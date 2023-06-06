@@ -1,0 +1,7 @@
+*.env
+__debug_bin
+*.log
+path.json
+*.http
+*.json
+*.sql
