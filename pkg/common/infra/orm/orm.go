@@ -74,7 +74,8 @@ func CreateConnetionDB(conf config.DbConfig) (*gorm.DB, error) {
 	switch conf.Driver {
 	case "postgres":
 		// dsn = "postgres://" + conf.User + ":" + conf.Password + "@" + conf.Host + ":" + conf.Port + "/" + conf.Password
-		dsn = fmt.Sprintf("postgres://%v:%v@%v:%v/%v", conf.User, conf.Password, conf.Host, conf.Port, conf.Password)
+		// dsn = fmt.Sprintf("postgres://%v:%v@%v:%v/%v", conf.User, conf.Password, conf.Host, conf.Port, conf.Password)
+		dsn = fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=UTC", conf.Host, conf.User, conf.Password, conf.Database, conf.Port)
 	default:
 		return nil, ErrDriverNotSupported.AttacthDetail(map[string]any{"driveName": conf.Driver, "supportedDrivers": "[postgres]"})
 	}
