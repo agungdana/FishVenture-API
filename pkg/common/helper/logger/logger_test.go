@@ -15,7 +15,7 @@ func TestLooger(t *testing.T) {
 		Debug:   "true",
 	}
 
-	logger.SetupLogger(conf)
+	logger.SetupLogger(conf.Debug)
 
 	logger.Info("example")
 }
@@ -28,7 +28,7 @@ func BenchmarkLooger(b *testing.B) {
 		Debug:   "true",
 	}
 
-	logger.SetupLogger(conf)
+	logger.SetupLogger(conf.Debug)
 
 	logger.Info("example")
 }

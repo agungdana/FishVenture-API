@@ -8,7 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/e-fish/api/pkg/common/helper/config"
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
 	"github.com/sirupsen/logrus"
 )
@@ -72,12 +71,12 @@ func (l *loggerHook) Fire(entry *logrus.Entry) error {
 	return nil
 }
 
-func SetupLogger(conf config.AppConfig) {
+func SetupLogger(debugStatus string) {
 	if logger == nil {
 		once.Do(func() {
 			log := logrus.New()
 			log.SetLevel(logrus.InfoLevel)
-			if conf.Debug == "true" || conf.Debug == "" {
+			if debugStatus == "true" || debugStatus == "" {
 				log.SetLevel(logrus.TraceLevel)
 			}
 
