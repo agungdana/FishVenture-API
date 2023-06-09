@@ -54,7 +54,7 @@ func Test_ErrorsIsSuitable(t *testing.T) {
 }
 
 func Test_AddErrors(t *testing.T) {
-	errs := werror.Newerror("multiple errors example")
+	errs := werror.NewError("multiple errors example")
 
 	errs.Add(exampleErr.AttacthDetail(map[string]any{"causes": "example 1"}))
 	errs.Add(exampleErr.AttacthDetail(map[string]any{"causes": "example 2", "causes2": "example 3"}))
@@ -68,7 +68,7 @@ func Test_AddErrors(t *testing.T) {
 }
 
 func Test_AddErrorsFromErrors(t *testing.T) {
-	errs := werror.Newerror("multiple errors example")
+	errs := werror.NewError("multiple errors example")
 
 	errs.Add(errors.New("example 1"))
 	errs.Add(DoSomethingAndReturnErrors(t))
@@ -82,7 +82,7 @@ func Test_AddErrorsFromErrors(t *testing.T) {
 }
 
 func DoSomethingAndReturnErrors(t *testing.T) error {
-	errs := werror.Newerror("multiple errors return")
+	errs := werror.NewError("multiple errors return")
 
 	errs.Add(exampleErr.AttacthDetail(map[string]any{"causes": "example 1"}))
 	errs.Add(exampleErr.AttacthDetail(map[string]any{"causes": "example 2"}))

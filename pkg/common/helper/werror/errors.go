@@ -57,7 +57,7 @@ func (e Errors) Error() string {
 	return result
 }
 
-func Newerror(message string) *Errors {
+func NewError(message string) *Errors {
 	return &Errors{
 		Message: message,
 		Errors:  make([]Error, 0),
