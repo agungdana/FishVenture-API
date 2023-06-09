@@ -1,33 +1,111 @@
 package restsvr
 
 import (
+	"context"
 	"net/http"
+	"sync"
+	"time"
 
+	"github.com/e-fish/api/pkg/common/helper/config"
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
+	"github.com/e-fish/api/pkg/common/helper/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
-func NewRoute() *gin.Engine {
-	r := gin.Default()
+var (
+	restSvr *RestSvr
+	once    sync.Once
+)
 
-	r.Use(ctxutil.Authentication())
-
-	return r
+type RestSvr struct {
+	conf config.AppConfig
+	gin  *gin.Engine
 }
 
-func Run(r *gin.Engine) {
+func getGinEngine() *RestSvr {
+	if restSvr == nil {
+		once.Do(func() {
+			r := gin.Default()
 
-	r.GET("/status", func(ctx *gin.Context) {
+			r.Use(Timeout(), ctxutil.Authentication())
+
+			restSvr = &RestSvr{
+				gin: r,
+			}
+		})
+	}
+
+	return restSvr
+}
+
+func Timeout() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := c.Request.Context()
+
+		if c.Request.Method == "POST" {
+			ctx, cancel := context.WithTimeout(ctx, time.Second*3)
+			defer cancel()
+
+			c.Request = c.Request.WithContext(ctx)
+			finished := make(chan struct{})
+			go func() {
+				c.Next()
+
+				finished <- struct{}{}
+			}()
+
+			select {
+			case <-finished:
+				c.Next()
+				return
+			case <-ctx.Done():
+				ResponsJson(c, &HttpResponse{
+					Status:  StatusFailed,
+					Message: "connection timeout",
+					Error: []ErrorResponse{
+						{
+							Code:    "RequestTimeout",
+							Message: "connection timeout",
+							Details: map[string]any{"request to longger": "request > 3s"},
+						},
+					},
+				})
+
+				return
+			}
+		}
+	}
+}
+
+func NewRoute(conf config.AppConfig) {
+	getGinEngine().conf = conf
+}
+
+func GetGinRoute() *gin.Engine {
+	return restSvr.gin
+}
+
+func Run() {
+	rs := getGinEngine()
+
+	rs.gin.GET("/status", func(ctx *gin.Context) {
 		res := new(HttpResponse)
 		res.Add("running", nil)
 		ResponsJson(ctx, res)
 	})
 
-	// if err := r.Run(conf.AppsAddress + ":" + conf.AppsPort); err != nil {
-	// 	logger.Fatal("failed to run serv: %v", err)
-	// }
-	r.Run()
+	if rs.conf.Address == "" {
+		rs.conf.Address = "localhost"
+	}
+	if rs.conf.Port == "" {
+		rs.conf.Port = "8080"
+	}
+
+	if err := rs.gin.Run(rs.conf.Address + ":" + rs.conf.Port); err != nil {
+		logger.Fatal("failed to run serv: %v", err)
+	}
+
 }
 
 func Upgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
