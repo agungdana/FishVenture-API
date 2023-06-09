@@ -2,18 +2,39 @@ package ctxutil
 
 import (
 	"context"
+	"sync"
 
 	"github.com/google/uuid"
 )
 
-var permissionAccess = make(map[uuid.UUID]map[string]bool)
+var (
+	permissionAccess = make(map[uuid.UUID]map[string]bool)
+
+	mut sync.Mutex
+)
 
 type PermissionAccess struct {
 	ID   uuid.UUID
 	Path string
 }
 
+func DeleteUserPermission(data PermissionAccess) {
+	mut.Lock()
+	if val, ok := permissionAccess[data.ID]; ok {
+		delete(val, data.Path)
+	}
+	mut.Unlock()
+}
+
+func DeleteRolePermission(data PermissionAccess) {
+	mut.Lock()
+	delete(permissionAccess, data.ID)
+	mut.Unlock()
+}
+
 func AddPermissionAccess(data []PermissionAccess) {
+	mut.Lock()
+
 	for _, v := range data {
 		if _, ok := permissionAccess[v.ID]; !ok {
 			permissionAccess[v.ID] = make(map[string]bool)
@@ -23,6 +44,8 @@ func AddPermissionAccess(data []PermissionAccess) {
 			permissionAccess[v.ID][v.Path] = true
 		}
 	}
+
+	mut.Unlock()
 }
 
 func CanAccess(ctx context.Context, path string) bool {
