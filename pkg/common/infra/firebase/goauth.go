@@ -11,7 +11,7 @@ import (
 	"github.com/e-fish/api/pkg/common/helper/logger"
 )
 
-func newAuth(app *firebase.App, ctx context.Context) (GoogleAuth, error) {
+func newAuth(ctx context.Context, app *firebase.App) (GoogleAuth, error) {
 
 	auth, err := app.Auth(ctx)
 	if err != nil {

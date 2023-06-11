@@ -32,7 +32,7 @@ type fireBase struct {
 
 // NewGoogleAuth implements Firebase
 func (f *fireBase) NewGoogleAuth(ctx context.Context) (GoogleAuth, error) {
-	return newAuth(f.app, ctx)
+	return newAuth(ctx, f.app)
 }
 
 // NewMessaging implements Firebase
