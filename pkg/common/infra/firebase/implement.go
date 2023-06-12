@@ -10,9 +10,9 @@ import (
 	"google.golang.org/api/option"
 )
 
-func NewFirebase(conf config.AppConfig) (Firebase, error) {
+func NewFirebase(conf config.FirebaseConfig) (Firebase, error) {
 
-	data, err := os.ReadFile(conf.FirebaseConfig.FireBase)
+	data, err := os.ReadFile(conf.FireBase)
 	if err != nil {
 		return nil, err
 	}
