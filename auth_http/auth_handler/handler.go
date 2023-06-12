@@ -4,6 +4,7 @@ import (
 	authconfig "github.com/e-fish/api/auth_http/auth_config"
 	authservice "github.com/e-fish/api/auth_http/auth_service"
 	"github.com/e-fish/api/pkg/common/helper/restsvr"
+	"github.com/e-fish/api/pkg/domain/auth/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,15 +15,19 @@ type Handler struct {
 
 func (h *Handler) CreateUser(c *gin.Context) {
 	var (
-		// ctx = c.Request.Context()
-		// req any
+		ctx = c.Request.Context()
+		req model.CreateUserInput
 		res = new(restsvr.HttpResponse)
 	)
 
 	defer restsvr.ResponsJson(c, res)
 
-	// err := c.ShouldBindJSON(&req)
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		res.Add(nil, err)
+		return
+	}
 
-	// result, err := h.Service.CreateUser(ctx, req)
-	// res.Add(result, err)
+	result, err := h.Service.CreateUser(ctx, req)
+	res.Add(result, err)
 }
