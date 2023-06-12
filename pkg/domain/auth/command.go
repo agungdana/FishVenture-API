@@ -2,29 +2,56 @@ package auth
 
 import (
 	"context"
+	"time"
 
+	"github.com/e-fish/api/pkg/common/helper/bcrypt"
+	"github.com/e-fish/api/pkg/common/helper/ctxutil"
+	"github.com/e-fish/api/pkg/common/helper/logger"
 	"github.com/e-fish/api/pkg/common/infra/firebase"
 	"github.com/e-fish/api/pkg/common/infra/orm"
 	"github.com/e-fish/api/pkg/common/infra/token"
+	errorauth "github.com/e-fish/api/pkg/domain/auth/error"
 	"github.com/e-fish/api/pkg/domain/auth/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func newCommand(ctx context.Context, db *gorm.DB, maker token.Token, firebase firebase.GoogleAuth) Command {
+func newCommand(ctx context.Context, db *gorm.DB, maker token.Token, gauth firebase.GoogleAuth) Command {
 	var (
 		dbTxn = orm.BeginTxn(ctx, db)
 	)
 
 	return &command{
-		dbTxn: dbTxn,
-		query: newQuery(dbTxn, maker, firebase),
+		dbTxn:      dbTxn,
+		tokenMaker: maker,
+		gauth:      gauth,
+		query:      newQuery(dbTxn),
 	}
 }
 
 type command struct {
-	dbTxn *gorm.DB
-	query Query
+	dbTxn      *gorm.DB
+	tokenMaker token.Token
+	gauth      firebase.GoogleAuth
+	query      Query
+}
+
+// CreateUserRoleByRoleName implements Command.
+func (c *command) CreateUserRoleByRoleName(ctx context.Context, input model.AddUserRoleInput) (*uuid.UUID, error) {
+
+	role, err := c.query.GetRoleByName(ctx, input.RoleName)
+	if err != nil {
+		return nil, err
+	}
+
+	newUserRole := input.ToUserRole(role.ID)
+
+	err = c.dbTxn.WithContext(ctx).Create(&newUserRole).Error
+	if err != nil {
+		return nil, errorauth.ErrCreateUserRole.AttacthDetail(map[string]any{"errors": err})
+	}
+
+	return &newUserRole.ID, nil
 }
 
 // AddVerificationCode implements Command.
@@ -39,7 +66,33 @@ func (c *command) CreateRolePermission(ctx context.Context, input model.AddRoleP
 
 // CreateUser implements Command.
 func (c *command) CreateUser(ctx context.Context, input model.CreateUserInput) (*uuid.UUID, error) {
-	panic("unimplemented")
+	logger.DebugWithContext(ctx, "#### proces create user")
+
+	exist, err := c.query.GetUserByEmail(ctx, input.Email, false)
+	if err != nil {
+		if !errorauth.ErrUserNotFound.Is(err) {
+			return nil, err
+		}
+		return nil, errorauth.ErrUserAlreadyExist.AttacthDetail(map[string]any{"email": input.Email})
+	}
+
+	if exist != nil {
+		return nil, errorauth.ErrUserAlreadyExist.AttacthDetail(map[string]any{"email": input.Email})
+	}
+
+	err = input.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	newUser := input.ToUser()
+
+	err = c.dbTxn.WithContext(ctx).Create(&newUser).Error
+	if err != nil {
+		return nil, errorauth.ErrFailedCreateUser.AttacthDetail(map[string]any{"err": err})
+	}
+
+	return &newUser.ID, nil
 }
 
 // CreateUserPermission implements Command.
@@ -59,13 +112,96 @@ func (c *command) DeleteUserPermission(ctx context.Context, input uuid.UUID) (*u
 
 // UpdateUser implements Command.
 func (c *command) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*uuid.UUID, error) {
-	panic("unimplemented")
+	userID, _ := ctxutil.GetUserID(ctx)
+
+	err := input.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	updateUser := input.ToUser(userID)
+
+	err = c.dbTxn.WithContext(ctx).Updates(&updateUser).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &userID, nil
+}
+
+// Login implements Command.
+func (c *command) Login(ctx context.Context, input model.UserLoginInput) (*model.UserLoginOutput, error) {
+	user, err := c.query.GetUserByEmail(ctx, input.Email, true)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := bcrypt.ComparePassword(input.Password, user.Password); err != nil {
+		return nil, errorauth.ErrUserPasswordNotMatch.AttacthDetail(map[string]any{"input-pw": input.Password, "email": input.Email, "err": err})
+	}
+
+	role := []uuid.UUID{}
+
+	for _, v := range user.UserRole {
+		role = append(role, v.RoleID)
+	}
+
+	token, err := c.tokenMaker.CreateToken(&token.Payload{
+		UserID:    user.ID,
+		UserRole:  role,
+		IssuedAt:  time.Now(),
+		ExpiredAt: time.Now().AddDate(1, 0, 0),
+	})
+	if err != nil {
+		return nil, errorauth.ErrTokenError.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &model.UserLoginOutput{
+		Token: token,
+	}, nil
+}
+
+// LoginByGoogle implements Command.
+func (c *command) LoginByGoogle(ctx context.Context, input model.UserLoginByGooleInput) (*model.UserLoginOutput, error) {
+
+	signin, err := c.gauth.Signin(ctx, input.Token)
+	if err != nil {
+		return nil, errorauth.ErrSigninFirbaseAuth.AttacthDetail(map[string]any{"err": err})
+	}
+
+	user, err := c.query.GetUserByEmail(ctx, signin.Email, true)
+	if err != nil {
+		if !errorauth.ErrUserNotFound.Is(err) {
+			return nil, err
+		}
+
+	}
+
+	role := []uuid.UUID{}
+
+	for _, v := range user.UserRole {
+		role = append(role, v.RoleID)
+	}
+
+	token, err := c.tokenMaker.CreateToken(&token.Payload{
+		UserID:    user.ID,
+		UserRole:  role,
+		IssuedAt:  time.Now(),
+		ExpiredAt: time.Now().AddDate(1, 0, 0),
+	})
+	if err != nil {
+		return nil, errorauth.ErrTokenError.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &model.UserLoginOutput{
+		Token: token,
+	}, nil
 }
 
 // Commit implements Command.
 func (c *command) Commit(ctx context.Context) error {
 	if err := orm.CommitTxn(ctx); err != nil {
-		return err
+		return errorauth.ErrCommit.AttacthDetail(map[string]any{"errors": err})
 	}
 	return nil
 }
@@ -73,7 +209,7 @@ func (c *command) Commit(ctx context.Context) error {
 // Rollback implements Command.
 func (c *command) Rollback(ctx context.Context) error {
 	if err := orm.RollbackTxn(ctx); err != nil {
-		return err
+		return errorauth.ErrRollback.AttacthDetail(map[string]any{"errors": err})
 	}
 	return nil
 }
