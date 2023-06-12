@@ -3,29 +3,35 @@ package auth
 import (
 	"context"
 	"errors"
-	"time"
 
-	"github.com/e-fish/api/pkg/common/helper/bcrypt"
-	"github.com/e-fish/api/pkg/common/infra/firebase"
-	"github.com/e-fish/api/pkg/common/infra/token"
+	errorauth "github.com/e-fish/api/pkg/domain/auth/error"
 	"github.com/e-fish/api/pkg/domain/auth/model"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-func newQuery(db *gorm.DB, maker token.Token, gauth firebase.GoogleAuth) Query {
+func newQuery(db *gorm.DB) Query {
 	return &query{
-		tokenMaker: maker,
-		gauth:      gauth,
-		db:         db,
+		db: db,
 	}
 }
 
 type query struct {
-	tokenMaker token.Token
-	gauth      firebase.GoogleAuth
-	db         *gorm.DB
+	db *gorm.DB
+}
+
+// GetRoleByName implements Query.
+func (q *query) GetRoleByName(ctx context.Context, input string) (*model.Role, error) {
+	role := model.Role{}
+	err := q.db.Where("deleted_at IS NULL and name = ?", input).Take(&role).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorauth.ErrRoleNotFound.AttacthDetail(map[string]any{"name": input})
+		}
+		return nil, errorauth.ErrRole.AttacthDetail(map[string]any{"errors": err})
+	}
+
+	return &role, nil
 }
 
 // GetAllUserPermission implements Query.
@@ -63,85 +69,16 @@ func (q *query) GetUserByEmail(ctx context.Context, input string, withPermission
 	err := db.Where("deleted_at IS NULL and email = ?", input).Take(&data).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ErrUserNotFound.AttacthDetail(map[string]any{"email": input})
+			return nil, errorauth.ErrUserNotFound.AttacthDetail(map[string]any{"email": input})
 		}
-		return nil, ErrUser.AttacthDetail(map[string]any{"error": err})
+		return nil, errorauth.ErrUser.AttacthDetail(map[string]any{"error": err})
 	}
 	return &data, nil
-}
-
-// Login implements Query.
-func (q *query) Login(ctx context.Context, input model.UserLoginInput) (*model.UserLoginOutput, error) {
-	user, err := q.GetUserByEmail(ctx, input.Email, true)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := bcrypt.ComparePassword(input.Password, user.Password); err != nil {
-		return nil, ErrUserPasswordNotMatch.AttacthDetail(map[string]any{"input-pw": input.Password, "email": input.Email, "err": err})
-	}
-
-	role := []uuid.UUID{}
-
-	for _, v := range user.UserRole {
-		role = append(role, v.RoleID)
-	}
-
-	token, err := q.tokenMaker.CreateToken(&token.Payload{
-		UserID:    user.ID,
-		UserRole:  role,
-		IssuedAt:  time.Now(),
-		ExpiredAt: time.Now().AddDate(1, 0, 0),
-	})
-	if err != nil {
-		return nil, ErrTokenError.AttacthDetail(map[string]any{"error": err})
-	}
-
-	return &model.UserLoginOutput{
-		Token: token,
-	}, nil
-}
-
-// LoginByGoogle implements Query.
-func (q *query) LoginByGoogle(ctx context.Context, input model.UserLoginByGooleInput) (*model.UserLoginOutput, error) {
-
-	signin, err := q.gauth.Signin(ctx, input.Token)
-	if err != nil {
-		return nil, ErrSigninFirbaseAuth.AttacthDetail(map[string]any{"err": err})
-	}
-
-	user, err := q.GetUserByEmail(ctx, signin.Email, true)
-	if err != nil {
-		if !ErrUserNotFound.Is(err) {
-			return nil, err
-		}
-
-	}
-
-	role := []uuid.UUID{}
-
-	for _, v := range user.UserRole {
-		role = append(role, v.RoleID)
-	}
-
-	token, err := q.tokenMaker.CreateToken(&token.Payload{
-		UserID:    user.ID,
-		UserRole:  role,
-		IssuedAt:  time.Now(),
-		ExpiredAt: time.Now().AddDate(1, 0, 0),
-	})
-	if err != nil {
-		return nil, ErrTokenError.AttacthDetail(map[string]any{"error": err})
-	}
-
-	return &model.UserLoginOutput{
-		Token: token,
-	}, nil
 }
 
 // lock implements Query.
 // lock table row to avoid race condition
 func (q *query) lock() Query {
 	db := q.db.Clauses(clause.Locking{Strength: "UPDATE"})
-	return &query{db: db, tokenMaker: q.tokenMaker}
+	return &query{db: db}
 }

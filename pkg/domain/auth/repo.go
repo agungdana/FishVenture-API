@@ -44,5 +44,5 @@ func (a *AuthRepo) NewCommand(ctx context.Context) Command {
 
 // NewQuery implements Repo.
 func (a *AuthRepo) NewQuery() Query {
-	return newQuery(a.db, a.tokenMaker, a.gauth)
+	return newQuery(a.db)
 }
