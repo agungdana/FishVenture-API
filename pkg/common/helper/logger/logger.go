@@ -106,77 +106,77 @@ func GetLogger() *Logger {
 
 func Trace(format string, msg ...any) {
 	messages := fmt.Sprintf("Trace:"+format, msg...)
-	logger.Entry.Trace(messages)
+	go logger.Entry.Trace(messages)
 }
 
 func Debug(format string, msg ...any) {
 	messages := fmt.Sprintf("Debug:"+format, msg...)
-	logger.Entry.Debug(messages)
+	go logger.Entry.Debug(messages)
 }
 
 func Info(format string, msg ...any) {
 	messages := fmt.Sprintf("Info:"+format, msg...)
-	logger.Entry.Info(messages)
+	go logger.Entry.Info(messages)
 }
 
 func Error(format string, msg ...any) {
 	messages := fmt.Sprintf("Error:"+format, msg...)
-	logger.Entry.Error(messages)
+	go logger.Entry.Error(messages)
 }
 
 func Warn(format string, msg ...any) {
 	messages := fmt.Sprintf("Warn:"+format, msg...)
-	logger.Entry.Warn(messages)
+	go logger.Entry.Warn(messages)
 }
 
 func Fatal(format string, msg ...any) {
 	messages := fmt.Sprintf("Fatal:"+format, msg...)
-	logger.Entry.Fatal(messages)
+	go logger.Entry.Fatal(messages)
 }
 
 func Panic(format string, msg ...any) {
 	messages := fmt.Sprintf("Panic:"+format, msg...)
-	logger.Entry.Panic(messages)
+	go logger.Entry.Panic(messages)
 }
 
 func TraceWithContext(ctx context.Context, format string, msg ...any) {
 	messages := fmt.Sprintf("Trace:"+extractLabel(ctx)+format, msg...)
 	logger.Entry.Context = ctx
-	logger.Entry.Trace(messages)
+	go logger.Entry.Trace(messages)
 }
 
 func DebugWithContext(ctx context.Context, format string, msg ...any) {
 	messages := fmt.Sprintf("Debug:"+extractLabel(ctx)+format, msg...)
 	logger.Entry.Context = ctx
-	logger.Entry.Debug(messages)
+	go logger.Entry.Debug(messages)
 }
 
 func InfoWithContext(ctx context.Context, format string, msg ...any) {
 	messages := fmt.Sprintf("Info:"+extractLabel(ctx)+format, msg...)
 	logger.Entry.Context = ctx
-	logger.Entry.Info(messages)
+	go logger.Entry.Info(messages)
 }
 
 func WarnWithContext(ctx context.Context, format string, msg ...any) {
 	messages := fmt.Sprintf("Warn:"+extractLabel(ctx)+format, msg...)
 	logger.Entry.Context = ctx
-	logger.Entry.Warn(messages)
+	go logger.Entry.Warn(messages)
 }
 
 func ErrorWithContext(ctx context.Context, format string, msg ...any) {
 	messages := fmt.Sprintf("Error:"+extractLabel(ctx)+format, msg...)
 	logger.Entry.Context = ctx
-	logger.Entry.Error(messages)
+	go logger.Entry.Error(messages)
 }
 
 func FatalWithContext(ctx context.Context, format string, msg ...any) {
 	messages := fmt.Sprintf("Fatal:"+extractLabel(ctx)+format, msg...)
 	logger.Entry.Context = ctx
-	logger.Entry.Fatal(messages)
+	go logger.Entry.Fatal(messages)
 }
 
 func PanicWithContext(ctx context.Context, format string, msg ...any) {
 	messages := fmt.Sprintf("Panic:"+extractLabel(ctx)+format, msg...)
 	logger.Entry.Context = ctx
-	logger.Entry.Panic(messages)
+	go logger.Entry.Panic(messages)
 }
