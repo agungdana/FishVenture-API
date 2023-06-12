@@ -76,6 +76,8 @@ func CreateConnetionDB(conf config.DbConfig) (*gorm.DB, error) {
 		// dsn = "postgres://" + conf.User + ":" + conf.Password + "@" + conf.Host + ":" + conf.Port + "/" + conf.Password
 		// dsn = fmt.Sprintf("postgres://%v:%v@%v:%v/%v", conf.User, conf.Password, conf.Host, conf.Port, conf.Password)
 		dsn = fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=UTC", conf.Host, conf.User, conf.Password, conf.Database, conf.Port)
+	case "mysql":
+		//mysql code dsn here
 	default:
 		return nil, ErrDriverNotSupported.AttacthDetail(map[string]any{"driveName": conf.Driver, "supportedDrivers": "[postgres]"})
 	}
@@ -93,6 +95,8 @@ func CreateConnetionDB(conf config.DbConfig) (*gorm.DB, error) {
 		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 			Logger: gormLogger(),
 		})
+	case "mysql":
+		//mysql code gorm open here
 	default:
 		return nil, ErrDriverNotSupported.AttacthDetail(map[string]any{"driveName": conf.Driver, "supportedDrivers": "[postgres]"})
 	}
