@@ -1,20 +1,60 @@
 package model
 
 import (
+	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/e-fish/api/pkg/common/helper/bcrypt"
 	"github.com/e-fish/api/pkg/common/helper/rand"
+	"github.com/e-fish/api/pkg/common/helper/werror"
 	"github.com/e-fish/api/pkg/common/infra/orm"
+	errorauth "github.com/e-fish/api/pkg/domain/auth/error"
 	"github.com/google/uuid"
 )
 
 type CreateUserInput struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Phone    string `json:"phone"`
-	Password string `json:"password"`
-	Photo    string `json:"photo"`
+	Name            string `json:"name"`
+	Email           string `json:"email"`
+	Password        string `json:"password"`
+	ApplicationType string `json:"application_type"`
+	Status          bool   `json:"-"`
+}
+
+func (c *CreateUserInput) Validate() error {
+	errs := werror.NewError("error validate input user")
+
+	if c.Name == "" {
+		errs.Add(errorauth.ErrValidateCreateUserInput.AttacthDetail(map[string]any{"name": "empty"}))
+	}
+	if c.Email == "" {
+		errs.Add(errorauth.ErrValidateCreateUserInput.AttacthDetail(map[string]any{"email": "empty"}))
+	}
+	if c.Password == "" {
+		errs.Add(errorauth.ErrValidateCreateUserInput.AttacthDetail(map[string]any{"password": "empty"}))
+	}
+
+	if c.ApplicationType == "" {
+		errs.Add(errorauth.ErrValidateCreateUserInput.AttacthDetail(map[string]any{"application_type": "empty"}))
+	}
+
+	if err := errs.Return(); err != nil {
+		return err
+	}
+
+	if c.ApplicationType == BUYER {
+		c.Status = true
+	}
+
+	newPassword, err := bcrypt.HashPassowrd(c.Password)
+	if err != nil {
+		return errorauth.ErrHashedPassword.AttacthDetail(map[string]any{"errors": err})
+	}
+
+	c.Password = newPassword
+
+	return nil
 }
 
 func (c *CreateUserInput) ToUser() User {
@@ -26,8 +66,8 @@ func (c *CreateUserInput) ToUser() User {
 		ID:       userID,
 		Name:     c.Name,
 		Email:    c.Email,
-		Phone:    c.Phone,
 		Password: c.Password,
+		Status:   c.Status,
 		OrmModel: orm.OrmModel{
 			CreatedAt: time.Now(),
 			CreatedBy: userID,
@@ -38,6 +78,40 @@ func (c *CreateUserInput) ToUser() User {
 type UpdateUserInput struct {
 	Name  string `json:"name"`
 	Photo string `json:"photo"`
+	Phone string `json:"phone"`
+}
+
+func (u *UpdateUserInput) Validate() error {
+	newPhone, err := ValidatePhone(u.Phone)
+	if err != nil {
+		return errorauth.ErrPhoneValidate.AttacthDetail(map[string]any{"phone": u.Phone})
+	}
+
+	u.Phone = newPhone
+	return nil
+}
+
+func ValidatePhone(no string) (string, error) {
+	code := "62"
+	fc := no[0:1]
+
+	no = strings.ReplaceAll(no, "+", "")
+	no = strings.ReplaceAll(no, "-", "")
+	no = strings.ReplaceAll(no, ",", "")
+	no = strings.ReplaceAll(no, ".", "")
+	no = strings.ReplaceAll(no, " ", "")
+
+	if fc == "0" {
+		no = strings.Replace(no, "0", code, 1)
+	}
+
+	_, err := strconv.Atoi(no)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		return "", err
+	}
+
+	return no, nil
 }
 
 func (c *UpdateUserInput) ToUser(userID uuid.UUID) User {
@@ -49,6 +123,7 @@ func (c *UpdateUserInput) ToUser(userID uuid.UUID) User {
 		ID:    userID,
 		Name:  c.Name,
 		Photo: c.Photo,
+		Phone: c.Phone,
 		OrmModel: orm.OrmModel{
 			UpdatedAt: &today,
 			UpdatedBy: &userID,
@@ -112,16 +187,16 @@ func (c *AddUserPermissionInput) ToUserPermission(userID uuid.UUID, permissionPa
 }
 
 type AddUserRoleInput struct {
-	UserID uuid.UUID
-	RoleID uuid.UUID
+	UserID   uuid.UUID
+	RoleName string
 }
 
-func (c *AddUserRoleInput) ToUserPermission(userID uuid.UUID, permissionPath, permissionName string) UserRole {
+func (c *AddUserRoleInput) ToUserRole(roleID uuid.UUID) UserRole {
 	return UserRole{
 		ID:       uuid.New(),
 		UserID:   c.UserID,
-		RoleID:   c.RoleID,
-		OrmModel: orm.OrmModel{CreatedAt: time.Now(), CreatedBy: userID},
+		RoleID:   roleID,
+		OrmModel: orm.OrmModel{CreatedAt: time.Now(), CreatedBy: c.UserID},
 	}
 }
 
