@@ -2,7 +2,7 @@ package config
 
 type AppConfig struct {
 	Name           string
-	Address        string
+	Host           string
 	Port           string
 	Debug          string
 	FirebaseConfig FirebaseConfig

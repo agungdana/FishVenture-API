@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	ID                  uuid.UUID
+	ID                  uuid.UUID `gorm:"size:256"`
 	Name                string
 	Email               string
 	Password            string
@@ -21,7 +21,7 @@ type User struct {
 }
 
 type Role struct {
-	ID             uuid.UUID
+	ID             uuid.UUID `gorm:"size:256"`
 	Code           string
 	Name           string
 	Scope          string
@@ -30,7 +30,7 @@ type Role struct {
 }
 
 type Permission struct {
-	ID             uuid.UUID
+	ID             uuid.UUID `gorm:"size:256"`
 	Code           string
 	Name           string
 	Path           string
@@ -39,10 +39,10 @@ type Permission struct {
 }
 
 type RolePermission struct {
-	ID             uuid.UUID
-	RoleID         uuid.UUID
+	ID             uuid.UUID `gorm:"size:256"`
+	RoleID         uuid.UUID `gorm:"size:256"`
 	Role           Role
-	PermissionID   uuid.UUID
+	PermissionID   uuid.UUID `gorm:"size:256"`
 	PermissionName string
 	PermissionPath string
 	Permission     Permission
@@ -50,19 +50,19 @@ type RolePermission struct {
 }
 
 type UserRole struct {
-	ID     uuid.UUID
-	UserID uuid.UUID
+	ID     uuid.UUID `gorm:"size:256"`
+	UserID uuid.UUID `gorm:"size:256"`
 	User   User
-	RoleID uuid.UUID
+	RoleID uuid.UUID `gorm:"size:256"`
 	Role   Role
 	orm.OrmModel
 }
 
 type UserPermission struct {
-	ID             uuid.UUID
-	UserID         uuid.UUID
+	ID             uuid.UUID `gorm:"size:256"`
+	UserID         uuid.UUID `gorm:"size:256"`
 	User           User
-	PermissionID   uuid.UUID
+	PermissionID   uuid.UUID `gorm:"size:256"`
 	PermissionPath string
 	PermissionName string
 	Permission     Permission

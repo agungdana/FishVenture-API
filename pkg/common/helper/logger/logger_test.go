@@ -9,10 +9,10 @@ import (
 
 func TestLooger(t *testing.T) {
 	conf := config.AppConfig{
-		Name:    "Paled-ID",
-		Address: "localhost",
-		Port:    "8081",
-		Debug:   "true",
+		Name:  "Paled-ID",
+		Host:  "localhost",
+		Port:  "8081",
+		Debug: "true",
 	}
 
 	logger.SetupLogger(conf.Debug)
@@ -22,10 +22,10 @@ func TestLooger(t *testing.T) {
 
 func BenchmarkLooger(b *testing.B) {
 	conf := config.AppConfig{
-		Name:    "Paled-ID",
-		Address: "localhost",
-		Port:    "8081",
-		Debug:   "true",
+		Name:  "Paled-ID",
+		Host:  "localhost",
+		Port:  "8081",
+		Debug: "true",
 	}
 
 	logger.SetupLogger(conf.Debug)
