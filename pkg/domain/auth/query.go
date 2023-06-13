@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/e-fish/api/pkg/common/helper/ctxutil"
 	errorauth "github.com/e-fish/api/pkg/domain/auth/error"
 	"github.com/e-fish/api/pkg/domain/auth/model"
 	"gorm.io/gorm"
@@ -18,6 +19,24 @@ func newQuery(db *gorm.DB) Query {
 
 type query struct {
 	db *gorm.DB
+}
+
+// GetProfile implements Query.
+func (q *query) GetProfile(ctx context.Context) (*model.Profile, error) {
+	var (
+		data      = model.Profile{}
+		db        = q.db
+		userID, _ = ctxutil.GetUserID(ctx)
+	)
+
+	err := db.Where("deleted_at IS NULL and id = ?", userID).Take(&data).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorauth.ErrUserNotFound.AttacthDetail(map[string]any{"id": userID})
+		}
+		return nil, errorauth.ErrUser.AttacthDetail(map[string]any{"error": err})
+	}
+	return &data, nil
 }
 
 // GetRoleByName implements Query.

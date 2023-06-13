@@ -31,3 +31,53 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	result, err := h.Service.CreateUser(ctx, req)
 	res.Add(result, err)
 }
+
+func (h *Handler) Login(c *gin.Context) {
+	var (
+		ctx = c.Request.Context()
+		req model.UserLoginInput
+		res = new(restsvr.HttpResponse)
+	)
+
+	defer restsvr.ResponsJson(c, res)
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		res.Add(nil, err)
+		return
+	}
+
+	result, err := h.Service.Login(ctx, req)
+	res.Add(result, err)
+}
+
+func (h *Handler) LoginByGoogle(c *gin.Context) {
+	var (
+		ctx = c.Request.Context()
+		req model.UserLoginByGooleInput
+		res = new(restsvr.HttpResponse)
+	)
+
+	defer restsvr.ResponsJson(c, res)
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		res.Add(nil, err)
+		return
+	}
+
+	result, err := h.Service.LoginByGoogle(ctx, req)
+	res.Add(result, err)
+}
+
+func (h *Handler) Profile(c *gin.Context) {
+	var (
+		ctx = c.Request.Context()
+		res = new(restsvr.HttpResponse)
+	)
+
+	defer restsvr.ResponsJson(c, res)
+
+	result, err := h.Service.Profile(ctx)
+	res.Add(result, err)
+}

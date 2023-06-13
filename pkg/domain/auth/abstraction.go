@@ -31,6 +31,7 @@ type Command interface {
 }
 
 type Query interface {
+	GetProfile(ctx context.Context) (*model.Profile, error)
 	GetUserByEmail(ctx context.Context, input string, withPermissionPreload bool) (*model.User, error)
 
 	GetRoleByName(ctx context.Context, input string) (*model.Role, error)

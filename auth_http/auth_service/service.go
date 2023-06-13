@@ -98,3 +98,51 @@ func (s *Service) CreateUserRole(ctx context.Context, input model.AddUserRoleInp
 
 	return result, nil
 }
+
+func (s *Service) Login(ctx context.Context, input model.UserLoginInput) (*model.UserLoginOutput, error) {
+	command := s.repo.NewCommand(ctx)
+	result, err := command.Login(ctx, input)
+	if err != nil {
+		if err := command.Rollback(ctx); err != nil {
+			logger.ErrorWithContext(ctx, "can't rollback transaction err: %v", err)
+		}
+		logger.ErrorWithContext(ctx, "error login user err: %v", err)
+		return nil, err
+	}
+
+	if err := command.Commit(ctx); err != nil {
+		logger.ErrorWithContext(ctx, "error login user err: %v", err)
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (s *Service) LoginByGoogle(ctx context.Context, input model.UserLoginByGooleInput) (*model.UserLoginOutput, error) {
+	command := s.repo.NewCommand(ctx)
+	result, err := command.LoginByGoogle(ctx, input)
+	if err != nil {
+		if err := command.Rollback(ctx); err != nil {
+			logger.ErrorWithContext(ctx, "can't rollback transaction err: %v", err)
+		}
+		logger.ErrorWithContext(ctx, "error login user err: %v", err)
+		return nil, err
+	}
+
+	if err := command.Commit(ctx); err != nil {
+		logger.ErrorWithContext(ctx, "error login user err: %v", err)
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (s *Service) Profile(ctx context.Context) (*model.Profile, error) {
+	query := s.repo.NewQuery()
+	result, err := query.GetProfile(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
