@@ -20,12 +20,12 @@ func NewService(conf authconfig.AuthConfig) Service {
 
 	fb, err := firebase.NewFirebase(conf.FireBaseConfig)
 	if err != nil {
-		logger.Fatal("###failed create auth service err: %v", err)
+		logger.Fatal("###failed create firebase service err: %v", err)
 	}
 
 	tokenMaker, err := token.NewTokenMaker(token.SecretKey)
 	if err != nil {
-		logger.Fatal("###failed create auth service err: %v", err)
+		logger.Fatal("###failed create token maker service err: %v", err)
 	}
 
 	authRepo, err := auth.NewRepo(conf.DbConfig, tokenMaker, fb)

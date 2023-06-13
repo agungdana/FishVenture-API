@@ -11,6 +11,7 @@ import (
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
 	"github.com/e-fish/api/pkg/common/helper/logger"
 	"github.com/google/uuid"
+	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormlog "gorm.io/gorm/logger"
@@ -77,6 +78,7 @@ func CreateConnetionDB(conf config.DbConfig) (*gorm.DB, error) {
 		// dsn = fmt.Sprintf("postgres://%v:%v@%v:%v/%v", conf.User, conf.Password, conf.Host, conf.Port, conf.Password)
 		dsn = fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=UTC", conf.Host, conf.User, conf.Password, conf.Database, conf.Port)
 	case "mysql":
+		dsn = conf.User + ":" + conf.Password + "@tcp(" + conf.Host + ":" + conf.Port + ")/" + conf.Database + "?parseTime=True&loc=Local"
 		//mysql code dsn here
 	default:
 		return nil, ErrDriverNotSupported.AttacthDetail(map[string]any{"driveName": conf.Driver, "supportedDrivers": "[postgres]"})
@@ -97,6 +99,7 @@ func CreateConnetionDB(conf config.DbConfig) (*gorm.DB, error) {
 		})
 	case "mysql":
 		//mysql code gorm open here
+		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	default:
 		return nil, ErrDriverNotSupported.AttacthDetail(map[string]any{"driveName": conf.Driver, "supportedDrivers": "[postgres]"})
 	}

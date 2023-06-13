@@ -95,14 +95,14 @@ func Run() {
 		ResponsJson(ctx, res)
 	})
 
-	if rs.conf.Address == "" {
-		rs.conf.Address = "localhost"
+	if rs.conf.Host == "" {
+		rs.conf.Host = "localhost"
 	}
 	if rs.conf.Port == "" {
 		rs.conf.Port = "8080"
 	}
 
-	if err := rs.gin.Run(rs.conf.Address + ":" + rs.conf.Port); err != nil {
+	if err := rs.gin.Run(rs.conf.Host + ":" + rs.conf.Port); err != nil {
 		logger.Fatal("failed to run serv: %v", err)
 	}
 

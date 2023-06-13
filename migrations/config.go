@@ -1,4 +1,4 @@
-package authconfig
+package migrations
 
 import (
 	"os"
@@ -37,7 +37,6 @@ func getConfig() *AuthConfig {
 			username := os.Getenv("DB_USERNAME")
 			password := os.Getenv("DB_PASSWORD")
 			port := os.Getenv("DB_PORT")
-			firebaseConf := os.Getenv("FIREBASE_CONF")
 
 			conf = &AuthConfig{
 				DbConfig: config.DbConfig{
@@ -47,9 +46,6 @@ func getConfig() *AuthConfig {
 					Password: password,
 					Database: database,
 					Port:     port,
-				},
-				FireBaseConfig: config.FirebaseConfig{
-					FireBase: firebaseConf,
 				},
 			}
 		})

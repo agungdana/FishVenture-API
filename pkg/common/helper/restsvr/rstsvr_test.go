@@ -16,10 +16,10 @@ import (
 
 func TestRestSvrNeRoute(t *testing.T) {
 	conf := config.AppConfig{
-		Name:    "palen-id",
-		Address: "localhost",
-		Port:    "8081",
-		Debug:   "true",
+		Name:  "palen-id",
+		Host:  "localhost",
+		Port:  "8081",
+		Debug: "true",
 	}
 
 	logger.SetupLogger(conf.Debug)
