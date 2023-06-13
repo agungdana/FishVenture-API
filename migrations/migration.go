@@ -24,26 +24,54 @@ func Migrations() {
 		logger.Info("Error Auto Migreate: %v", err)
 	}
 
-	db.Create([]model.Role{{
-		ID:             uuid.New(),
+	admin := uuid.New()
+	buyer := uuid.New()
+	saler := uuid.New()
+
+	db.Create(&[]model.Role{{
+		ID:             buyer,
 		Code:           "RO0001",
 		Name:           model.BUYER,
 		Scope:          "",
 		RolePermission: []*model.RolePermission{},
 		OrmModel:       orm.OrmModel{},
 	}, {
-		ID:             uuid.New(),
+		ID:             admin,
 		Code:           "RO0002",
 		Name:           model.ADMIN,
 		Scope:          "",
 		RolePermission: []*model.RolePermission{},
 		OrmModel:       orm.OrmModel{},
 	}, {
-		ID:             uuid.New(),
+		ID:             saler,
 		Code:           "RO0003",
 		Name:           model.SALLER,
 		Scope:          "",
 		RolePermission: []*model.RolePermission{},
 		OrmModel:       orm.OrmModel{},
 	}})
+
+	profilePermission := uuid.New()
+
+	db.Create(&[]model.Permission{
+		{
+			ID:       profilePermission,
+			Code:     "PM0002",
+			Name:     "profile",
+			Path:     "/profile",
+			OrmModel: orm.OrmModel{},
+		},
+	})
+
+	db.Create(&[]model.RolePermission{
+		{
+			ID:             uuid.New(),
+			RoleID:         buyer,
+			PermissionID:   profilePermission,
+			PermissionName: "profile",
+			PermissionPath: "/profile",
+			Permission:     model.Permission{},
+			OrmModel:       orm.OrmModel{},
+		},
+	})
 }
