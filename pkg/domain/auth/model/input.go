@@ -18,7 +18,7 @@ type CreateUserInput struct {
 	Name            string `json:"name"`
 	Email           string `json:"email"`
 	Password        string `json:"password"`
-	ApplicationType string `json:"application_type"`
+	ApplicationType string `json:"applicationType"`
 	Status          bool   `json:"-"`
 }
 
@@ -36,7 +36,7 @@ func (c *CreateUserInput) Validate() error {
 	}
 
 	if c.ApplicationType == "" {
-		errs.Add(errorauth.ErrValidateCreateUserInput.AttacthDetail(map[string]any{"application_type": "empty"}))
+		errs.Add(errorauth.ErrValidateCreateUserInput.AttacthDetail(map[string]any{"applicationType": "empty"}))
 	}
 
 	if err := errs.Return(); err != nil {
@@ -132,9 +132,9 @@ func (c *UpdateUserInput) ToUser(userID uuid.UUID) User {
 }
 
 type UserLoginInput struct {
-	Email           string
-	Password        string
-	ApplicationType string
+	Email           string `json:"email,omitempty"`
+	Password        string `json:"password,omitempty"`
+	ApplicationType string `json:"applicationType,omitempty"`
 }
 
 type UserLoginByGooleInput struct {
