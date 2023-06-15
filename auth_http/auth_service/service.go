@@ -9,6 +9,7 @@ import (
 	"github.com/e-fish/api/pkg/common/infra/firebase"
 	"github.com/e-fish/api/pkg/common/infra/token"
 	"github.com/e-fish/api/pkg/domain/auth"
+	errorauth "github.com/e-fish/api/pkg/domain/auth/error"
 	"github.com/e-fish/api/pkg/domain/auth/model"
 	"github.com/google/uuid"
 )
@@ -49,7 +50,31 @@ type Service struct {
 }
 
 func (s *Service) RegisterPermissionAccess(ctx context.Context) error {
-
+	query := s.repo.NewQuery()
+	roles, err := query.GetAllRolePermission(ctx)
+	if err != nil {
+		logger.Fatal("err get all permission: %v", err)
+	}
+	user, err := query.GetAllUserPermission(ctx)
+	if err != nil {
+		if !errorauth.ErrGetUserPermissionEmpty.Is(err) {
+			logger.Fatal("err get all user permission")
+		}
+	}
+	access := []ctxutil.PermissionAccess{}
+	for _, v := range roles {
+		access = append(access, ctxutil.PermissionAccess{
+			ID:   v.RoleID,
+			Path: v.PermissionPath,
+		})
+	}
+	for _, v := range user {
+		access = append(access, ctxutil.PermissionAccess{
+			ID:   v.RoleID,
+			Path: v.PermissionPath,
+		})
+	}
+	ctxutil.AddPermissionAccess(access)
 	return nil
 }
 
@@ -79,20 +104,21 @@ func (s *Service) CreateUser(ctx context.Context, input model.CreateUserInput) (
 }
 
 func (s *Service) CreateUserRole(ctx context.Context, input model.AddUserRoleInput) (*uuid.UUID, error) {
-	ctx = ctxutil.NewRequest(ctx)
+	// ctx = ctxutil.NewRequest(ctx)
+	newCtx := ctxutil.NewRequestWithOutTimeOut(ctx)
 
-	command := s.repo.NewCommand(ctx)
-	result, err := command.CreateUserRoleByRoleName(ctx, input)
+	command := s.repo.NewCommand(newCtx)
+	result, err := command.CreateUserRoleByRoleName(newCtx, input)
 	if err != nil {
-		if err := command.Rollback(ctx); err != nil {
-			logger.ErrorWithContext(ctx, "can't rollback transaction err: %v", err)
+		if err := command.Rollback(newCtx); err != nil {
+			logger.ErrorWithContext(newCtx, "can't rollback transaction err: %v", err)
 		}
-		logger.ErrorWithContext(ctx, "error create user err: %v", err)
+		logger.ErrorWithContext(newCtx, "error create user err: %v", err)
 		return nil, err
 	}
 
-	if err := command.Commit(ctx); err != nil {
-		logger.ErrorWithContext(ctx, "error create user err: %v", err)
+	if err := command.Commit(newCtx); err != nil {
+		logger.ErrorWithContext(newCtx, "error create user err: %v", err)
 		return nil, err
 	}
 

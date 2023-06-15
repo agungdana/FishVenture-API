@@ -26,7 +26,7 @@ func Migrations() {
 
 	admin := uuid.New()
 	buyer := uuid.New()
-	saler := uuid.New()
+	seller := uuid.New()
 
 	db.Create(&[]model.Role{{
 		ID:             buyer,
@@ -43,7 +43,7 @@ func Migrations() {
 		RolePermission: []*model.RolePermission{},
 		OrmModel:       orm.OrmModel{},
 	}, {
-		ID:             saler,
+		ID:             seller,
 		Code:           "RO0003",
 		Name:           model.SALLER,
 		Scope:          "",
@@ -55,23 +55,46 @@ func Migrations() {
 
 	db.Create(&[]model.Permission{
 		{
-			ID:       profilePermission,
-			Code:     "PM0002",
-			Name:     "profile",
-			Path:     "/profile",
+			ID:   profilePermission,
+			Code: "PM0002",
+			Name: "profile",
+			Path: "/profile",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.New(),
+					RoleID:         buyer,
+					PermissionID:   profilePermission,
+					PermissionName: "profile",
+					PermissionPath: "/profile",
+				},
+				{
+					ID:             uuid.New(),
+					RoleID:         seller,
+					PermissionID:   profilePermission,
+					PermissionName: "profile",
+					PermissionPath: "/profile",
+				},
+				{
+					ID:             uuid.New(),
+					RoleID:         admin,
+					PermissionID:   profilePermission,
+					PermissionName: "profile",
+					PermissionPath: "/profile",
+				},
+			},
 			OrmModel: orm.OrmModel{},
 		},
 	})
 
-	db.Create(&[]model.RolePermission{
-		{
-			ID:             uuid.New(),
-			RoleID:         buyer,
-			PermissionID:   profilePermission,
-			PermissionName: "profile",
-			PermissionPath: "/profile",
-			Permission:     model.Permission{},
-			OrmModel:       orm.OrmModel{},
-		},
-	})
+	// db.Create(&[]model.RolePermission{
+	// 	{
+	// 		ID:             uuid.New(),
+	// 		RoleID:         buyer,
+	// 		PermissionID:   profilePermission,
+	// 		PermissionName: "profile",
+	// 		PermissionPath: "/profile",
+	// 		Permission:     model.Permission{},
+	// 		OrmModel:       orm.OrmModel{},
+	// 	},
+	// })
 }

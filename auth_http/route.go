@@ -30,7 +30,7 @@ func newRoute(ro route) {
 	ginEngine.POST("/add-user-role", ctxutil.Authorization())
 	ginEngine.POST("/delete-user-role/id", ctxutil.Authorization())
 
-	ginEngine.GET("/login", handler.Login)
-	ginEngine.GET("/login-by-google", handler.LoginByGoogle)
+	ginEngine.POST("/login", handler.Login)
+	ginEngine.POST("/login-by-google", handler.LoginByGoogle)
 	ginEngine.GET("/profile", ctxutil.Authorization(), handler.Profile)
 }

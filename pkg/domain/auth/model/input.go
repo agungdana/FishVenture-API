@@ -19,7 +19,7 @@ type CreateUserInput struct {
 	Email           string `json:"email"`
 	Password        string `json:"password"`
 	ApplicationType string `json:"applicationType"`
-	Status          bool   `json:"-"`
+	Status          *bool  `json:"-"`
 }
 
 func (c *CreateUserInput) Validate() error {
@@ -43,8 +43,10 @@ func (c *CreateUserInput) Validate() error {
 		return err
 	}
 
+	status := false
 	if c.ApplicationType == BUYER {
-		c.Status = true
+		status = true
+		c.Status = &status
 	}
 
 	newPassword, err := bcrypt.HashPassowrd(c.Password)

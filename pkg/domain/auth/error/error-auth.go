@@ -70,4 +70,17 @@ var (
 		Code:    "FailedRollbackTransaction",
 		Message: "can't rollback transaction",
 	}
+	ErrRolePermisionEmpty = werror.Error{
+		Code:    "RolePermisionEmpty",
+		Message: "can't find role permission",
+	}
+	ErrGetUserPermissionEmpty = werror.Error{
+		Code:    "UserPermisionEmpty",
+		Message: "can't find user permission",
+	}
+
+	ErrGetUserPermission = werror.Error{
+		Code:    "UserPermissionErr",
+		Message: "internal server error",
+	}
 )

@@ -51,7 +51,6 @@ func AddPermissionAccess(data []PermissionAccess) {
 func CanAccess(ctx context.Context, path string) bool {
 	roleID, _ := GetRoleID(ctx)
 	userID, _ := GetUserID(ctx)
-
 	if val, ok := permissionAccess[userID][path]; ok {
 		return val
 

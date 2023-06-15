@@ -68,6 +68,17 @@ func NewRequest(ctx context.Context) context.Context {
 	return ctx
 }
 
+func NewRequestWithOutTimeOut(ctx context.Context) context.Context {
+	newCtx := context.Background()
+	newCtx = NewTransactionID(newCtx)
+	newCtx = NewRequestID(newCtx)
+	userID, _ := GetUserID(ctx)
+	roleID, _ := GetRoleID(ctx)
+	newCtx = SetUserID(newCtx, userID)
+	newCtx = SetRoleID(newCtx, roleID...)
+	return newCtx
+}
+
 func GetRequestID(ctx context.Context) (uuid.UUID, bool) {
 	return fromContextUUID(ctx, REQUEST_ID)
 }

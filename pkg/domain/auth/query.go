@@ -55,12 +55,31 @@ func (q *query) GetRoleByName(ctx context.Context, input string) (*model.Role, e
 
 // GetAllUserPermission implements Query.
 func (q *query) GetAllUserPermission(ctx context.Context) ([]*model.UserPermissionOutput, error) {
-	panic("unimplemented")
+	data := []*model.UserPermissionOutput{}
+	err := q.db.Find(&data).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorauth.ErrGetUserPermissionEmpty
+		}
+		return nil, errorauth.ErrGetUserPermission.AttacthDetail(map[string]any{"error": err})
+	}
+	if len(data) < 1 {
+		return nil, errorauth.ErrGetUserPermissionEmpty
+	}
+	return data, nil
 }
 
 // GetAllUserRole implements Query.
-func (q *query) GetAllUserRole(ctx context.Context) ([]*model.UserRole, error) {
-	panic("unimplemented")
+func (q *query) GetAllRolePermission(ctx context.Context) ([]*model.RolePermission, error) {
+	data := []*model.RolePermission{}
+	err := q.db.Find(&data).Error
+	if err != nil {
+		return nil, err
+	}
+	if len(data) < 1 {
+		return nil, errorauth.ErrRolePermisionEmpty
+	}
+	return data, nil
 }
 
 // GetUserPermissionByCreated implements Query.
@@ -82,7 +101,7 @@ func (q *query) GetUserByEmail(ctx context.Context, input string, withPermission
 
 	if withPermissionPreload {
 		//get data role by user exist
-		db.Preload("UserRole")
+		db = db.Preload("UserRole")
 	}
 
 	err := db.Where("deleted_at IS NULL and email = ?", input).Take(&data).Error

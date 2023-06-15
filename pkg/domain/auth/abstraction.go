@@ -37,7 +37,7 @@ type Query interface {
 	GetRoleByName(ctx context.Context, input string) (*model.Role, error)
 
 	GetAllUserPermission(ctx context.Context) ([]*model.UserPermissionOutput, error)
-	GetAllUserRole(ctx context.Context) ([]*model.UserRole, error)
+	GetAllRolePermission(ctx context.Context) ([]*model.RolePermission, error)
 
 	GetUserPermissionByCreated(ctx context.Context) ([]*model.UserPermissionOutput, error)
 	GetUserRolePermissionIsNotCustomer(ctx context.Context) ([]*model.UserRoleOutput, error)

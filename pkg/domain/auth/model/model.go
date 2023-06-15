@@ -12,7 +12,7 @@ type User struct {
 	Password            string
 	Phone               string
 	Photo               string
-	Status              bool
+	Status              *bool
 	VarificationCode    string
 	ExpVerificationCode string
 	UserRole            []*UserRole
