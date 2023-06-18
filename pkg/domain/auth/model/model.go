@@ -2,21 +2,22 @@ package model
 
 import (
 	"github.com/e-fish/api/pkg/common/infra/orm"
+	"github.com/e-fish/api/pkg/domain/budidaya/model"
 	"github.com/google/uuid"
 )
 
 type User struct {
-	ID                  uuid.UUID `gorm:"size:256"`
-	Name                string
-	Email               string
-	Password            string
-	Phone               string
-	Photo               string
-	Status              *bool
-	VarificationCode    string
-	ExpVerificationCode string
-	UserRole            []*UserRole
-	UserPermission      []*UserPermission
+	ID             uuid.UUID `gorm:"size:256"`
+	Name           string
+	Email          string
+	Password       string
+	Phone          string
+	Photo          string
+	Status         *bool
+	UserRole       []*UserRole
+	UserPermission []*UserPermission
+	PondID         *uuid.UUID `gorm:"size:256"`
+	Pond           model.Pond
 	orm.OrmModel
 }
 
