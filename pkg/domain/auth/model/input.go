@@ -43,11 +43,8 @@ func (c *CreateUserInput) Validate() error {
 		return err
 	}
 
-	status := false
-	if c.ApplicationType == BUYER {
-		status = true
-		c.Status = &status
-	}
+	status := true
+	c.Status = &status
 
 	newPassword, err := bcrypt.HashPassowrd(c.Password)
 	if err != nil {
