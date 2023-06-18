@@ -146,12 +146,19 @@ func (c *command) Login(ctx context.Context, input model.UserLoginInput) (*model
 		role = append(role, v.RoleID)
 	}
 
-	token, err := c.tokenMaker.CreateToken(&token.Payload{
+	payload := token.Payload{
 		UserID:    user.ID,
 		UserRole:  role,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().AddDate(1, 0, 0),
-	})
+	}
+
+	if user.PondID != nil {
+		payload.PondID = *user.PondID
+	}
+
+	token, err := c.tokenMaker.CreateToken(&payload)
+
 	if err != nil {
 		return nil, errorauth.ErrTokenError.AttacthDetail(map[string]any{"error": err})
 	}
@@ -196,6 +203,29 @@ func (c *command) LoginByGoogle(ctx context.Context, input model.UserLoginByGool
 	return &model.UserLoginOutput{
 		Token: token,
 	}, nil
+}
+
+func (c *command) UpdateUserStatusAndPondID(ctx context.Context, input uuid.UUID) (*uuid.UUID, error) {
+	var (
+		userID, _ = ctxutil.GetUserID(ctx)
+		today     = time.Now()
+	)
+
+	user := model.User{
+		ID:     userID,
+		PondID: &input,
+		OrmModel: orm.OrmModel{
+			UpdatedAt: &today,
+			UpdatedBy: &userID,
+		},
+	}
+
+	err := c.dbTxn.Where("deleted_at is NULL and id = ?", userID).Updates(&user).Error
+	if err != nil {
+		return nil, errorauth.ErrUpdateUser.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &userID, nil
 }
 
 // Commit implements Command.

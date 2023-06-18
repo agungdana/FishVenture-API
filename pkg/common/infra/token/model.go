@@ -13,6 +13,7 @@ type Claims interface {
 
 type Payload struct {
 	UserID    uuid.UUID
+	PondID    uuid.UUID
 	UserRole  []uuid.UUID
 	IssuedAt  time.Time
 	ExpiredAt time.Time
