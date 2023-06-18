@@ -12,6 +12,7 @@ const (
 	REQUEST_ID     key = "X-Otoritech-Request-ID"
 	TRANSACTION_ID key = "X-Otoritech-Transaction-ID"
 	USER_ID        key = "X-Otoritech-User-ID"
+	POND_ID        key = "X-Otoritech-Pond-ID"
 	ROLE_ID        key = "X-Otoritech-Role-ID"
 )
 
@@ -103,8 +104,17 @@ func GetRoleID(ctx context.Context) ([]uuid.UUID, bool) {
 	return fromContextArrayUUID(ctx, ROLE_ID)
 }
 
-func SetUserPayload(ctx context.Context, userID uuid.UUID, roleID ...uuid.UUID) context.Context {
+func SetPondID(ctx context.Context, id uuid.UUID) context.Context {
+	return context.WithValue(ctx, USER_ID, id)
+}
+
+func GetPondID(ctx context.Context) (uuid.UUID, bool) {
+	return fromContextUUID(ctx, USER_ID)
+}
+
+func SetUserPayload(ctx context.Context, userID, PondID uuid.UUID, roleID ...uuid.UUID) context.Context {
 	ctx = SetUserID(ctx, userID)
+	ctx = SetPondID(ctx, PondID)
 	ctx = SetRoleID(ctx, roleID...)
 	return ctx
 }
