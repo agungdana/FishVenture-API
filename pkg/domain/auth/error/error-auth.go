@@ -64,11 +64,11 @@ var (
 
 	ErrCommit = werror.Error{
 		Code:    "FailedCommitTransaction",
-		Message: "can't commit transaction",
+		Message: "can't commit transaction auth",
 	}
 	ErrRollback = werror.Error{
 		Code:    "FailedRollbackTransaction",
-		Message: "can't rollback transaction",
+		Message: "can't rollback transaction auth",
 	}
 	ErrRolePermisionEmpty = werror.Error{
 		Code:    "RolePermisionEmpty",
@@ -82,5 +82,10 @@ var (
 	ErrGetUserPermission = werror.Error{
 		Code:    "UserPermissionErr",
 		Message: "internal server error",
+	}
+
+	ErrUpdateUser = werror.Error{
+		Code:    "FailedUpdateUser",
+		Message: "failed update user",
 	}
 )
