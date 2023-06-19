@@ -8,14 +8,18 @@ import (
 )
 
 type UserPond struct {
-	ID                  uuid.UUID `gorm:"size:256"`
+	ID                  uuid.UUID `gorm:"primaryKey,size:256"`
 	Name                string
 	VarificationCode    string
 	ExpVerificationCode time.Time
 }
 
+func (u UserPond) TableName() string {
+	return "users"
+}
+
 type Team struct {
-	ID         uuid.UUID `gorm:"size:256"`
+	ID         uuid.UUID `gorm:"primaryKey,size:256"`
 	Name       string
 	CountryID  uuid.UUID `gorm:"size:256"`
 	ProvinceID uuid.UUID `gorm:"size:256"`
@@ -28,7 +32,7 @@ type Team struct {
 }
 
 type Pond struct {
-	ID            uuid.UUID `gorm:"size:256" json:"id"`
+	ID            uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
 	UserID        uuid.UUID `gorm:"size:256" json:"user_id"`
 	User          UserPond
 	Name          string    `json:"name"`
@@ -50,7 +54,7 @@ type Pond struct {
 }
 
 type Berkas struct {
-	ID     uuid.UUID `gorm:"size:256" json:"id"`
+	ID     uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
 	PondID uuid.UUID `gorm:"size:256"`
 	Pond   Pond
 	Name   string `json:"name"`
@@ -59,7 +63,7 @@ type Berkas struct {
 }
 
 type Pool struct {
-	ID     uuid.UUID `gorm:"size:256" json:"id"`
+	ID     uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
 	PondID uuid.UUID `gorm:"size:256" json:"pond_id"`
 	Pond   Pond      `json:"pond"`
 	Name   string    `json:"name"`

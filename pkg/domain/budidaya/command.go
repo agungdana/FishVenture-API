@@ -1,10 +1,11 @@
-package product
+package budidaya
 
 import (
 	"context"
 
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
 	"github.com/e-fish/api/pkg/common/infra/orm"
+	errorbudidaya "github.com/e-fish/api/pkg/domain/budidaya/error-budidaya"
 	"github.com/e-fish/api/pkg/domain/budidaya/model"
 	errorauth "github.com/e-fish/api/pkg/domain/product/error"
 	"github.com/e-fish/api/pkg/domain/verification"
@@ -28,6 +29,55 @@ type command struct {
 	dbTxn            *gorm.DB
 	query            Query
 	verificationRepo verification.Repo
+}
+
+// UpdatePond implements Command.
+func (c *command) UpdatePond(ctx context.Context, input model.UpdatePondInput) (*uuid.UUID, error) {
+	var (
+		userID, _ = ctxutil.GetUserID(ctx)
+		pondID, _ = ctxutil.GetPondID(ctx)
+	)
+
+	updatePond := input.ToPond(userID, pondID)
+
+	err := c.dbTxn.Where("deleted_at IS NULL and id = ? and user_id = ?", pondID, userID).Updates(&updatePond).Error
+	if err != nil {
+		return nil, errorbudidaya.ErrFailedUpdatePond.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &updatePond.ID, nil
+}
+
+// UpdatePondStatus implements Command.
+func (c *command) UpdatePondStatus(ctx context.Context, input model.UpdatePondStatus) (*uuid.UUID, error) {
+	var (
+		userID, _ = ctxutil.GetUserID(ctx)
+	)
+
+	err := input.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	updatePond := input.ToPond(userID)
+
+	pond, err := c.query.GetPondByID(ctx, input.PondID)
+	if err != nil {
+		return nil, err
+	}
+
+	val, ok := model.MapStatus[pond.Status][updatePond.Status]
+	if !ok || !val {
+		return nil, errorbudidaya.ErrCannotUpdateStatusPond.AttacthDetail(map[string]any{"already-status": pond.Status, "targer-status": updatePond.Status})
+	}
+
+	err = c.dbTxn.Where("deleted_at IS NULL and id = ?", updatePond.ID).Updates(&updatePond).Error
+	if err != nil {
+		return nil, errorbudidaya.ErrFailedUpdatePond.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &updatePond.ID, nil
+
 }
 
 // CreatePond implements Command.

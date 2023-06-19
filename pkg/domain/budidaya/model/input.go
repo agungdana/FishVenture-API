@@ -194,3 +194,73 @@ func ListPoolInputToListPool(userID, pondID uuid.UUID, input []CreatePoolInput) 
 	}
 	return
 }
+
+type UpdatePondInput struct {
+	Name          string    `json:"name"`
+	CountryID     uuid.UUID `gorm:"size:256" json:"country_id"`
+	ProvinceID    uuid.UUID `gorm:"size:256" json:"province_id"`
+	CityID        uuid.UUID `gorm:"size:256" json:"city_id"`
+	DistrictID    uuid.UUID `gorm:"size:256" json:"district_id"`
+	DetailAddress string    `json:"detailAddress"`
+	NoteAddress   string    `json:"noteAddress"`
+	Type          string    `json:"type"`
+	Latitude      float64   `json:"latitude"`
+	Longitude     float64   `json:"longitude"`
+}
+
+func (u *UpdatePondInput) ToPond(userID, pondID uuid.UUID) Pond {
+	var (
+		today = time.Now()
+	)
+
+	return Pond{
+		ID:            pondID,
+		Name:          u.Name,
+		CountryID:     u.CountryID,
+		ProvinceID:    u.ProvinceID,
+		CityID:        u.CityID,
+		DistrictID:    u.DistrictID,
+		DetailAddress: u.DetailAddress,
+		NoteAddress:   u.NoteAddress,
+		Type:          u.Type,
+		Latitude:      u.Latitude,
+		Longitude:     u.Longitude,
+		OrmModel: orm.OrmModel{
+			UpdatedAt: &today,
+			UpdatedBy: &userID,
+		},
+	}
+}
+
+type UpdatePondStatus struct {
+	PondID uuid.UUID
+	Status string
+}
+
+func (u *UpdatePondStatus) Validate() error {
+	errs := werror.NewError("failed validate input update pond status")
+
+	if u.PondID == uuid.Nil {
+		errs.Add(errorbudidaya.ErrValidateInputbUpdateStatus.AttacthDetail(map[string]any{"PondID": "empty"}))
+	}
+	if u.Status == "" {
+		errs.Add(errorbudidaya.ErrValidateInputbUpdateStatus.AttacthDetail(map[string]any{"Status": "empty"}))
+	}
+
+	return errs.Return()
+}
+
+func (u *UpdatePondStatus) ToPond(userID uuid.UUID) Pond {
+	var (
+		today = time.Now()
+	)
+
+	return Pond{
+		ID:     u.PondID,
+		Status: u.Status,
+		OrmModel: orm.OrmModel{
+			UpdatedAt: &today,
+			UpdatedBy: &userID,
+		},
+	}
+}

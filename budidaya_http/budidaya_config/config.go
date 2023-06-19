@@ -1,4 +1,4 @@
-package authconfig
+package budidayaconfig
 
 import (
 	"os"
@@ -11,23 +11,22 @@ import (
 )
 
 var (
-	conf *AuthConfig
+	conf *BudidayaConfig
 	once sync.Once
 )
 
-type AuthConfig struct {
-	DbConfig       config.DbConfig
-	FireBaseConfig config.FirebaseConfig
+type BudidayaConfig struct {
+	DbConfig config.DbConfig
 }
 
 // single tone
 // to avoid reading env multiple times
-func getConfig() *AuthConfig {
+func getConfig() *BudidayaConfig {
 	if conf == nil {
 		once.Do(func() {
 			err := godotenv.Load()
 			if err != nil {
-				logger.Fatal("error load env err: %v", config.ErrLoadEnv.AttacthDetail(map[string]any{"location": "auth-config", "err": err}))
+				logger.Fatal("error load env err: %v", config.ErrLoadEnv.AttacthDetail(map[string]any{"location": "budidaya-config", "err": err}))
 				return
 			}
 
@@ -37,9 +36,8 @@ func getConfig() *AuthConfig {
 			username := os.Getenv("DB_USERNAME")
 			password := os.Getenv("DB_PASSWORD")
 			port := os.Getenv("DB_PORT")
-			firebaseConf := os.Getenv("FIREBASE_CONF")
 
-			conf = &AuthConfig{
+			conf = &BudidayaConfig{
 				DbConfig: config.DbConfig{
 					Driver:   driver,
 					Host:     host,
@@ -48,19 +46,16 @@ func getConfig() *AuthConfig {
 					Database: database,
 					Port:     port,
 				},
-				FireBaseConfig: config.FirebaseConfig{
-					FireBase: firebaseConf,
-				},
 			}
 		})
 	}
 	return conf
 }
 
-func GetConfig() *AuthConfig {
+func GetConfig() *BudidayaConfig {
 	conf := getConfig()
 
-	errs := werror.NewError("incomplete configuration auth")
+	errs := werror.NewError("incomplete configuration budidaya")
 
 	dbConf := conf.DbConfig
 
