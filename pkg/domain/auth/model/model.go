@@ -7,7 +7,7 @@ import (
 )
 
 type User struct {
-	ID             uuid.UUID `gorm:"size:256"`
+	ID             uuid.UUID `gorm:"primaryKey,size:256"`
 	Name           string
 	Email          string
 	Password       string
@@ -16,13 +16,13 @@ type User struct {
 	Status         *bool
 	UserRole       []*UserRole
 	UserPermission []*UserPermission
-	PondID         *uuid.UUID `gorm:"size:256"`
+	PondID         *uuid.UUID `gorm:"primaryKey,size:256"`
 	Pond           model.Pond
 	orm.OrmModel
 }
 
 type Role struct {
-	ID             uuid.UUID `gorm:"size:256"`
+	ID             uuid.UUID `gorm:"primaryKey,size:256"`
 	Code           string
 	Name           string
 	Scope          string
@@ -31,7 +31,7 @@ type Role struct {
 }
 
 type Permission struct {
-	ID             uuid.UUID `gorm:"size:256"`
+	ID             uuid.UUID `gorm:"primaryKey,size:256"`
 	Code           string
 	Name           string
 	Path           string
@@ -40,7 +40,7 @@ type Permission struct {
 }
 
 type RolePermission struct {
-	ID             uuid.UUID `gorm:"size:256"`
+	ID             uuid.UUID `gorm:"primaryKey,size:256"`
 	RoleID         uuid.UUID `gorm:"size:256"`
 	Role           Role
 	PermissionID   uuid.UUID `gorm:"size:256"`
@@ -51,7 +51,7 @@ type RolePermission struct {
 }
 
 type UserRole struct {
-	ID     uuid.UUID `gorm:"size:256"`
+	ID     uuid.UUID `gorm:"primaryKey,size:256"`
 	UserID uuid.UUID `gorm:"size:256"`
 	User   User
 	RoleID uuid.UUID `gorm:"size:256"`
@@ -60,7 +60,7 @@ type UserRole struct {
 }
 
 type UserPermission struct {
-	ID             uuid.UUID `gorm:"size:256"`
+	ID             uuid.UUID `gorm:"primaryKey,size:256"`
 	UserID         uuid.UUID `gorm:"size:256"`
 	User           User
 	PermissionID   uuid.UUID `gorm:"size:256"`
