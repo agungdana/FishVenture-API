@@ -21,6 +21,7 @@ type CreatePondInput struct {
 	Latitude      float64             `json:"latitude"`
 	Longitude     float64             `json:"longitude"`
 	TeamID        uuid.UUID           `gorm:"size:256" json:"team_id"`
+	Image         string              `json:"image"`
 	ListPool      []CreatePoolInput   `json:"list_pool"`
 	ListBerkas    []CreateBerkasInput `json:"berkas"`
 }
@@ -83,6 +84,7 @@ func (c *CreatePondInput) ToPond(userID uuid.UUID) Pond {
 		Longitude:     c.Longitude,
 		TeamID:        c.TeamID,
 		Status:        SUBMISION,
+		Image:         c.Image,
 		ListPool:      ListPoolInputToListPool(userID, pondID, c.ListPool),
 		ListBerkas:    ListBerkasInputToListBerkas(userID, pondID, c.ListBerkas),
 		OrmModel: orm.OrmModel{
@@ -206,6 +208,7 @@ type UpdatePondInput struct {
 	Type          string    `json:"type"`
 	Latitude      float64   `json:"latitude"`
 	Longitude     float64   `json:"longitude"`
+	Image         string    `json:"image"`
 }
 
 func (u *UpdatePondInput) ToPond(userID, pondID uuid.UUID) Pond {
@@ -225,6 +228,7 @@ func (u *UpdatePondInput) ToPond(userID, pondID uuid.UUID) Pond {
 		Type:          u.Type,
 		Latitude:      u.Latitude,
 		Longitude:     u.Longitude,
+		Image:         u.Image,
 		OrmModel: orm.OrmModel{
 			UpdatedAt: &today,
 			UpdatedBy: &userID,

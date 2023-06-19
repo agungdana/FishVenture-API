@@ -48,6 +48,7 @@ type Pond struct {
 	TeamID        uuid.UUID `gorm:"size:256" json:"team_id"`
 	Team          Team      `json:"team"`
 	Status        string    `json:"status"`
+	Image         string    `json:"image"`
 	ListPool      []Pool    `json:"list_pool"`
 	ListBerkas    []Berkas  `json:"berkas"`
 	orm.OrmModel
