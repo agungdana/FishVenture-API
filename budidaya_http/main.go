@@ -5,7 +5,7 @@ import (
 	"github.com/e-fish/api/pkg/common/helper/restsvr"
 )
 
-func NewAuthHttp() {
+func NewBudidayaHttp() {
 	var (
 		ginEngine = restsvr.GetGinRoute()
 		conf      = budidayaconfig.GetConfig()

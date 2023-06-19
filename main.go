@@ -2,6 +2,7 @@ package main
 
 import (
 	authhttp "github.com/e-fish/api/auth_http"
+	budidayahttp "github.com/e-fish/api/budidaya_http"
 	mainconfig "github.com/e-fish/api/main_config"
 	"github.com/e-fish/api/pkg/common/helper/logger"
 	"github.com/e-fish/api/pkg/common/helper/ptime"
@@ -20,6 +21,8 @@ func main() {
 
 	//register auth http in main
 	authhttp.NewAuthHttp()
+	//register auth http in main
+	budidayahttp.NewBudidayaHttp()
 
 	// migrations.Migrations()
 
