@@ -60,7 +60,7 @@ func getConfig() *AuthConfig {
 func GetConfig() *AuthConfig {
 	conf := getConfig()
 
-	errs := werror.NewError("incomplete configuration")
+	errs := werror.NewError("incomplete configuration auth")
 
 	dbConf := conf.DbConfig
 
