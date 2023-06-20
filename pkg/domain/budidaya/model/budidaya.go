@@ -8,7 +8,7 @@ import (
 )
 
 type Budidaya struct {
-	ID              uuid.UUID `gorm:"size:256"`
+	ID              uuid.UUID `gorm:"primaryKey,size:256"`
 	PoolID          uuid.UUID `gorm:"size:256"`
 	Pool            Pool
 	DateOfSeed      time.Time
@@ -16,12 +16,13 @@ type Budidaya struct {
 	FishSpecies     FishSpecies
 	FishSpeciesName string
 	EstTonase       float64
+	EstPanenDate    time.Time
 	Status          bool
 	orm.OrmModel
 }
 
 type FishSpecies struct {
-	ID       uuid.UUID
+	ID       uuid.UUID `gorm:"primaryKey,size:256"`
 	Name     string
 	Budidaya []*Budidaya
 	orm.OrmModel
