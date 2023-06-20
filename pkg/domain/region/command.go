@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/e-fish/api/pkg/common/infra/orm"
-	errorauth "github.com/e-fish/api/pkg/domain/product/error"
+	errorregion "github.com/e-fish/api/pkg/domain/region/error-region"
 	"gorm.io/gorm"
 )
 
@@ -27,7 +27,7 @@ type command struct {
 // Commit implements Command.
 func (c *command) Commit(ctx context.Context) error {
 	if err := orm.CommitTxn(ctx); err != nil {
-		return errorauth.ErrCommit.AttacthDetail(map[string]any{"errors": err})
+		return errorregion.ErrCommit.AttacthDetail(map[string]any{"errors": err})
 	}
 	return nil
 }
@@ -35,7 +35,7 @@ func (c *command) Commit(ctx context.Context) error {
 // Rollback implements Command.
 func (c *command) Rollback(ctx context.Context) error {
 	if err := orm.RollbackTxn(ctx); err != nil {
-		return errorauth.ErrRollback.AttacthDetail(map[string]any{"errors": err})
+		return errorregion.ErrRollback.AttacthDetail(map[string]any{"errors": err})
 	}
 	return nil
 }
