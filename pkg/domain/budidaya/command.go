@@ -7,7 +7,6 @@ import (
 	"github.com/e-fish/api/pkg/common/infra/orm"
 	errorbudidaya "github.com/e-fish/api/pkg/domain/budidaya/error-budidaya"
 	"github.com/e-fish/api/pkg/domain/budidaya/model"
-	errorauth "github.com/e-fish/api/pkg/domain/product/error"
 	"github.com/e-fish/api/pkg/domain/verification"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -104,7 +103,7 @@ func (c *command) CreatePond(ctx context.Context, input model.CreatePondInput) (
 // Commit implements Command.
 func (c *command) Commit(ctx context.Context) error {
 	if err := orm.CommitTxn(ctx); err != nil {
-		return errorauth.ErrCommit.AttacthDetail(map[string]any{"errors": err})
+		return errorbudidaya.ErrCommit.AttacthDetail(map[string]any{"errors": err})
 	}
 	return nil
 }
@@ -112,7 +111,7 @@ func (c *command) Commit(ctx context.Context) error {
 // Rollback implements Command.
 func (c *command) Rollback(ctx context.Context) error {
 	if err := orm.RollbackTxn(ctx); err != nil {
-		return errorauth.ErrRollback.AttacthDetail(map[string]any{"errors": err})
+		return errorbudidaya.ErrRollback.AttacthDetail(map[string]any{"errors": err})
 	}
 	return nil
 }
