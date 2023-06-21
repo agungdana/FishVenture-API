@@ -6,7 +6,6 @@ import (
 
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
 	"github.com/e-fish/api/pkg/common/infra/orm"
-	errorauth "github.com/e-fish/api/pkg/domain/product/error"
 	errorverification "github.com/e-fish/api/pkg/domain/verification/error_verification"
 	"github.com/e-fish/api/pkg/domain/verification/model"
 	"github.com/google/uuid"
@@ -73,7 +72,7 @@ func (c *command) CreateOTP(ctx context.Context, input model.CreateCodeOTPInput)
 // Commit implements Command.
 func (c *command) Commit(ctx context.Context) error {
 	if err := orm.CommitTxn(ctx); err != nil {
-		return errorauth.ErrCommit.AttacthDetail(map[string]any{"errors": err})
+		return errorverification.ErrCommit.AttacthDetail(map[string]any{"errors": err})
 	}
 	return nil
 }
@@ -81,7 +80,7 @@ func (c *command) Commit(ctx context.Context) error {
 // Rollback implements Command.
 func (c *command) Rollback(ctx context.Context) error {
 	if err := orm.RollbackTxn(ctx); err != nil {
-		return errorauth.ErrRollback.AttacthDetail(map[string]any{"errors": err})
+		return errorverification.ErrRollback.AttacthDetail(map[string]any{"errors": err})
 	}
 	return nil
 }

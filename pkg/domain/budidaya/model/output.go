@@ -1,20 +1,22 @@
 package model
 
 import (
+	"time"
+
 	"github.com/e-fish/api/pkg/common/infra/orm"
 	"github.com/google/uuid"
 )
 
 type TeamOutput struct {
-	ID         uuid.UUID `gorm:"size:256"`
-	Name       string
-	CountryID  uuid.UUID `gorm:"size:256"`
-	ProvinceID uuid.UUID `gorm:"size:256"`
-	CityID     uuid.UUID `gorm:"size:256"`
-	DistrictID uuid.UUID `gorm:"size:256"`
-	Detail     string
-	Note       string
-	ListPond   []PondOutput `gorm:"foreignKey:TeamID;references:ID"`
+	ID         uuid.UUID    `gorm:"size:256" json:"id"`
+	Name       string       `json:"name"`
+	CountryID  uuid.UUID    `gorm:"size:256" json:"countryID"`
+	ProvinceID uuid.UUID    `gorm:"size:256" json:"provinceID"`
+	CityID     uuid.UUID    `gorm:"size:256" json:"cityID"`
+	DistrictID uuid.UUID    `gorm:"size:256" json:"districtID"`
+	Detail     string       `json:"detail"`
+	Note       string       `json:"note"`
+	ListPond   []PondOutput `gorm:"foreignKey:TeamID;references:ID" json:"listPond,omitempty"`
 }
 
 func (t *TeamOutput) TableName() string {
@@ -22,9 +24,9 @@ func (t *TeamOutput) TableName() string {
 }
 
 type PondOutput struct {
-	ID            uuid.UUID `gorm:"size:256" json:"id"`
-	UserID        uuid.UUID `gorm:"size:256" json:"user_id"`
-	User          UserPond
+	ID            uuid.UUID      `gorm:"size:256" json:"id"`
+	UserID        uuid.UUID      `gorm:"size:256" json:"user_id"`
+	User          *UserPond      `json:"user,omitempty"`
 	Name          string         `json:"name"`
 	CountryID     uuid.UUID      `gorm:"size:256" json:"country_id"`
 	ProvinceID    uuid.UUID      `gorm:"size:256" json:"province_id"`
@@ -73,4 +75,23 @@ type PoolOutput struct {
 
 func (t *PoolOutput) TableName() string {
 	return "pools"
+}
+
+type BudidayaOutput struct {
+	ID              uuid.UUID          `gorm:"primaryKey,size:256" json:"id"`
+	PoolID          uuid.UUID          `gorm:"size:256" json:"poolID"`
+	Pool            *PoolOutput        `gorm:"foreignKey:PoolID;references:ID" json:"pool,omitempty"`
+	DateOfSeed      time.Time          `json:"dateOfSeed"`
+	FishSpeciesID   uuid.UUID          `json:"fishSpeciesID"`
+	FishSpecies     *FishSpeciesOutput `gorm:"foreignKey:FishSpeciesID;references:ID" json:"fishSpecies,omitempty"`
+	FishSpeciesName string             `json:"fishSpeciesName"`
+	EstTonase       float64            `json:"estTonase"`
+	EstPanenDate    time.Time          `json:"estPanenDate,omitempty"`
+	Status          bool               `json:"status"`
+}
+
+type FishSpeciesOutput struct {
+	ID       uuid.UUID         `gorm:"primaryKey,size:256" json:"id"`
+	Name     string            `json:"name"`
+	Budidaya []*BudidayaOutput `json:"budidaya,omitempty"`
 }
