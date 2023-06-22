@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/e-fish/api/pkg/common/helper/bcrypt"
@@ -141,7 +140,7 @@ func (c *command) Login(ctx context.Context, input model.UserLoginInput) (*model
 	}
 
 	role := []uuid.UUID{}
-	fmt.Printf("user.UserRole: %v\n", user.UserRole)
+
 	for _, v := range user.UserRole {
 		role = append(role, v.RoleID)
 	}

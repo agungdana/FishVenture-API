@@ -23,7 +23,7 @@ type Command interface {
 type Query interface {
 	ReadProductByBudidayaID(ctx context.Context, input uuid.UUID) (*model.ProductOutput, error)
 	ReadProductByPondID(ctx context.Context, input uuid.UUID) ([]*model.ProductOutput, error)
-	ReadProductByID(ctx context.Context, input uuid.UUID) (*model.ProductOutput, error)
+	ReadProductByID(ctx context.Context, input uuid.UUID, withPreload bool) (*model.ProductOutput, error)
 	ReadProductByBudidayaEstPanenDate(ctx context.Context) ([]*model.ProductOutput, error)
 	lock() Query
 }
