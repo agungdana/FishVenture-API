@@ -78,10 +78,10 @@ func CreateConnetionDB(conf config.DbConfig) (*gorm.DB, error) {
 		// dsn = fmt.Sprintf("postgres://%v:%v@%v:%v/%v", conf.User, conf.Password, conf.Host, conf.Port, conf.Password)
 		dsn = fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=UTC", conf.Host, conf.User, conf.Password, conf.Database, conf.Port)
 	case "mysql":
-		dsn = conf.User + ":" + conf.Password + "@tcp(" + conf.Host + ":" + conf.Port + ")/" + conf.Database + "?parseTime=True&loc=Local"
 		//mysql code dsn here
+		dsn = conf.User + ":" + conf.Password + "@tcp(" + conf.Host + ":" + conf.Port + ")/" + conf.Database + "?parseTime=True&loc=Local"
 	default:
-		return nil, ErrDriverNotSupported.AttacthDetail(map[string]any{"driveName": conf.Driver, "supportedDrivers": "[postgres]"})
+		return nil, ErrDriverNotSupported.AttacthDetail(map[string]any{"driveName": conf.Driver, "supportedDrivers": "[postgres,]"})
 	}
 
 	dsnWithoutPassword = strings.ReplaceAll(dsn, conf.Password, "")

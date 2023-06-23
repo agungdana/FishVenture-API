@@ -6,8 +6,12 @@ import (
 )
 
 type ProductOutput struct {
-	ID         uuid.UUID `gorm:"primaryKey,size:256"`
-	BudidayaID uuid.UUID `gorm:"size:256"`
-	Budidaya   model.BudidayaOutput
-	EstPrice   int
+	ID         uuid.UUID            `gorm:"primaryKey,size:256" json:"id"`
+	BudidayaID uuid.UUID            `gorm:"size:256" json:"budidayaID"`
+	Budidaya   model.BudidayaOutput `gorm:"size:256" json:"budidaya"`
+	EstPrice   int                  `json:"estPrice"`
+}
+
+func (p *ProductOutput) TableName() string {
+	return "products"
 }

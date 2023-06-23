@@ -17,7 +17,8 @@ type Budidaya struct {
 	FishSpeciesName string
 	EstTonase       float64
 	EstPanenDate    time.Time
-	Status          bool
+	EstPrice        int
+	Status          string
 	orm.OrmModel
 }
 
