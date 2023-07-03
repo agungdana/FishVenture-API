@@ -8,6 +8,11 @@ type AppConfig struct {
 	FirebaseConfig FirebaseConfig
 }
 
+type ImageConfig struct {
+	Url  string
+	Path string
+}
+
 type DbConfig struct {
 	Driver   string
 	Host     string

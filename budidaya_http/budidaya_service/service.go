@@ -2,9 +2,12 @@ package budidayaservice
 
 import (
 	"context"
+	"mime/multipart"
+	"path/filepath"
 
 	budidayaconfig "github.com/e-fish/api/budidaya_http/budidaya_config"
 	"github.com/e-fish/api/pkg/common/helper/logger"
+	"github.com/e-fish/api/pkg/common/helper/savefile"
 	"github.com/e-fish/api/pkg/domain/budidaya"
 	"github.com/e-fish/api/pkg/domain/budidaya/model"
 	"github.com/e-fish/api/pkg/domain/verification"
@@ -109,4 +112,21 @@ func (s *Service) GetAllPondSubmission(ctx context.Context) ([]*model.PondOutput
 func (s *Service) GetListPondForUser(ctx context.Context) ([]*model.PondOutput, error) {
 	query := s.repo.NewQuery()
 	return query.GetListPondForUser(ctx)
+}
+
+func (s *Service) SaveImages(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
+	ext := filepath.Ext(file.Filename)
+	filename := uuid.New().String() + ext
+	err := savefile.SaveFile(file, s.conf.ImageConfig.Path+"/"+filename)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := UploadPhotoResponse{
+		Name: filename,
+		Url:  s.conf.ImageConfig.Url + filename,
+	}
+
+	return &result, nil
 }

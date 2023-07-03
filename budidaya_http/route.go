@@ -5,6 +5,7 @@ import (
 	budidayahandler "github.com/e-fish/api/budidaya_http/budidaya_handler"
 	budidayaservice "github.com/e-fish/api/budidaya_http/budidaya_service"
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,4 +33,8 @@ func newRoute(ro route) {
 
 	ginEngine.GET("/list-budidaya", ctxutil.Authorization())
 	ginEngine.GET("/list-budidaya-active")
+
+	ginEngine.POST("/upload-photo-product", handler.SaveImage)
+	ginEngine.Use(static.Serve("/assets/image/product", static.LocalFile(ro.conf.ImageConfig.Path, false)))
+
 }
