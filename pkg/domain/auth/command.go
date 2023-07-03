@@ -143,6 +143,9 @@ func (c *command) Login(ctx context.Context, input model.UserLoginInput) (*model
 
 	for _, v := range user.UserRole {
 		role = append(role, v.RoleID)
+		if input.ApplicationType != v.Role.Name {
+			return nil, errorauth.ErrUserAccess.AttacthDetail(map[string]any{"app-type": input.ApplicationType})
+		}
 	}
 
 	payload := token.Payload{

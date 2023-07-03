@@ -70,7 +70,7 @@ func (h *Handler) UpdatePondStatus(c *gin.Context) {
 	res.Add(result, err)
 }
 
-func (h *Handler) GetPondByUserID(c *gin.Context) {
+func (h *Handler) GetPondByUserAdmin(c *gin.Context) {
 	var (
 		ctx = c.Request.Context()
 		res = new(restsvr.HttpResponse)
@@ -91,5 +91,17 @@ func (h *Handler) GetAllPondSubmission(c *gin.Context) {
 	defer restsvr.ResponsJson(c, res)
 
 	result, err := h.Service.GetAllPondSubmission(ctx)
+	res.Add(result, err)
+}
+
+func (h *Handler) GetAllPondForUser(c *gin.Context) {
+	var (
+		ctx = c.Request.Context()
+		res = new(restsvr.HttpResponse)
+	)
+
+	defer restsvr.ResponsJson(c, res)
+
+	result, err := h.Service.GetListPondForUser(ctx)
 	res.Add(result, err)
 }

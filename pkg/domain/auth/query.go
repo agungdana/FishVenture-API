@@ -101,7 +101,7 @@ func (q *query) GetUserByEmail(ctx context.Context, input string, withPermission
 
 	if withPermissionPreload {
 		//get data role by user exist
-		db = db.Preload("UserRole")
+		db = db.Preload("UserRole.Role")
 	}
 
 	err := db.Where("deleted_at IS NULL and email = ?", input).Take(&data).Error

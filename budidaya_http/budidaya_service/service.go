@@ -98,10 +98,15 @@ func (s *Service) UpdatePondStatus(ctx context.Context, input model.UpdatePondSt
 
 func (s *Service) GetPondByUserID(ctx context.Context) (*model.PondOutput, error) {
 	query := s.repo.NewQuery()
-	return query.GetPondByUserID(ctx)
+	return query.GetPondByUserPondAdmin(ctx)
 }
 
 func (s *Service) GetAllPondSubmission(ctx context.Context) ([]*model.PondOutput, error) {
 	query := s.repo.NewQuery()
 	return query.GetListPondSubmission(ctx)
+}
+
+func (s *Service) GetListPondForUser(ctx context.Context) ([]*model.PondOutput, error) {
+	query := s.repo.NewQuery()
+	return query.GetListPondForUser(ctx)
 }
