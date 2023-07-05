@@ -13,6 +13,11 @@ var (
 		Message: "internal server error",
 	}
 
+	ErrUserAccess = werror.Error{
+		Code:    "UserAccessNotFound",
+		Message: "this account does not have access to the application",
+	}
+
 	ErrUserPasswordNotMatch = werror.Error{
 		Code:    "UserQueryErr",
 		Message: "internal server error",

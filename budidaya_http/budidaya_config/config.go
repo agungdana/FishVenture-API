@@ -16,7 +16,8 @@ var (
 )
 
 type BudidayaConfig struct {
-	DbConfig config.DbConfig
+	ImageConfig config.ImageConfig
+	DbConfig    config.DbConfig
 }
 
 // single tone
@@ -37,15 +38,15 @@ func getConfig() *BudidayaConfig {
 			password := os.Getenv("DB_PASSWORD")
 			port := os.Getenv("DB_PORT")
 
+			path := os.Getenv("PATH_IMAGE_BUDIDAYA")
+			url := os.Getenv("URL_IMAGE_BUDIDAYA")
+
 			conf = &BudidayaConfig{
-				DbConfig: config.DbConfig{
-					Driver:   driver,
-					Host:     host,
-					User:     username,
-					Password: password,
-					Database: database,
-					Port:     port,
+				ImageConfig: config.ImageConfig{
+					Url:  url,
+					Path: path,
 				},
+				DbConfig: config.DbConfig{Driver: driver, Host: host, User: username, Password: password, Database: database, Port: port},
 			}
 		})
 	}

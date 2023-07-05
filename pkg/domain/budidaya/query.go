@@ -60,8 +60,8 @@ func (q *query) GetListPondSubmission(ctx context.Context) ([]*model.PondOutput,
 	return data, nil
 }
 
-// GetPondByUserID implements Query.
-func (q *query) GetPondByUserID(ctx context.Context) (*model.PondOutput, error) {
+// GetPondByUserPondAdmin implements Query.
+func (q *query) GetPondByUserPondAdmin(ctx context.Context) (*model.PondOutput, error) {
 	var (
 		userID, _ = ctxutil.GetUserID(ctx)
 		pondID, _ = ctxutil.GetPondID(ctx)
@@ -77,6 +77,23 @@ func (q *query) GetPondByUserID(ctx context.Context) (*model.PondOutput, error) 
 	}
 
 	return &data, nil
+}
+
+// GetListPondForUser implements Query.
+func (q *query) GetListPondForUser(ctx context.Context) ([]*model.PondOutput, error) {
+	var (
+		data = []*model.PondOutput{}
+	)
+
+	err := q.db.Where("deleted_at IS NULL").Find(&data).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorbudidaya.ErrFoundPond
+		}
+		return nil, errorbudidaya.ErrFailedFindPond.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return data, nil
 }
 
 // lock implements Query.
