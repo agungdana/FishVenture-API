@@ -166,7 +166,8 @@ func (c *command) Login(ctx context.Context, input model.UserLoginInput) (*model
 	}
 
 	return &model.UserLoginOutput{
-		Token: token,
+		ApplicationType: input.ApplicationType,
+		Token:           token,
 	}, nil
 }
 
@@ -203,7 +204,8 @@ func (c *command) LoginByGoogle(ctx context.Context, input model.UserLoginByGool
 	}
 
 	return &model.UserLoginOutput{
-		Token: token,
+		ApplicationType: input.ApplicationType,
+		Token:           token,
 	}, nil
 }
 
