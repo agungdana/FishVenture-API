@@ -89,20 +89,20 @@ type Pond struct {
 	ID            uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
 	OwnerName     string    `json:"ownerName"`
 	Name          string    `json:"name"`
-	CountryID     uuid.UUID `gorm:"size:256" json:"country_id"`
-	ProvinceID    uuid.UUID `gorm:"size:256" json:"province_id"`
-	CityID        uuid.UUID `gorm:"size:256" json:"city_id"`
-	DistrictID    uuid.UUID `gorm:"size:256" json:"district_id"`
+	CountryID     uuid.UUID `gorm:"size:256" json:"countryID"`
+	ProvinceID    uuid.UUID `gorm:"size:256" json:"provinceID"`
+	CityID        uuid.UUID `gorm:"size:256" json:"cityID"`
+	DistrictID    uuid.UUID `gorm:"size:256" json:"districtID"`
 	DetailAddress string    `json:"detailAddress"`
 	NoteAddress   string    `json:"noteAddress"`
 	Type          string    `json:"type"`
 	Latitude      float64   `json:"latitude"`
 	Longitude     float64   `json:"longitude"`
-	TeamID        uuid.UUID `gorm:"size:256" json:"team_id"`
+	TeamID        uuid.UUID `gorm:"size:256" json:"teamID"`
 	Team          Team      `json:"team"`
 	Status        string    `json:"status"`
 	Image         string    `json:"image"`
-	ListPool      []Pool    `json:"list_pool"`
+	ListPool      []Pool    `json:"listPool"`
 	ListBerkas    []Berkas  `json:"berkas"`
 	orm.OrmModel
 }
