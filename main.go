@@ -4,7 +4,6 @@ import (
 	authhttp "github.com/e-fish/api/auth_http"
 	budidayahttp "github.com/e-fish/api/budidaya_http"
 	mainconfig "github.com/e-fish/api/main_config"
-	"github.com/e-fish/api/migrations"
 	"github.com/e-fish/api/pkg/common/helper/logger"
 	"github.com/e-fish/api/pkg/common/helper/ptime"
 	"github.com/e-fish/api/pkg/common/helper/restsvr"
@@ -18,7 +17,7 @@ func main() {
 	conf := mainconfig.GetConfig()
 	logger.SetupLogger(conf.Debug)
 
-	migrations.Migrations()
+	// migrations.Migrations()
 
 	//create new route
 	restsvr.NewRoute(conf.AppConfig)
