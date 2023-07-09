@@ -2,26 +2,26 @@ package transactionhttp
 
 import (
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
-	productconfig "github.com/e-fish/api/product_http/product_config"
-	productservice "github.com/e-fish/api/product_http/product_service"
-	"github.com/e-fish/api/product_http/producthandler"
+	transactionconfig "github.com/e-fish/api/transaction_http/transaction_config"
+	transactionhandler "github.com/e-fish/api/transaction_http/transaction_handler"
+	transactionservice "github.com/e-fish/api/transaction_http/transaction_service"
+
 	"github.com/gin-gonic/gin"
 )
 
 type route struct {
-	conf productconfig.ProductConfig
+	conf transactionconfig.TransactionConfig
 	gin  *gin.Engine
 }
 
 func newRoute(ro route) {
 	ginEngine := ro.gin
 
-	service := productservice.NewService(ro.conf)
-	handler := producthandler.Handler{
+	service := transactionservice.NewService(ro.conf)
+	handler := transactionhandler.Handler{
 		Conf:    ro.conf,
 		Service: service,
 	}
 
-	ginEngine.POST("/create-product", ctxutil.Authorization(), handler.CreateProduct)
-	ginEngine.POST("/delete-product", ctxutil.Authorization(), handler.DeleteProduct)
+	ginEngine.POST("/create-order", ctxutil.Authorization(), handler.CreateOrder)
 }

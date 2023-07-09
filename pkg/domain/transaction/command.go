@@ -5,7 +5,6 @@ import (
 
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
 	"github.com/e-fish/api/pkg/common/infra/orm"
-	errorproduct "github.com/e-fish/api/pkg/domain/product/error-product"
 	errortransaction "github.com/e-fish/api/pkg/domain/transaction/error-transaction"
 	"github.com/e-fish/api/pkg/domain/transaction/model"
 	"github.com/google/uuid"
@@ -52,7 +51,7 @@ func (c *command) CreateOrder(ctx context.Context, input model.CreateOrderInput)
 // Commit implements Command.
 func (c *command) Commit(ctx context.Context) error {
 	if err := orm.CommitTxn(ctx); err != nil {
-		return errorproduct.ErrCommit.AttacthDetail(map[string]any{"errors": err})
+		return errortransaction.ErrCommit.AttacthDetail(map[string]any{"errors": err})
 	}
 	return nil
 }
@@ -60,7 +59,7 @@ func (c *command) Commit(ctx context.Context) error {
 // Rollback implements Command.
 func (c *command) Rollback(ctx context.Context) error {
 	if err := orm.RollbackTxn(ctx); err != nil {
-		return errorproduct.ErrRollback.AttacthDetail(map[string]any{"errors": err})
+		return errortransaction.ErrRollback.AttacthDetail(map[string]any{"errors": err})
 	}
 	return nil
 }

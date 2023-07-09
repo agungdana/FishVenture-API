@@ -22,6 +22,13 @@ type Budidaya struct {
 	orm.OrmModel
 }
 
+type PriceList struct {
+	ID         uuid.UUID `gorm:"primaryKey,size:256"`
+	BudidayaID uuid.UUID
+	Qty        int
+	Price      int
+}
+
 type FishSpecies struct {
 	ID       uuid.UUID `gorm:"primaryKey,size:256"`
 	Name     string
