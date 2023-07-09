@@ -5,7 +5,7 @@ import (
 
 	"github.com/e-fish/api/pkg/common/helper/werror"
 	"github.com/e-fish/api/pkg/common/infra/orm"
-	errorbudidaya "github.com/e-fish/api/pkg/domain/budidaya/error-budidaya"
+	errorpond "github.com/e-fish/api/pkg/domain/pond/error-pond"
 	"github.com/google/uuid"
 )
 
@@ -30,33 +30,33 @@ func (c *CreatePondInput) Validate() error {
 	errs := werror.NewError("error validate input")
 
 	if c.Name == "" {
-		errs.Add(errorbudidaya.ErrValidateInputPond.AttacthDetail(map[string]any{"Name": "empty"}))
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Name": "empty"}))
 	}
 	if c.CountryID == uuid.Nil {
-		errs.Add(errorbudidaya.ErrValidateInputPond.AttacthDetail(map[string]any{"CountryID": "empty"}))
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"CountryID": "empty"}))
 	}
 	if c.ProvinceID == uuid.Nil {
-		errs.Add(errorbudidaya.ErrValidateInputPond.AttacthDetail(map[string]any{"ProvinceID": "empty"}))
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"ProvinceID": "empty"}))
 	}
 	if c.CityID == uuid.Nil {
-		errs.Add(errorbudidaya.ErrValidateInputPond.AttacthDetail(map[string]any{"CityID": "empty"}))
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"CityID": "empty"}))
 	}
 	if c.DistrictID == uuid.Nil {
-		errs.Add(errorbudidaya.ErrValidateInputPond.AttacthDetail(map[string]any{"DistrictID": "empty"}))
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"DistrictID": "empty"}))
 	}
 	if c.Type == "" {
-		errs.Add(errorbudidaya.ErrValidateInputPond.AttacthDetail(map[string]any{"Type": "empty"}))
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Type": "empty"}))
 	}
 
 	if c.Type == TEAM {
 		if c.TeamID == uuid.Nil {
-			errs.Add(errorbudidaya.ErrValidateInputPond.AttacthDetail(map[string]any{"Team": "empty"}))
+			errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Team": "empty"}))
 		}
 		errs.Add(ValidateCreateberkasInput(c.ListBerkas))
 	}
 
 	if len(c.ListPool) < 1 {
-		errs.Add(errorbudidaya.ErrValidateInputPond.AttacthDetail(map[string]any{"Pool": "empty"}))
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Pool": "empty"}))
 	}
 
 	errs.Add(ValidateCreatePoolInput(c.ListPool))
@@ -103,10 +103,10 @@ func (c *CreateBerkasInput) Validate() error {
 	errs := werror.NewError("error validate input")
 
 	if c.Name == "" {
-		errs.Add(errorbudidaya.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Name": "empty"}))
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Name": "empty"}))
 	}
 	if c.File == "" {
-		errs.Add(errorbudidaya.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"File": "empty"}))
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"File": "empty"}))
 	}
 
 	return errs.Return()
@@ -153,16 +153,16 @@ func (c *CreatePoolInput) Validate() error {
 	errs := werror.NewError("error validate input")
 
 	if c.Name == "" {
-		errs.Add(errorbudidaya.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Name": "empty"}))
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Name": "empty"}))
 	}
 	if c.Long == 0 {
-		errs.Add(errorbudidaya.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Long": "empty"}))
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Long": "empty"}))
 	}
 	if c.Wide == 0 {
-		errs.Add(errorbudidaya.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Wide": "empty"}))
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Wide": "empty"}))
 	}
 	if c.Image == "" {
-		errs.Add(errorbudidaya.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Image": "empty"}))
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Image": "empty"}))
 	}
 
 	return errs.Return()
@@ -245,10 +245,10 @@ func (u *UpdatePondStatus) Validate() error {
 	errs := werror.NewError("failed validate input update pond status")
 
 	if u.PondID == uuid.Nil {
-		errs.Add(errorbudidaya.ErrValidateInputbUpdateStatus.AttacthDetail(map[string]any{"PondID": "empty"}))
+		errs.Add(errorpond.ErrValidateInputbUpdateStatus.AttacthDetail(map[string]any{"PondID": "empty"}))
 	}
 	if u.Status == "" {
-		errs.Add(errorbudidaya.ErrValidateInputbUpdateStatus.AttacthDetail(map[string]any{"Status": "empty"}))
+		errs.Add(errorpond.ErrValidateInputbUpdateStatus.AttacthDetail(map[string]any{"Status": "empty"}))
 	}
 
 	return errs.Return()

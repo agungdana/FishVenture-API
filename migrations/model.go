@@ -102,8 +102,8 @@ type Pond struct {
 	Team          Team      `json:"team"`
 	Status        string    `json:"status"`
 	Image         string    `json:"image"`
-	ListPool      []Pool    `json:"list_pool"`
-	ListBerkas    []Berkas  `json:"berkas"`
+	ListPool      []*Pool   `json:"list_pool"`
+	ListBerkas    []*Berkas `json:"berkas"`
 	orm.OrmModel
 }
 
@@ -117,13 +117,14 @@ type Berkas struct {
 }
 
 type Pool struct {
-	ID     uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
-	PondID uuid.UUID `gorm:"size:256" json:"pond_id"`
-	Pond   Pond      `json:"pond"`
-	Name   string    `json:"name"`
-	Long   float64   `json:"long"`
-	Wide   float64   `json:"wide"`
-	Image  string    `json:"image"`
+	ID           uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
+	PondID       uuid.UUID `gorm:"size:256" json:"pond_id"`
+	Pond         Pond      `json:"pond"`
+	Name         string    `json:"name"`
+	Long         float64   `json:"long"`
+	Wide         float64   `json:"wide"`
+	Image        string    `json:"image"`
+	ListBudidaya []*Budidaya
 	orm.OrmModel
 }
 
@@ -132,19 +133,30 @@ type Budidaya struct {
 	PoolID          uuid.UUID `gorm:"size:256"`
 	Pool            Pool
 	DateOfSeed      time.Time
-	FishSpeciesID   uuid.UUID `gorm:"size:256"`
+	FishSpeciesID   uuid.UUID
 	FishSpecies     FishSpecies
 	FishSpeciesName string
 	EstTonase       float64
 	EstPanenDate    time.Time
 	EstPrice        int
 	Status          string
+	PriceList       []*PriceList
+	orm.OrmModel
+}
+
+type PriceList struct {
+	ID         uuid.UUID `gorm:"primaryKey,size:256"`
+	BudidayaID uuid.UUID
+	Budidaya   Budidaya
+	Limit      int
+	Price      int
 	orm.OrmModel
 }
 
 type FishSpecies struct {
 	ID       uuid.UUID `gorm:"primaryKey,size:256"`
 	Name     string
+	Asal     string
 	Budidaya []*Budidaya
 	orm.OrmModel
 }

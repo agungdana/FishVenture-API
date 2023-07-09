@@ -13,19 +13,23 @@ type Repo interface {
 }
 
 type Command interface {
-	CreatePond(ctx context.Context, input model.CreatePondInput) (*uuid.UUID, error)
-	UpdatePond(ctx context.Context, input model.UpdatePondInput) (*uuid.UUID, error)
-	UpdatePondStatus(ctx context.Context, input model.UpdatePondStatus) (*uuid.UUID, error)
+	CreateBudidaya(ctx context.Context, input model.CreateBudidayaInput) (*uuid.UUID, error)
+	UpdateStatusBudidaya(ctx context.Context, input model.UpdateBudidayaStatusInput) (*uuid.UUID, error)
+
+	CreateMultiplePricelistBudidaya(ctx context.Context, input model.CreateMultiplePriceListInput) ([]*uuid.UUID, error)
+
+	CreateFishSpecies(ctx context.Context, input model.CreateFishSpeciesInput) (*uuid.UUID, error)
 
 	Rollback(ctx context.Context) error
 	Commit(ctx context.Context) error
 }
 
 type Query interface {
-	GetListPondSubmission(ctx context.Context) ([]*model.PondOutput, error)
-	GetPondByUserPondAdmin(ctx context.Context) (*model.PondOutput, error)
-	GetPondByID(ctx context.Context, input uuid.UUID) (*model.PondOutput, error)
-	GetListPondForUser(ctx context.Context) ([]*model.PondOutput, error)
+	ReadBudidayaActiveByPoolID(ctx context.Context, input uuid.UUID) (*model.BudidayaOutput, error)
+	ReadBudidayaByUserLogin(ctx context.Context) ([]*model.BudidayaOutput, error)
+	ReadBudidayaByUserBuyer(ctx context.Context) ([]*model.BudidayaOutput, error)
+	ReadBudidayaByUserSaller(ctx context.Context) ([]*model.BudidayaOutput, error)
+	ReadBudidayaByUserAdmin(ctx context.Context) ([]*model.BudidayaOutput, error)
 
 	lock() Query
 }

@@ -1,8 +1,6 @@
 package model
 
 import (
-	"time"
-
 	"github.com/e-fish/api/pkg/common/infra/orm"
 	"github.com/google/uuid"
 )
@@ -75,23 +73,4 @@ type PoolOutput struct {
 
 func (t *PoolOutput) TableName() string {
 	return "pools"
-}
-
-type BudidayaOutput struct {
-	ID              uuid.UUID          `gorm:"primaryKey,size:256" json:"id"`
-	PoolID          uuid.UUID          `gorm:"size:256" json:"poolID"`
-	Pool            *PoolOutput        `gorm:"foreignKey:PoolID;references:ID" json:"pool,omitempty"`
-	DateOfSeed      time.Time          `json:"dateOfSeed"`
-	FishSpeciesID   uuid.UUID          `json:"fishSpeciesID"`
-	FishSpecies     *FishSpeciesOutput `gorm:"foreignKey:FishSpeciesID;references:ID" json:"fishSpecies,omitempty"`
-	FishSpeciesName string             `json:"fishSpeciesName"`
-	EstTonase       float64            `json:"estTonase"`
-	EstPanenDate    time.Time          `json:"estPanenDate,omitempty"`
-	Status          bool               `json:"status"`
-}
-
-type FishSpeciesOutput struct {
-	ID       uuid.UUID         `gorm:"primaryKey,size:256" json:"id"`
-	Name     string            `json:"name"`
-	Budidaya []*BudidayaOutput `json:"budidaya,omitempty"`
 }

@@ -9,11 +9,12 @@ import (
 type key string
 
 const (
-	REQUEST_ID     key = "X-Otoritech-Request-ID"
-	TRANSACTION_ID key = "X-Otoritech-Transaction-ID"
-	USER_ID        key = "X-Otoritech-User-ID"
-	POND_ID        key = "X-Otoritech-Pond-ID"
-	ROLE_ID        key = "X-Otoritech-Role-ID"
+	REQUEST_ID     key = "X-Efish-Request-ID"
+	TRANSACTION_ID key = "X-Efish-Transaction-ID"
+	USER_ID        key = "X-Efish-User-ID"
+	POND_ID        key = "X-Efish-Pond-ID"
+	ROLE_ID        key = "X-Efish-Role-ID"
+	AppType        key = "X-Efish-App-Type"
 )
 
 func fromContextUUID(ctx context.Context, key key) (uuid.UUID, bool) {
@@ -34,6 +35,16 @@ func fromContextUUID(ctx context.Context, key key) (uuid.UUID, bool) {
 		return v, true
 	default:
 		return uuid.UUID{}, false
+	}
+}
+
+func fromContextString(ctx context.Context, key key) (string, bool) {
+	value := ctx.Value(key)
+	switch v := value.(type) {
+	case string:
+		return v, true
+	default:
+		return "", false
 	}
 }
 
@@ -75,8 +86,12 @@ func NewRequestWithOutTimeOut(ctx context.Context) context.Context {
 	newCtx = NewRequestID(newCtx)
 	userID, _ := GetUserID(ctx)
 	roleID, _ := GetRoleID(ctx)
+	pondID, _ := GetPondID(ctx)
+	appType, _ := GetUserAppType(ctx)
 	newCtx = SetUserID(newCtx, userID)
 	newCtx = SetRoleID(newCtx, roleID...)
+	newCtx = SetPondID(newCtx, pondID)
+	newCtx = SetUserAppType(newCtx, appType)
 	return newCtx
 }
 
@@ -110,6 +125,14 @@ func SetPondID(ctx context.Context, id uuid.UUID) context.Context {
 
 func GetPondID(ctx context.Context) (uuid.UUID, bool) {
 	return fromContextUUID(ctx, POND_ID)
+}
+
+func SetUserAppType(ctx context.Context, appType string) context.Context {
+	return context.WithValue(ctx, AppType, appType)
+}
+
+func GetUserAppType(ctx context.Context) (string, bool) {
+	return fromContextString(ctx, USER_ID)
 }
 
 func SetUserPayload(ctx context.Context, userID, PondID uuid.UUID, roleID ...uuid.UUID) context.Context {
