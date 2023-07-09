@@ -28,21 +28,21 @@ func getConfig() *RegionConfig {
 				return
 			}
 
-			driverRegion := os.Getenv("DB_DRIVER_REGION")
-			hostRegion := os.Getenv("DB_HOST_REGION")
-			databaseRegion := os.Getenv("DB_NAME_REGION")
-			usernameRegion := os.Getenv("DB_USERNAME_REGION")
-			passwordRegion := os.Getenv("DB_PASSWORD_REGION")
-			portRegion := os.Getenv("DB_PORT_REGION")
+			driver := os.Getenv("DB_DRIVER")
+			host := os.Getenv("DB_HOST")
+			database := os.Getenv("DB_NAME")
+			username := os.Getenv("DB_USERNAME")
+			password := os.Getenv("DB_PASSWORD")
+			port := os.Getenv("DB_PORT")
 
 			conf = &RegionConfig{
 				RegionDBConfig: config.DbConfig{
-					Driver:   driverRegion,
-					Host:     hostRegion,
-					User:     usernameRegion,
-					Password: passwordRegion,
-					Database: databaseRegion,
-					Port:     portRegion,
+					Driver:   driver,
+					Host:     host,
+					User:     username,
+					Password: password,
+					Database: database,
+					Port:     port,
 				},
 			}
 		})
