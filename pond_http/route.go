@@ -31,7 +31,10 @@ func newRoute(ro route) {
 	ginEngine.GET("/all-pond-submission", ctxutil.Authorization(), handler.GetAllPondSubmission)
 	ginEngine.POST("/update-pond-status", ctxutil.Authorization(), handler.UpdatePondStatus)
 
-	ginEngine.POST("/upload-pool-photo", handler.SaveImage)
-	ginEngine.Use(static.Serve("/assets/image/pool", static.LocalFile(ro.conf.ImageConfig.Path, false)))
+	ginEngine.POST("/upload-pond-photo", handler.SaveImagePond)
+	ginEngine.Use(static.Serve("/assets/image/pond", static.LocalFile(ro.conf.PondImageConfig.Path, false)))
+
+	ginEngine.POST("/upload-pool-photo", handler.SaveImagePool)
+	ginEngine.Use(static.Serve("/assets/image/pool", static.LocalFile(ro.conf.PoolImageConfig.Path, false)))
 
 }

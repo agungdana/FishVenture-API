@@ -1,4 +1,4 @@
-package product
+package region
 
 import (
 	"context"
@@ -8,29 +8,27 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewRepo(dbConfig config.DbConfig) (Repo, error) {
-	db, err := orm.CreateConnetionDB(dbConfig)
+func NewRepo(appConfig config.DbConfig) (Repo, error) {
+	db, err := orm.CreateConnetionDB(appConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Region{
-		DbConfig: dbConfig,
-		db:       db,
+	return &RegionRepo{
+		db: db,
 	}, err
 }
 
-type Region struct {
-	DbConfig config.DbConfig
-	db       *gorm.DB
+type RegionRepo struct {
+	db *gorm.DB
 }
 
 // NewCommand implements Repo.
-func (a *Region) NewCommand(ctx context.Context) Command {
+func (a *RegionRepo) NewCommand(ctx context.Context) Command {
 	return newCommand(ctx, a.db)
 }
 
 // NewQuery implements Repo.
-func (a *Region) NewQuery() Query {
+func (a *RegionRepo) NewQuery() Query {
 	return newQuery(a.db)
 }

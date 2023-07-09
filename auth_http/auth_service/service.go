@@ -2,10 +2,13 @@ package authservice
 
 import (
 	"context"
+	"mime/multipart"
+	"path/filepath"
 
 	authconfig "github.com/e-fish/api/auth_http/auth_config"
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
 	"github.com/e-fish/api/pkg/common/helper/logger"
+	"github.com/e-fish/api/pkg/common/helper/savefile"
 	"github.com/e-fish/api/pkg/common/infra/firebase"
 	"github.com/e-fish/api/pkg/common/infra/token"
 	"github.com/e-fish/api/pkg/domain/auth"
@@ -171,4 +174,21 @@ func (s *Service) Profile(ctx context.Context) (*model.Profile, error) {
 	}
 
 	return result, nil
+}
+
+func (s *Service) SaveImages(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
+	ext := filepath.Ext(file.Filename)
+	filename := uuid.New().String() + ext
+	err := savefile.SaveFile(file, s.conf.UserImageConfig.Path+"/"+filename)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := UploadPhotoResponse{
+		Name: filename,
+		Url:  s.conf.UserImageConfig.Url + filename,
+	}
+
+	return &result, nil
 }

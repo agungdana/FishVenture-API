@@ -31,9 +31,10 @@ func (c *CreateBudidayaInput) Validate() error {
 	return errs.Return()
 }
 
-func (c *CreateBudidayaInput) ToBudidaya(userID uuid.UUID) Budidaya {
+func (c *CreateBudidayaInput) ToBudidaya(userID, pondID uuid.UUID) Budidaya {
 	return Budidaya{
 		ID:            uuid.New(),
+		PondID:        pondID,
 		PoolID:        c.PoolID,
 		DateOfSeed:    c.DateOfSeed,
 		FishSpeciesID: c.FishSpeciesID,
@@ -180,4 +181,8 @@ func (c *CreateFishSpeciesInput) ToFishSpecies(userID uuid.UUID) FishSpecies {
 		Asal:     c.Asal,
 		OrmModel: orm.OrmModel{CreatedAt: time.Now(), CreatedBy: userID},
 	}
+}
+
+type GetBudidayaInput struct {
+	PondID uuid.UUID
 }

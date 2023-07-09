@@ -36,8 +36,13 @@ func Migrate(db *gorm.DB, flag string) error {
 			&Berkas{},
 			&Pool{},
 			&Budidaya{},
+			&PriceList{},
 			&FishSpecies{},
 			&Order{},
+			&Country{},
+			&Province{},
+			&City{},
+			&District{},
 		)
 		if err != nil {
 			logger.Info("Error Auto Migreate: %v", err)

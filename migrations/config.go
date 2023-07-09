@@ -11,18 +11,18 @@ import (
 )
 
 var (
-	conf *AuthConfig
+	conf *MigrateConfig
 	once sync.Once
 )
 
-type AuthConfig struct {
+type MigrateConfig struct {
 	DbConfig       config.DbConfig
 	FireBaseConfig config.FirebaseConfig
 }
 
 // single tone
 // to avoid reading env multiple times
-func getConfig() *AuthConfig {
+func getConfig() *MigrateConfig {
 	if conf == nil {
 		once.Do(func() {
 			err := godotenv.Load()
@@ -38,7 +38,7 @@ func getConfig() *AuthConfig {
 			password := os.Getenv("DB_PASSWORD")
 			port := os.Getenv("DB_PORT")
 
-			conf = &AuthConfig{
+			conf = &MigrateConfig{
 				DbConfig: config.DbConfig{
 					Driver:   driver,
 					Host:     host,
@@ -53,7 +53,7 @@ func getConfig() *AuthConfig {
 	return conf
 }
 
-func GetConfig() *AuthConfig {
+func GetConfig() *MigrateConfig {
 	conf := getConfig()
 
 	errs := werror.NewError("incomplete configuration")

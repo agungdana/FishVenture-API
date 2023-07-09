@@ -9,11 +9,12 @@ import (
 
 type BudidayaOutput struct {
 	ID              uuid.UUID          `gorm:"primaryKey,size:256" json:"id"`
+	PondID          uuid.UUID          `gorm:"size:256" json:"pondID"`
 	PoolID          uuid.UUID          `gorm:"size:256" json:"poolID"`
-	Pool            model.Pool         `json:"pool"`
+	Pool            model.PoolOutput   `gorm:"foreignKey:PoolID;references:ID" json:"pool"`
 	DateOfSeed      time.Time          `json:"dateOfSeed"`
 	FishSpeciesID   uuid.UUID          `json:"fishSpeciesID"`
-	FishSpecies     FishSpecies        `gorm:"foreignKey:FishSpeciesID;references:ID" json:"fishSpecies"`
+	FishSpecies     FishSpeciesOutput  `gorm:"foreignKey:FishSpeciesID;references:ID" json:"fishSpecies"`
 	FishSpeciesName string             `json:"fishSpeciesName"`
 	EstTonase       float64            `json:"estTonase"`
 	EstPanenDate    time.Time          `json:"estPanenDate"`
@@ -31,8 +32,8 @@ type PriceListOutput struct {
 }
 
 type FishSpeciesOutput struct {
-	ID       uuid.UUID   `gorm:"primaryKey,size:256" json:"id"`
-	Name     string      `json:"name"`
-	Asal     string      `json:"asal"`
-	Budidaya []*Budidaya `gorm:"foreignKey:FishSpeciesID;references:ID" json:"budidaya,omitempty"`
+	ID       uuid.UUID         `gorm:"primaryKey,size:256" json:"id"`
+	Name     string            `json:"name"`
+	Asal     string            `json:"asal"`
+	Budidaya []*BudidayaOutput `gorm:"foreignKey:FishSpeciesID;references:ID" json:"budidaya,omitempty"`
 }

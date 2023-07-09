@@ -114,10 +114,10 @@ func (s *Service) GetListPondForUser(ctx context.Context) ([]*model.PondOutput, 
 	return query.GetListPondForUser(ctx)
 }
 
-func (s *Service) SaveImages(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
+func (s *Service) SaveImagesPond(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext
-	err := savefile.SaveFile(file, s.conf.ImageConfig.Path+"/"+filename)
+	err := savefile.SaveFile(file, s.conf.PondImageConfig.Path+"/"+filename)
 
 	if err != nil {
 		return nil, err
@@ -125,7 +125,24 @@ func (s *Service) SaveImages(ctx context.Context, file *multipart.FileHeader) (*
 
 	result := UploadPhotoResponse{
 		Name: filename,
-		Url:  s.conf.ImageConfig.Url + filename,
+		Url:  s.conf.PondImageConfig.Url + filename,
+	}
+
+	return &result, nil
+}
+
+func (s *Service) SaveImagesPool(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
+	ext := filepath.Ext(file.Filename)
+	filename := uuid.New().String() + ext
+	err := savefile.SaveFile(file, s.conf.PoolImageConfig.Path+"/"+filename)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := UploadPhotoResponse{
+		Name: filename,
+		Url:  s.conf.PoolImageConfig.Url + filename,
 	}
 
 	return &result, nil

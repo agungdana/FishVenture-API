@@ -26,10 +26,10 @@ type Command interface {
 
 type Query interface {
 	ReadBudidayaActiveByPoolID(ctx context.Context, input uuid.UUID) (*model.BudidayaOutput, error)
-	ReadBudidayaByUserLogin(ctx context.Context) ([]*model.BudidayaOutput, error)
-	ReadBudidayaByUserBuyer(ctx context.Context) ([]*model.BudidayaOutput, error)
+	ReadBudidayaByUserLogin(ctx context.Context, input model.GetBudidayaInput) ([]*model.BudidayaOutput, error)
+	ReadBudidayaByUserBuyer(ctx context.Context, input model.GetBudidayaInput) ([]*model.BudidayaOutput, error)
+	ReadBudidayaByUserAdmin(ctx context.Context, input model.GetBudidayaInput) ([]*model.BudidayaOutput, error)
 	ReadBudidayaByUserSaller(ctx context.Context) ([]*model.BudidayaOutput, error)
-	ReadBudidayaByUserAdmin(ctx context.Context) ([]*model.BudidayaOutput, error)
 
 	lock() Query
 }

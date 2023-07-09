@@ -16,8 +16,9 @@ var (
 )
 
 type AuthConfig struct {
-	DbConfig       config.DbConfig
-	FireBaseConfig config.FirebaseConfig
+	UserImageConfig config.ImageConfig
+	DbConfig        config.DbConfig
+	FireBaseConfig  config.FirebaseConfig
 }
 
 // single tone
@@ -39,7 +40,14 @@ func getConfig() *AuthConfig {
 			port := os.Getenv("DB_PORT")
 			firebaseConf := os.Getenv("FIREBASE_CONF")
 
+			userImagePath := os.Getenv("PATH_IMAGE_USER")
+			userImageUrl := os.Getenv("URL_IMAGE_USER")
+
 			conf = &AuthConfig{
+				UserImageConfig: config.ImageConfig{
+					Url:  userImageUrl,
+					Path: userImagePath,
+				},
 				DbConfig: config.DbConfig{
 					Driver:   driver,
 					Host:     host,

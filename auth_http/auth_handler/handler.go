@@ -81,3 +81,18 @@ func (h *Handler) Profile(c *gin.Context) {
 	result, err := h.Service.Profile(ctx)
 	res.Add(result, err)
 }
+
+func (h *Handler) SaveImage(c *gin.Context) {
+	var (
+		ctx = c.Request.Context()
+		res = new(restsvr.HttpResponse)
+	)
+	defer restsvr.ResponsJson(c, res)
+	file, err := c.FormFile("image")
+	if err != nil {
+		res.Add(nil, err)
+		return
+	}
+	result, err := h.Service.SaveImages(ctx, file)
+	res.Add(result, err)
+}

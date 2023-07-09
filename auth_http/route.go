@@ -5,6 +5,7 @@ import (
 	authhandler "github.com/e-fish/api/auth_http/auth_handler"
 	authservice "github.com/e-fish/api/auth_http/auth_service"
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,4 +34,7 @@ func newRoute(ro route) {
 	ginEngine.POST("/login", handler.Login)
 	ginEngine.POST("/login-by-google", handler.LoginByGoogle)
 	ginEngine.GET("/profile", ctxutil.Authorization(), handler.Profile)
+
+	ginEngine.POST("/upload-user-photo", handler.SaveImage)
+	ginEngine.Use(static.Serve("/assets/image/user", static.LocalFile(ro.conf.UserImageConfig.Path, false)))
 }

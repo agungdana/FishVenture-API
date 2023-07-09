@@ -16,8 +16,9 @@ var (
 )
 
 type PondConfig struct {
-	ImageConfig config.ImageConfig
-	DbConfig    config.DbConfig
+	PondImageConfig config.ImageConfig
+	PoolImageConfig config.ImageConfig
+	DbConfig        config.DbConfig
 }
 
 // single tone
@@ -38,13 +39,19 @@ func getConfig() *PondConfig {
 			password := os.Getenv("DB_PASSWORD")
 			port := os.Getenv("DB_PORT")
 
-			path := os.Getenv("PATH_IMAGE_BUDIDAYA")
-			url := os.Getenv("URL_IMAGE_BUDIDAYA")
+			pondImagePath := os.Getenv("PATH_IMAGE_POND")
+			pondImageUrl := os.Getenv("URL_IMAGE_POND")
+			poolImagePath := os.Getenv("PATH_IMAGE_POOL")
+			poolImageUrl := os.Getenv("URL_IMAGE_POOL")
 
 			conf = &PondConfig{
-				ImageConfig: config.ImageConfig{
-					Url:  url,
-					Path: path,
+				PondImageConfig: config.ImageConfig{
+					Url:  pondImageUrl,
+					Path: pondImagePath,
+				},
+				PoolImageConfig: config.ImageConfig{
+					Url:  poolImageUrl,
+					Path: poolImagePath,
 				},
 				DbConfig: config.DbConfig{Driver: driver, Host: host, User: username, Password: password, Database: database, Port: port},
 			}

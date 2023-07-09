@@ -8,36 +8,47 @@ import (
 	"github.com/e-fish/api/pkg/common/infra/orm"
 	errorbudidaya "github.com/e-fish/api/pkg/domain/budidaya/error-budidaya"
 	"github.com/e-fish/api/pkg/domain/budidaya/model"
-	"github.com/e-fish/api/pkg/domain/verification"
+	"github.com/e-fish/api/pkg/domain/pond"
+	status "github.com/e-fish/api/pkg/domain/pond/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func newCommand(ctx context.Context, db *gorm.DB, verificationRepo verification.Repo) Command {
+func newCommand(ctx context.Context, db *gorm.DB, pondRrepo pond.Repo) Command {
 	var (
 		dbTxn = orm.BeginTxn(ctx, db)
 	)
 
 	return &command{
-		dbTxn:            dbTxn,
-		query:            newQuery(dbTxn),
-		verificationRepo: verificationRepo,
+		dbTxn:     dbTxn,
+		query:     newQuery(dbTxn),
+		pondQuery: pondRrepo.NewQuery(),
 	}
 }
 
 type command struct {
-	dbTxn            *gorm.DB
-	query            Query
-	verificationRepo verification.Repo
+	dbTxn     *gorm.DB
+	query     Query
+	pondQuery pond.Query
 }
 
 // CreateBudidaya implements Command.
 func (c *command) CreateBudidaya(ctx context.Context, input model.CreateBudidayaInput) (*uuid.UUID, error) {
 	var (
 		userID, _ = ctxutil.GetUserID(ctx)
+		pondID, _ = ctxutil.GetPondID(ctx)
 	)
 
-	err := input.Validate()
+	data, err := c.pondQuery.GetPondByID(ctx, pondID)
+	if err != nil {
+		return nil, err
+	}
+
+	if data.Status != status.ACTIVED {
+		return nil, errorbudidaya.ErrFailedCreateBudidaya.AttacthDetail(map[string]any{"pond-status": data.Status})
+	}
+
+	err = input.Validate()
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +63,7 @@ func (c *command) CreateBudidaya(ctx context.Context, input model.CreateBudidaya
 		return nil, errorbudidaya.ErrFailedCreateBudidayaExist.AttacthDetail(map[string]any{"pool": exist.PoolID})
 	}
 
-	newBudidaya := input.ToBudidaya(userID)
+	newBudidaya := input.ToBudidaya(userID, pondID)
 
 	err = c.dbTxn.Create(&newBudidaya).Error
 	if err != nil {

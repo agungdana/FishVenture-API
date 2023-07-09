@@ -10,6 +10,8 @@ import (
 
 type Budidaya struct {
 	ID              uuid.UUID `gorm:"primaryKey,size:256"`
+	PondID          uuid.UUID `gorm:"size:256"`
+	Pond            model.Pond
 	PoolID          uuid.UUID `gorm:"size:256"`
 	Pool            model.Pool
 	DateOfSeed      time.Time
