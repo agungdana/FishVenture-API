@@ -98,7 +98,7 @@ func (h *Handler) GetBudidayaAdminAndCustomer(c *gin.Context) {
 	res.Add(result, err)
 }
 
-func (h *Handler) GetBudidayaForSaller(c *gin.Context) {
+func (h *Handler) GetBudidayaForSeller(c *gin.Context) {
 	var (
 		ctx = c.Request.Context()
 		res = new(restsvr.HttpResponse)
@@ -106,6 +106,6 @@ func (h *Handler) GetBudidayaForSaller(c *gin.Context) {
 
 	defer restsvr.ResponsJson(c, res)
 
-	result, err := h.Service.GetBudidayaByUserSaller(ctx)
+	result, err := h.Service.GetBudidayaByUserSeller(ctx)
 	res.Add(result, err)
 }

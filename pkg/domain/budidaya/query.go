@@ -79,8 +79,8 @@ func (q *query) ReadBudidayaByUserBuyer(ctx context.Context, input model.GetBudi
 	return res, nil
 }
 
-// ReadBudidayaByUserSaller implements Query.
-func (q *query) ReadBudidayaByUserSaller(ctx context.Context) ([]*model.BudidayaOutput, error) {
+// ReadBudidayaByUserSeller implements Query.
+func (q *query) ReadBudidayaByUserSeller(ctx context.Context) ([]*model.BudidayaOutput, error) {
 	var (
 		pondID, _ = ctxutil.GetPondID(ctx)
 		res       = []*model.BudidayaOutput{}

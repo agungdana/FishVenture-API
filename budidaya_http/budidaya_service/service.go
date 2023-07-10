@@ -108,8 +108,8 @@ func (s *Service) GetBudidayaByUserLoginAdminOrCustomer(ctx context.Context, inp
 	return query.ReadBudidayaByUserLogin(ctx, input)
 }
 
-func (s *Service) GetBudidayaByUserSaller(ctx context.Context) ([]*model.BudidayaOutput, error) {
+func (s *Service) GetBudidayaByUserSeller(ctx context.Context) ([]*model.BudidayaOutput, error) {
 	query := s.repo.NewQuery()
 
-	return query.ReadBudidayaByUserSaller(ctx)
+	return query.ReadBudidayaByUserSeller(ctx)
 }

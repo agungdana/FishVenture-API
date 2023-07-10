@@ -2,6 +2,6 @@ package model
 
 const (
 	BUYER  = "buyer"
-	SALLER = "saller"
+	SELLER = "seller"
 	ADMIN  = "admin"
 )

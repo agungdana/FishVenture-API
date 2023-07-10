@@ -69,7 +69,7 @@ func Migrate(db *gorm.DB, flag string) error {
 		}, {
 			ID:             seller,
 			Code:           "RO0003",
-			Name:           model.SALLER,
+			Name:           model.SELLER,
 			Scope:          "",
 			RolePermission: []*model.RolePermission{},
 			OrmModel:       orm.OrmModel{},
