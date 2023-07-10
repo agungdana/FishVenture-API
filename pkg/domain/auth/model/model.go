@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/e-fish/api/pkg/common/infra/orm"
-	"github.com/e-fish/api/pkg/domain/budidaya/model"
+	"github.com/e-fish/api/pkg/domain/pond/model"
 	"github.com/google/uuid"
 )
 

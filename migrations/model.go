@@ -117,18 +117,21 @@ type Berkas struct {
 }
 
 type Pool struct {
-	ID     uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
-	PondID uuid.UUID `gorm:"size:256" json:"pond_id"`
-	Pond   Pond      `json:"pond"`
-	Name   string    `json:"name"`
-	Long   float64   `json:"long"`
-	Wide   float64   `json:"wide"`
-	Image  string    `json:"image"`
+	ID           uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
+	PondID       uuid.UUID `gorm:"size:256" json:"pond_id"`
+	Pond         Pond      `json:"pond"`
+	Name         string    `json:"name"`
+	Long         float64   `json:"long"`
+	Wide         float64   `json:"wide"`
+	Image        string    `json:"image"`
+	ListBudidaya []*Budidaya
 	orm.OrmModel
 }
 
 type Budidaya struct {
 	ID              uuid.UUID `gorm:"primaryKey,size:256"`
+	PondID          uuid.UUID `gorm:"size:256"`
+	Pond            Pond
 	PoolID          uuid.UUID `gorm:"size:256"`
 	Pool            Pool
 	DateOfSeed      time.Time
@@ -139,12 +142,23 @@ type Budidaya struct {
 	EstPanenDate    time.Time
 	EstPrice        int
 	Status          string
+	PriceList       []*PriceList
+	orm.OrmModel
+}
+
+type PriceList struct {
+	ID         uuid.UUID `gorm:"primaryKey,size:256"`
+	BudidayaID uuid.UUID `gorm:"size:256"`
+	Budidaya   Budidaya
+	Limit      int
+	Price      int
 	orm.OrmModel
 }
 
 type FishSpecies struct {
 	ID       uuid.UUID `gorm:"primaryKey,size:256"`
 	Name     string
+	Asal     string
 	Budidaya []*Budidaya
 	orm.OrmModel
 }
@@ -159,5 +173,42 @@ type Order struct {
 	Qty         int
 	BookingDate time.Time
 	Status      string
+	orm.OrmModel
+}
+
+type Country struct {
+	ID           uuid.UUID `gorm:"primaryKey,size:256"`
+	Name         string
+	IsCoverage   bool
+	ListProvince []Province
+	orm.OrmModel
+}
+
+type Province struct {
+	ID         uuid.UUID `gorm:"primaryKey,size:256"`
+	CountryID  uuid.UUID `gorm:"size:256"`
+	Country    Country
+	Name       string
+	IsCoverage bool
+	ListCity   []City
+	orm.OrmModel
+}
+
+type City struct {
+	ID           uuid.UUID `gorm:"primaryKey,size:256"`
+	ProvinceID   uuid.UUID `gorm:"size:256"`
+	Province     Province
+	Name         string
+	ListDistrict []District
+	IsCoverage   bool
+	orm.OrmModel
+}
+
+type District struct {
+	ID         uuid.UUID `gorm:"primaryKey,size:256"`
+	CityID     uuid.UUID `gorm:"size:256"`
+	City       City
+	Name       string
+	IsCoverage bool
 	orm.OrmModel
 }

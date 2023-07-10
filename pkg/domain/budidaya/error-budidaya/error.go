@@ -12,19 +12,39 @@ var (
 		Message: "can't rollback transaction product",
 	}
 
-	ErrValidateInputPond = werror.Error{
-		Code:    "ValidatedFailedInputPond",
+	ErrValidateInputBudidaya = werror.Error{
+		Code:    "ValidatedFailedInputBudidaya",
 		Message: "field can't be empty",
 	}
 
-	ErrFailedUpdatePond = werror.Error{
-		Code:    "FailedUpdatePond",
-		Message: "failed update pond",
+	ErrValidateMultipleInputPriceList = werror.Error{
+		Code:    "ValidatedFailedMultipleInputPriceList",
+		Message: "field can't be empty",
 	}
 
-	ErrValidateInputbBerkas = werror.Error{
-		Code:    "ValidatedFailedInputBerkas",
+	ErrValidateInputPriceList = werror.Error{
+		Code:    "ValidatedFailedInputPriceList",
 		Message: "field can't be empty",
+	}
+
+	ErrValidateInputFishSpecies = werror.Error{
+		Code:    "ValidatedFailedInputFishSpecies",
+		Message: "field can't be empty",
+	}
+
+	ErrFailedCreateBudidayaExist = werror.Error{
+		Code:    "FailedCreateBudidayaExist",
+		Message: "budidaya exist",
+	}
+
+	ErrFailedCreateBudidaya = werror.Error{
+		Code:    "FailedCreateBudidaya",
+		Message: "failed create Budidaya",
+	}
+
+	ErrFailedUpdateBudidaya = werror.Error{
+		Code:    "FailedUpdateBudidaya",
+		Message: "failed update Budidaya",
 	}
 
 	ErrValidateInputbUpdateStatus = werror.Error{
@@ -32,16 +52,23 @@ var (
 		Message: "field can't be empty",
 	}
 
-	ErrFoundPond = werror.Error{
-		Code:    "ValidatedFailedFoundPond",
-		Message: "pond not found",
+	ErrFoundBudidaya = werror.Error{
+		Code:    "ValidatedFailedFoundBudidaya",
+		Message: "Budidaya not found",
 	}
-	ErrFailedFindPond = werror.Error{
-		Code:    "ValidatedFailedFoundPond",
-		Message: "pond not found",
+
+	ErrFailedReadBudidaya = werror.Error{
+		Code:    "ValidatedReadBudidaya",
+		Message: "failed read budidaya data",
 	}
-	ErrCannotUpdateStatusPond = werror.Error{
-		Code:    "CannotUpdateStatusPond",
+
+	ErrCannotUpdateStatusBudidaya = werror.Error{
+		Code:    "CannotUpdateStatusBudidaya",
 		Message: "failed to update status",
+	}
+
+	ErrUnsuportedFindBudidaya = werror.Error{
+		Code:    "FailedFindBudidaya",
+		Message: "failed find Budidaya unsuported type",
 	}
 )

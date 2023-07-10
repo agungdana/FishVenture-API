@@ -15,6 +15,7 @@ type Payload struct {
 	UserID    uuid.UUID
 	PondID    uuid.UUID
 	UserRole  []uuid.UUID
+	AppType   string
 	IssuedAt  time.Time
 	ExpiredAt time.Time
 }

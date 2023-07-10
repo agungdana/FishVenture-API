@@ -4,51 +4,77 @@ import (
 	"context"
 
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
+	"github.com/e-fish/api/pkg/common/helper/logger"
 	"github.com/e-fish/api/pkg/common/infra/orm"
 	errorbudidaya "github.com/e-fish/api/pkg/domain/budidaya/error-budidaya"
 	"github.com/e-fish/api/pkg/domain/budidaya/model"
-	"github.com/e-fish/api/pkg/domain/verification"
+	"github.com/e-fish/api/pkg/domain/pond"
+	status "github.com/e-fish/api/pkg/domain/pond/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func newCommand(ctx context.Context, db *gorm.DB, verificationRepo verification.Repo) Command {
+func newCommand(ctx context.Context, db *gorm.DB, pondRrepo pond.Repo) Command {
 	var (
 		dbTxn = orm.BeginTxn(ctx, db)
 	)
 
 	return &command{
-		dbTxn:            dbTxn,
-		query:            newQuery(dbTxn),
-		verificationRepo: verificationRepo,
+		dbTxn:     dbTxn,
+		query:     newQuery(dbTxn),
+		pondQuery: pondRrepo.NewQuery(),
 	}
 }
 
 type command struct {
-	dbTxn            *gorm.DB
-	query            Query
-	verificationRepo verification.Repo
+	dbTxn     *gorm.DB
+	query     Query
+	pondQuery pond.Query
 }
 
-// UpdatePond implements Command.
-func (c *command) UpdatePond(ctx context.Context, input model.UpdatePondInput) (*uuid.UUID, error) {
+// CreateBudidaya implements Command.
+func (c *command) CreateBudidaya(ctx context.Context, input model.CreateBudidayaInput) (*uuid.UUID, error) {
 	var (
 		userID, _ = ctxutil.GetUserID(ctx)
 		pondID, _ = ctxutil.GetPondID(ctx)
 	)
 
-	updatePond := input.ToPond(userID, pondID)
-
-	err := c.dbTxn.Where("deleted_at IS NULL and id = ? and user_id = ?", pondID, userID).Updates(&updatePond).Error
+	data, err := c.pondQuery.GetPondByID(ctx, pondID)
 	if err != nil {
-		return nil, errorbudidaya.ErrFailedUpdatePond.AttacthDetail(map[string]any{"error": err})
+		return nil, err
 	}
 
-	return &updatePond.ID, nil
+	if data.Status != status.ACTIVED {
+		return nil, errorbudidaya.ErrFailedCreateBudidaya.AttacthDetail(map[string]any{"pond-status": data.Status})
+	}
+
+	err = input.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	logger.InfoWithContext(ctx, "###find existing budidaya by pool id for validate budidaya not exist")
+	exist, err := c.query.ReadBudidayaActiveByPoolID(ctx, input.PoolID)
+	if !errorbudidaya.ErrFoundBudidaya.Is(err) {
+		return nil, err
+	}
+
+	if exist != nil {
+		return nil, errorbudidaya.ErrFailedCreateBudidayaExist.AttacthDetail(map[string]any{"pool": exist.PoolID})
+	}
+
+	newBudidaya := input.ToBudidaya(userID, pondID)
+
+	err = c.dbTxn.Create(&newBudidaya).Error
+	if err != nil {
+		return nil, errorbudidaya.ErrFailedCreateBudidaya.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &newBudidaya.ID, nil
 }
 
-// UpdatePondStatus implements Command.
-func (c *command) UpdatePondStatus(ctx context.Context, input model.UpdatePondStatus) (*uuid.UUID, error) {
+// CreateFishSpecies implements Command.
+func (c *command) CreateFishSpecies(ctx context.Context, input model.CreateFishSpeciesInput) (*uuid.UUID, error) {
 	var (
 		userID, _ = ctxutil.GetUserID(ctx)
 	)
@@ -58,31 +84,21 @@ func (c *command) UpdatePondStatus(ctx context.Context, input model.UpdatePondSt
 		return nil, err
 	}
 
-	updatePond := input.ToPond(userID)
+	newFishSpecies := input.ToFishSpecies(userID)
 
-	pond, err := c.query.GetPondByID(ctx, input.PondID)
+	err = c.dbTxn.Create(&newFishSpecies).Error
 	if err != nil {
-		return nil, err
+		return nil, errorbudidaya.ErrFailedCreateBudidaya.AttacthDetail(map[string]any{"error": err})
 	}
 
-	val, ok := model.MapStatus[pond.Status][updatePond.Status]
-	if !ok || !val {
-		return nil, errorbudidaya.ErrCannotUpdateStatusPond.AttacthDetail(map[string]any{"already-status": pond.Status, "targer-status": updatePond.Status})
-	}
-
-	err = c.dbTxn.Where("deleted_at IS NULL and id = ?", updatePond.ID).Updates(&updatePond).Error
-	if err != nil {
-		return nil, errorbudidaya.ErrFailedUpdatePond.AttacthDetail(map[string]any{"error": err})
-	}
-
-	return &updatePond.ID, nil
-
+	return &newFishSpecies.ID, nil
 }
 
-// CreatePond implements Command.
-func (c *command) CreatePond(ctx context.Context, input model.CreatePondInput) (*uuid.UUID, error) {
+// CreateMultiplePricelistBudidaya implements Command.
+func (c *command) CreateMultiplePricelistBudidaya(ctx context.Context, input model.CreateMultiplePriceListInput) ([]*uuid.UUID, error) {
 	var (
 		userID, _ = ctxutil.GetUserID(ctx)
+		uid       = []*uuid.UUID{}
 	)
 
 	err := input.Validate()
@@ -90,14 +106,45 @@ func (c *command) CreatePond(ctx context.Context, input model.CreatePondInput) (
 		return nil, err
 	}
 
-	newPond := input.ToPond(userID)
+	newPricelist := input.ToMultiplePriceList(userID)
 
-	err = c.dbTxn.Create(&newPond).Error
+	err = c.dbTxn.Create(&newPricelist).Error
+	if err != nil {
+		return nil, errorbudidaya.ErrFailedCreateBudidaya.AttacthDetail(map[string]any{"error": err})
+	}
+
+	_, err = c.UpdateStatusBudidaya(ctx, model.UpdateBudidayaStatusInput{
+		ID:        input.BudidayaID,
+		EstTonase: input.EstTonase,
+		Status:    model.PANEN,
+		EstDate:   input.EstDate,
+	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	return &newPond.ID, nil
+	for _, v := range newPricelist {
+		uid = append(uid, &v.ID)
+	}
+
+	return uid, nil
+}
+
+// UpdateStatusBudidaya implements Command.
+func (c *command) UpdateStatusBudidaya(ctx context.Context, input model.UpdateBudidayaStatusInput) (*uuid.UUID, error) {
+	var (
+		userID, _ = ctxutil.GetUserID(ctx)
+	)
+
+	newStatus := input.ToBudidaya(userID)
+
+	err := c.dbTxn.Updates(&newStatus).Error
+	if err != nil {
+		return nil, errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &newStatus.ID, nil
 }
 
 // Commit implements Command.

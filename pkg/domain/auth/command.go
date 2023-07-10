@@ -151,6 +151,7 @@ func (c *command) Login(ctx context.Context, input model.UserLoginInput) (*model
 	payload := token.Payload{
 		UserID:    user.ID,
 		UserRole:  role,
+		AppType:   input.ApplicationType,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().AddDate(1, 0, 0),
 	}
@@ -184,7 +185,6 @@ func (c *command) LoginByGoogle(ctx context.Context, input model.UserLoginByGool
 		if !errorauth.ErrUserNotFound.Is(err) {
 			return nil, err
 		}
-
 	}
 
 	role := []uuid.UUID{}
@@ -196,6 +196,7 @@ func (c *command) LoginByGoogle(ctx context.Context, input model.UserLoginByGool
 	token, err := c.tokenMaker.CreateToken(&token.Payload{
 		UserID:    user.ID,
 		UserRole:  role,
+		AppType:   input.ApplicationType,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().AddDate(1, 0, 0),
 	})

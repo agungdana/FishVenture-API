@@ -36,8 +36,13 @@ func Migrate(db *gorm.DB, flag string) error {
 			&Berkas{},
 			&Pool{},
 			&Budidaya{},
+			&PriceList{},
 			&FishSpecies{},
 			&Order{},
+			&Country{},
+			&Province{},
+			&City{},
+			&District{},
 		)
 		if err != nil {
 			logger.Info("Error Auto Migreate: %v", err)
@@ -64,7 +69,7 @@ func Migrate(db *gorm.DB, flag string) error {
 		}, {
 			ID:             seller,
 			Code:           "RO0003",
-			Name:           model.SALLER,
+			Name:           model.SELLER,
 			Scope:          "",
 			RolePermission: []*model.RolePermission{},
 			OrmModel:       orm.OrmModel{},

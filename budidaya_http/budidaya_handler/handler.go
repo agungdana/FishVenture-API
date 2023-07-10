@@ -4,8 +4,10 @@ import (
 	budidayaconfig "github.com/e-fish/api/budidaya_http/budidaya_config"
 	budidayaservice "github.com/e-fish/api/budidaya_http/budidaya_service"
 	"github.com/e-fish/api/pkg/common/helper/restsvr"
+	"github.com/e-fish/api/pkg/common/helper/werror"
 	"github.com/e-fish/api/pkg/domain/budidaya/model"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -13,10 +15,10 @@ type Handler struct {
 	Service budidayaservice.Service
 }
 
-func (h *Handler) CreatePond(c *gin.Context) {
+func (h *Handler) CreateBudidaya(c *gin.Context) {
 	var (
 		ctx = c.Request.Context()
-		req model.CreatePondInput
+		req model.CreateBudidayaInput
 		res = new(restsvr.HttpResponse)
 	)
 
@@ -28,14 +30,14 @@ func (h *Handler) CreatePond(c *gin.Context) {
 		return
 	}
 
-	result, err := h.Service.CreatePond(ctx, req)
+	result, err := h.Service.CreateBudidaya(ctx, req)
 	res.Add(result, err)
 }
 
-func (h *Handler) UpdatePond(c *gin.Context) {
+func (h *Handler) CreateFishSpecies(c *gin.Context) {
 	var (
 		ctx = c.Request.Context()
-		req model.UpdatePondInput
+		req model.CreateFishSpeciesInput
 		res = new(restsvr.HttpResponse)
 	)
 
@@ -47,14 +49,14 @@ func (h *Handler) UpdatePond(c *gin.Context) {
 		return
 	}
 
-	result, err := h.Service.UpdatePond(ctx, req)
+	result, err := h.Service.CreateFishSpecies(ctx, req)
 	res.Add(result, err)
 }
 
-func (h *Handler) UpdatePondStatus(c *gin.Context) {
+func (h *Handler) CreateMultiplePricelist(c *gin.Context) {
 	var (
 		ctx = c.Request.Context()
-		req model.UpdatePondStatus
+		req model.CreateMultiplePriceListInput
 		res = new(restsvr.HttpResponse)
 	)
 
@@ -66,11 +68,11 @@ func (h *Handler) UpdatePondStatus(c *gin.Context) {
 		return
 	}
 
-	result, err := h.Service.UpdatePondStatus(ctx, req)
+	result, err := h.Service.CreateMultiplePricelist(ctx, req)
 	res.Add(result, err)
 }
 
-func (h *Handler) GetPondByUserAdmin(c *gin.Context) {
+func (h *Handler) GetBudidayaAdminAndCustomer(c *gin.Context) {
 	var (
 		ctx = c.Request.Context()
 		res = new(restsvr.HttpResponse)
@@ -78,45 +80,32 @@ func (h *Handler) GetPondByUserAdmin(c *gin.Context) {
 
 	defer restsvr.ResponsJson(c, res)
 
-	result, err := h.Service.GetPondByUserID(ctx)
-	res.Add(result, err)
-}
-
-func (h *Handler) GetAllPondSubmission(c *gin.Context) {
-	var (
-		ctx = c.Request.Context()
-		res = new(restsvr.HttpResponse)
-	)
-
-	defer restsvr.ResponsJson(c, res)
-
-	result, err := h.Service.GetAllPondSubmission(ctx)
-	res.Add(result, err)
-}
-
-func (h *Handler) GetAllPondForUser(c *gin.Context) {
-	var (
-		ctx = c.Request.Context()
-		res = new(restsvr.HttpResponse)
-	)
-
-	defer restsvr.ResponsJson(c, res)
-
-	result, err := h.Service.GetListPondForUser(ctx)
-	res.Add(result, err)
-}
-
-func (h *Handler) SaveImage(c *gin.Context) {
-	var (
-		ctx = c.Request.Context()
-		res = new(restsvr.HttpResponse)
-	)
-	defer restsvr.ResponsJson(c, res)
-	file, err := c.FormFile("image")
+	pondID, err := uuid.Parse(c.Query("id"))
 	if err != nil {
-		res.Add(nil, err)
+		res.Add(nil, werror.Error{
+			Code:    "NeedPondID",
+			Message: "need param pond id",
+			Details: map[string]any{
+				"error": err,
+			},
+		})
 		return
 	}
-	result, err := h.Service.SaveImages(ctx, file)
+
+	result, err := h.Service.GetBudidayaByUserLoginAdminOrCustomer(ctx, model.GetBudidayaInput{
+		PondID: pondID,
+	})
+	res.Add(result, err)
+}
+
+func (h *Handler) GetBudidayaForSeller(c *gin.Context) {
+	var (
+		ctx = c.Request.Context()
+		res = new(restsvr.HttpResponse)
+	)
+
+	defer restsvr.ResponsJson(c, res)
+
+	result, err := h.Service.GetBudidayaByUserSeller(ctx)
 	res.Add(result, err)
 }
