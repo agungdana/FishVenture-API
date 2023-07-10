@@ -11,18 +11,18 @@ import (
 
 type CreatePondInput struct {
 	Name          string              `json:"name"`
-	CountryID     uuid.UUID           `gorm:"size:256" json:"country_id"`
-	ProvinceID    uuid.UUID           `gorm:"size:256" json:"province_id"`
-	CityID        uuid.UUID           `gorm:"size:256" json:"city_id"`
-	DistrictID    uuid.UUID           `gorm:"size:256" json:"district_id"`
+	CountryID     uuid.UUID           `gorm:"size:256" json:"countryID"`
+	ProvinceID    uuid.UUID           `gorm:"size:256" json:"provinceID"`
+	CityID        uuid.UUID           `gorm:"size:256" json:"cityID"`
+	DistrictID    uuid.UUID           `gorm:"size:256" json:"districtID"`
 	DetailAddress string              `json:"detailAddress"`
 	NoteAddress   string              `json:"noteAddress"`
 	Type          string              `json:"type"`
 	Latitude      float64             `json:"latitude"`
 	Longitude     float64             `json:"longitude"`
-	TeamID        uuid.UUID           `gorm:"size:256" json:"team_id"`
+	TeamID        uuid.UUID           `gorm:"size:256" json:"teamID"`
 	Image         string              `json:"image"`
-	ListPool      []CreatePoolInput   `json:"list_pool"`
+	ListPool      []CreatePoolInput   `json:"listPool"`
 	ListBerkas    []CreateBerkasInput `json:"berkas"`
 }
 
@@ -199,10 +199,10 @@ func ListPoolInputToListPool(userID, pondID uuid.UUID, input []CreatePoolInput) 
 
 type UpdatePondInput struct {
 	Name          string    `json:"name"`
-	CountryID     uuid.UUID `gorm:"size:256" json:"country_id"`
-	ProvinceID    uuid.UUID `gorm:"size:256" json:"province_id"`
-	CityID        uuid.UUID `gorm:"size:256" json:"city_id"`
-	DistrictID    uuid.UUID `gorm:"size:256" json:"district_id"`
+	CountryID     uuid.UUID `gorm:"size:256" json:"countryID"`
+	ProvinceID    uuid.UUID `gorm:"size:256" json:"provinceID"`
+	CityID        uuid.UUID `gorm:"size:256" json:"cityID"`
+	DistrictID    uuid.UUID `gorm:"size:256" json:"districtID"`
 	DetailAddress string    `json:"detailAddress"`
 	NoteAddress   string    `json:"noteAddress"`
 	Type          string    `json:"type"`

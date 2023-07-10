@@ -26,19 +26,19 @@ type PondOutput struct {
 	UserID        uuid.UUID      `gorm:"size:256" json:"user_id"`
 	User          *UserPond      `json:"user,omitempty"`
 	Name          string         `json:"name"`
-	CountryID     uuid.UUID      `gorm:"size:256" json:"country_id"`
-	ProvinceID    uuid.UUID      `gorm:"size:256" json:"province_id"`
-	CityID        uuid.UUID      `gorm:"size:256" json:"city_id"`
-	DistrictID    uuid.UUID      `gorm:"size:256" json:"district_id"`
+	CountryID     uuid.UUID      `gorm:"size:256" json:"countryID"`
+	ProvinceID    uuid.UUID      `gorm:"size:256" json:"provinceID"`
+	CityID        uuid.UUID      `gorm:"size:256" json:"cityID"`
+	DistrictID    uuid.UUID      `gorm:"size:256" json:"districtID"`
 	DetailAddress string         `json:"detailAddress"`
 	NoteAddress   string         `json:"noteAddress"`
 	Type          string         `json:"type"`
 	Latitude      float64        `json:"latitude"`
 	Longitude     float64        `json:"longitude"`
-	TeamID        uuid.UUID      `gorm:"size:256" json:"team_id"`
+	TeamID        uuid.UUID      `gorm:"size:256" json:"teamID"`
 	Team          *TeamOutput    `json:"team,omitempty" gorm:"foreignKey:TeamID;references:ID"`
 	Status        string         `json:"status"`
-	ListPool      []PoolOutput   `json:"list_pool,omitempty" gorm:"foreignKey:PondID;references:ID"`
+	ListPool      []PoolOutput   `json:"listPool,omitempty" gorm:"foreignKey:PondID;references:ID"`
 	ListBerkas    []BerkasOutput `json:"berkas,omitempty" gorm:"foreignKey:PondID;references:ID"`
 	orm.OrmModel
 }

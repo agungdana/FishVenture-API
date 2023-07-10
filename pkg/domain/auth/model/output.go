@@ -7,7 +7,8 @@ import (
 )
 
 type UserLoginOutput struct {
-	Token string `json:"token"`
+	ApplicationType string `json:"applicationType"`
+	Token           string `json:"token"`
 }
 
 type Profile struct {
