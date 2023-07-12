@@ -30,6 +30,7 @@ type Query interface {
 	ReadBudidayaByUserBuyer(ctx context.Context, input model.GetBudidayaInput) ([]*model.BudidayaOutput, error)
 	ReadBudidayaByUserAdmin(ctx context.Context, input model.GetBudidayaInput) ([]*model.BudidayaOutput, error)
 	ReadBudidayaByUserSeller(ctx context.Context) ([]*model.BudidayaOutput, error)
+	ReadBudidayaCodeActive(ctx context.Context) (*string, error)
 
 	lock() Query
 }

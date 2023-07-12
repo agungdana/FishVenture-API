@@ -30,6 +30,22 @@ type query struct {
 	db *gorm.DB
 }
 
+// ReadBudidayaCodeActive implements Query.
+func (q *query) ReadBudidayaCodeActive(ctx context.Context) (*string, error) {
+	var (
+		pondID, _ = ctxutil.GetPondID(ctx)
+		budidaya  = model.Budidaya{}
+		db        = q.db
+	)
+
+	err := db.Where("deleted_at IS NULL and pond_id = ? and status <> ?", pondID, model.END).Order("created_at DESC").First(&budidaya).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &budidaya.Code, nil
+}
+
 // ReadBudidayaByUserLogin implements Query.
 func (q *query) ReadBudidayaByUserLogin(ctx context.Context, input model.GetBudidayaInput) ([]*model.BudidayaOutput, error) {
 	var (

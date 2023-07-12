@@ -63,7 +63,17 @@ func (c *command) CreateBudidaya(ctx context.Context, input model.CreateBudidaya
 		return nil, errorbudidaya.ErrFailedCreateBudidayaExist.AttacthDetail(map[string]any{"pool": exist.PoolID})
 	}
 
-	newBudidaya := input.ToBudidaya(userID, pondID)
+	code, err := c.query.ReadBudidayaCodeActive(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if code != nil {
+		codeStringEmpty := ""
+		code = &codeStringEmpty
+	}
+
+	newBudidaya := input.ToBudidaya(userID, pondID, *code)
 
 	err = c.dbTxn.Create(&newBudidaya).Error
 	if err != nil {
