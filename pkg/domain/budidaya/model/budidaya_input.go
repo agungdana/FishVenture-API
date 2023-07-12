@@ -10,6 +10,7 @@ import (
 )
 
 type CreateBudidayaInput struct {
+	Code          string    `json:"code"`
 	PoolID        uuid.UUID `json:"poolID"`
 	DateOfSeed    time.Time `json:"dateOfSeed"`
 	FishSpeciesID uuid.UUID `json:"fishSpeciesID"`

@@ -40,7 +40,10 @@ func (q *query) ReadBudidayaCodeActive(ctx context.Context) (*string, error) {
 
 	err := db.Where("deleted_at IS NULL and pond_id = ? and status <> ?", pondID, model.END).Order("created_at DESC").First(&budidaya).Error
 	if err != nil {
-		return nil, err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorbudidaya.ErrFoundBudidayaCode
+		}
+		return nil, errorbudidaya.ErrReadBudidayaCode.AttacthDetail(map[string]any{"error": err})
 	}
 
 	return &budidaya.Code, nil

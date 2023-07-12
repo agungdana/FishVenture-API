@@ -71,4 +71,14 @@ var (
 		Code:    "FailedFindBudidaya",
 		Message: "failed find Budidaya unsuported type",
 	}
+
+	ErrFoundBudidayaCode = werror.Error{
+		Code:    "FailedFoundBudidayaCodeExist",
+		Message: "Budidaya code not found",
+	}
+
+	ErrReadBudidayaCode = werror.Error{
+		Code:    "FailedReadBudidayaCodeExist",
+		Message: "failed read data budidaya",
+	}
 )
