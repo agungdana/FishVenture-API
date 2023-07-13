@@ -38,9 +38,22 @@ func (q *query) ReadBudidayaCodeActive(ctx context.Context) (*string, error) {
 		db        = q.db
 	)
 
-	err := db.Where("deleted_at IS NULL and pond_id = ? and status <> ?", pondID, model.END).Order("created_at DESC").First(&budidaya).Error
+	db = db.Order("created_at DESC")
+
+	err := db.Where("deleted_at IS NULL and pond_id = ? and status <> ?", pondID, model.END).First(&budidaya).Error
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorbudidaya.ErrReadBudidayaCode.AttacthDetail(map[string]any{"error": err})
+		}
+	}
+
+	if budidaya.Code != "" {
+		return &budidaya.Code, nil
+	}
+
+	err = db.Where("deleted_at IS NULL and pond_id = ? and status = ?", model.END).First(&budidaya).Error
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errorbudidaya.ErrFoundBudidayaCode
 		}
 		return nil, errorbudidaya.ErrReadBudidayaCode.AttacthDetail(map[string]any{"error": err})
