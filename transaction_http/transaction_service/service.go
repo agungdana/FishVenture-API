@@ -4,17 +4,35 @@ import (
 	"context"
 
 	"github.com/e-fish/api/pkg/common/helper/logger"
+	"github.com/e-fish/api/pkg/domain/budidaya"
+	"github.com/e-fish/api/pkg/domain/pond"
 	"github.com/e-fish/api/pkg/domain/transaction"
 	"github.com/e-fish/api/pkg/domain/transaction/model"
+	"github.com/e-fish/api/pkg/domain/verification"
 	transactionconfig "github.com/e-fish/api/transaction_http/transaction_config"
 	"github.com/google/uuid"
 )
 
 func NewService(conf transactionconfig.TransactionConfig) Service {
 
-	repo, err := transaction.NewRepo(conf.DbConfig)
+	verificationRepo, err := verification.NewRepo(conf.DbConfig)
 	if err != nil {
-		logger.Fatal("###failed create transaction service err: %v", err)
+		logger.Fatal("###failed create transaction service [causes: %v, err: %v]", "verification.NewRepo", err)
+	}
+
+	pondRepo, err := pond.NewRepo(conf.DbConfig, verificationRepo)
+	if err != nil {
+		logger.Fatal("###failed create transaction service [causes: %v, err: %v]", "pond.NewRepo", err)
+	}
+
+	budidayaRepo, err := budidaya.NewRepo(conf.DbConfig, pondRepo)
+	if err != nil {
+		logger.Fatal("###failed create transaction service [causes: %v, err: %v]", "budidaya.NewRepo", err)
+	}
+
+	repo, err := transaction.NewRepo(conf.DbConfig, budidayaRepo)
+	if err != nil {
+		logger.Fatal("###failed create transaction service [causes: %v, err: %v]", "transaction.NewRepo", err)
 	}
 
 	service := Service{

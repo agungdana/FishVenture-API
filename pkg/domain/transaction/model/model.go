@@ -25,7 +25,11 @@ type Order struct {
 	UserID      uuid.UUID
 	User        User
 	Qty         int
-	BookingDate time.Time
+	BookingDate *time.Time
+	PricelistID uuid.UUID
+	Pricelist   model.PriceList
+	Price       float64
+	Ammout      float64
 	Status      string
 	orm.OrmModel
 }

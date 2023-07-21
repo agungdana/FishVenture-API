@@ -31,5 +31,8 @@ type Query interface {
 	ReadBudidayaByUserAdmin(ctx context.Context, input model.GetBudidayaInput) ([]*model.BudidayaOutput, error)
 	ReadBudidayaByUserSeller(ctx context.Context) ([]*model.BudidayaOutput, error)
 
+	ReadPriceListBudidayaByBiggerThanLimitAndBudidayaID(ctx context.Context, input model.ReadPricelistBudidayaInput) (*model.PriceList, error)
+	ReadPriceListBudidayaBySmallerThanLimitAndBudidayaID(ctx context.Context, input model.ReadPricelistBudidayaInput) (*model.PriceList, error)
+
 	lock() Query
 }

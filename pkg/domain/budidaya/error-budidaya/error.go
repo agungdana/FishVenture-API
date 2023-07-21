@@ -71,4 +71,14 @@ var (
 		Code:    "FailedFindBudidaya",
 		Message: "failed find Budidaya unsuported type",
 	}
+
+	ErrFoundPricelist = werror.Error{
+		Code:    "FailedFindPricelistBudidaya",
+		Message: "failed find pricelist budidaya",
+	}
+
+	ErrReadPricelistData = werror.Error{
+		Code:    "FailedReadPricelistData",
+		Message: "failed read pricelist data",
+	}
 )

@@ -173,6 +173,10 @@ type Order struct {
 	Qty         int
 	BookingDate time.Time
 	Status      string
+	PricelistID uuid.UUID
+	Pricelist   model.PriceList
+	Price       float64
+	Ammout      float64
 	orm.OrmModel
 }
 
