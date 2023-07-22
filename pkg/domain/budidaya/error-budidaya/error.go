@@ -81,4 +81,14 @@ var (
 		Code:    "FailedReadPricelistData",
 		Message: "failed read pricelist data",
 	}
+
+	ErrFoundBudidayaCode = werror.Error{
+		Code:    "FailedFoundBudidayaCodeExist",
+		Message: "Budidaya code not found",
+	}
+
+	ErrReadBudidayaCode = werror.Error{
+		Code:    "FailedReadBudidayaCodeExist",
+		Message: "failed read data budidaya",
+	}
 )

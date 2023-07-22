@@ -130,6 +130,7 @@ type Pool struct {
 
 type Budidaya struct {
 	ID              uuid.UUID `gorm:"primaryKey,size:256"`
+	Code            string
 	PondID          uuid.UUID `gorm:"size:256"`
 	Pond            Pond
 	PoolID          uuid.UUID `gorm:"size:256"`

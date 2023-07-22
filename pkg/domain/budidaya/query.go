@@ -60,6 +60,38 @@ func (q *query) ReadPriceListBudidayaBySmallerThanLimitAndBudidayaID(ctx context
 	return &pricelist, nil
 }
 
+// ReadBudidayaCodeActive implements Query.
+func (q *query) ReadBudidayaCodeActive(ctx context.Context) (*string, error) {
+	var (
+		pondID, _ = ctxutil.GetPondID(ctx)
+		budidaya  = model.Budidaya{}
+		db        = q.db
+	)
+
+	db = db.Order("created_at DESC")
+
+	err := db.Where("deleted_at IS NULL and pond_id = ? and status <> ?", pondID, model.END).First(&budidaya).Error
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorbudidaya.ErrReadBudidayaCode.AttacthDetail(map[string]any{"error": err})
+		}
+	}
+
+	if budidaya.Code != "" {
+		return &budidaya.Code, nil
+	}
+
+	err = db.Where("deleted_at IS NULL and pond_id = ? and status = ?", model.END).First(&budidaya).Error
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorbudidaya.ErrFoundBudidayaCode
+		}
+		return nil, errorbudidaya.ErrReadBudidayaCode.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &budidaya.Code, nil
+}
+
 // ReadBudidayaByUserLogin implements Query.
 func (q *query) ReadBudidayaByUserLogin(ctx context.Context, input model.GetBudidayaInput) ([]*model.BudidayaOutput, error) {
 	var (
