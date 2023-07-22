@@ -10,6 +10,7 @@ import (
 )
 
 type CreateBudidayaInput struct {
+	Code          string    `json:"code"`
 	PoolID        uuid.UUID `json:"poolID"`
 	DateOfSeed    time.Time `json:"dateOfSeed"`
 	FishSpeciesID uuid.UUID `json:"fishSpeciesID"`
@@ -31,7 +32,7 @@ func (c *CreateBudidayaInput) Validate() error {
 	return errs.Return()
 }
 
-func (c *CreateBudidayaInput) ToBudidaya(userID, pondID uuid.UUID) Budidaya {
+func (c *CreateBudidayaInput) ToBudidaya(userID, pondID uuid.UUID, code string) Budidaya {
 	return Budidaya{
 		ID:            uuid.New(),
 		PondID:        pondID,
