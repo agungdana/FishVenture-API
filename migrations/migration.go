@@ -85,21 +85,21 @@ func Migrate(db *gorm.DB, flag string) error {
 			Path: "/profile",
 			RolePermission: []*model.RolePermission{
 				{
-					ID:             uuid.New(),
+					ID:             uuid.MustParse("548a9a4a-8fb2-5c6a-b357-691a90b208c4"),
 					RoleID:         buyer,
 					PermissionID:   profilePermission,
 					PermissionName: "profile",
 					PermissionPath: "/profile",
 				},
 				{
-					ID:             uuid.New(),
+					ID:             uuid.MustParse("5bf8249a-6593-564e-b926-f07264e23fb0"),
 					RoleID:         seller,
 					PermissionID:   profilePermission,
 					PermissionName: "profile",
 					PermissionPath: "/profile",
 				},
 				{
-					ID:             uuid.New(),
+					ID:             uuid.MustParse("b8a16a74-16b8-5b7c-bb1a-971beb7f942d"),
 					RoleID:         admin,
 					PermissionID:   profilePermission,
 					PermissionName: "profile",
@@ -108,7 +108,7 @@ func Migrate(db *gorm.DB, flag string) error {
 			},
 		}
 
-		createOrder := uuid.MustParse("ab47d368-974c-4a99-aaba-8f0c2c853b55")
+		createOrder := uuid.MustParse("0774379d-49aa-49f3-b62a-41be8c6d61aa")
 		createOrderPermission := model.Permission{
 			ID:   createOrder,
 			Code: "PM0002",
@@ -116,7 +116,7 @@ func Migrate(db *gorm.DB, flag string) error {
 			Path: "/create-order",
 			RolePermission: []*model.RolePermission{
 				{
-					ID:             uuid.New(),
+					ID:             uuid.MustParse("d5cfaaef-d346-5e13-af7b-d22c429e5022"),
 					RoleID:         buyer,
 					PermissionName: "create order",
 					PermissionPath: "/create-order",
@@ -132,7 +132,7 @@ func Migrate(db *gorm.DB, flag string) error {
 			Path: "/create-budidaya",
 			RolePermission: []*model.RolePermission{
 				{
-					ID:             uuid.New(),
+					ID:             uuid.MustParse("33120128-4910-54bd-8a8e-0f3ab0db8650"),
 					RoleID:         buyer,
 					PermissionName: "create budidaya",
 					PermissionPath: "/create-budidaya",
@@ -148,10 +148,26 @@ func Migrate(db *gorm.DB, flag string) error {
 			Path: "/create-pond",
 			RolePermission: []*model.RolePermission{
 				{
-					ID:             uuid.New(),
+					ID:             uuid.MustParse("f1aeb356-4ff4-5590-a8b2-3ce77a7d3425"),
 					RoleID:         seller,
 					PermissionName: "create pond",
 					PermissionPath: "/create-pond",
+				},
+			},
+		}
+
+		getPondSeller := uuid.MustParse("a2decae5-d84d-4073-aaf9-dc84d8ed8c33")
+		getPondSellerPermission := model.Permission{
+			ID:   getPondSeller,
+			Code: "PM0005",
+			Name: "pond",
+			Path: "/pond",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("71927c27-902e-500c-a603-b90a373bddee"),
+					RoleID:         seller,
+					PermissionName: "pond",
+					PermissionPath: "/pond",
 				},
 			},
 		}
@@ -161,6 +177,7 @@ func Migrate(db *gorm.DB, flag string) error {
 			createOrderPermission,
 			createBudidayaPermission,
 			createPondPermission,
+			getPondSellerPermission,
 		)
 
 		db.Save(&permission)
