@@ -187,3 +187,8 @@ func (c *CreateFishSpeciesInput) ToFishSpecies(userID uuid.UUID) FishSpecies {
 type GetBudidayaInput struct {
 	PondID uuid.UUID
 }
+
+type ReadPricelistBudidayaInput struct {
+	BudidayaID uuid.UUID
+	Qty        int
+}

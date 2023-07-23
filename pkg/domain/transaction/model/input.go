@@ -7,6 +7,7 @@ import (
 	"github.com/e-fish/api/pkg/common/helper/rand"
 	"github.com/e-fish/api/pkg/common/helper/werror"
 	"github.com/e-fish/api/pkg/common/infra/orm"
+	"github.com/e-fish/api/pkg/domain/budidaya/model"
 	errortransaction "github.com/e-fish/api/pkg/domain/transaction/error-transaction"
 	"github.com/google/uuid"
 )
@@ -33,14 +34,17 @@ func (c *CreateOrderInput) Validate() error {
 	return errs.Return()
 }
 
-func (c *CreateOrderInput) ToOrder(userID uuid.UUID) Order {
+func (c *CreateOrderInput) ToOrder(userID uuid.UUID, pricelist model.PriceList) Order {
 	return Order{
 		ID:          uuid.New(),
 		Code:        GenerateCode(),
 		BudidayaID:  c.BudidayaID,
 		UserID:      userID,
 		Qty:         c.Qty,
-		BookingDate: *c.BookingDate,
+		PricelistID: pricelist.ID,
+		Price:       float64(pricelist.Price),
+		Ammout:      float64(pricelist.Price) * float64(c.Qty),
+		BookingDate: c.BookingDate,
 		OrmModel: orm.OrmModel{
 			CreatedAt: time.Now(),
 			CreatedBy: userID,

@@ -30,6 +30,36 @@ type query struct {
 	db *gorm.DB
 }
 
+// ReadPriceListBudidayaByBiggerThanLimitAndBudidayaID implements Query.
+func (q *query) ReadPriceListBudidayaByBiggerThanLimitAndBudidayaID(ctx context.Context, input model.ReadPricelistBudidayaInput) (*model.PriceList, error) {
+	pricelist := model.PriceList{}
+
+	err := q.db.Where("deleted_at IS NULL and budidaya_id = ? AND limit >= ?", input.BudidayaID, input.Qty).Take(&pricelist).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return q.ReadPriceListBudidayaBySmallerThanLimitAndBudidayaID(ctx, input)
+		}
+		return nil, errorbudidaya.ErrReadPricelistData.AttacthDetail(map[string]any{"error": err})
+	}
+	return &pricelist, nil
+}
+
+// ReadPriceListBudidayaBySmallerThanLimitAndBudidayaID implements Query.
+func (q *query) ReadPriceListBudidayaBySmallerThanLimitAndBudidayaID(ctx context.Context, input model.ReadPricelistBudidayaInput) (*model.PriceList, error) {
+	pricelist := model.PriceList{}
+
+	err := q.db.Where("deleted_at IS NULL and budidaya_id = ? AND limit <= ?", input.BudidayaID, input.Qty).Take(&pricelist).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return q.ReadPriceListBudidayaBySmallerThanLimitAndBudidayaID(ctx, input)
+		}
+		return nil, errorbudidaya.ErrFoundPricelist.AttacthDetail(map[string]any{
+			"input": input,
+		})
+	}
+	return &pricelist, nil
+}
+
 // ReadBudidayaCodeActive implements Query.
 func (q *query) ReadBudidayaCodeActive(ctx context.Context) (*string, error) {
 	var (
