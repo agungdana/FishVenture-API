@@ -1,8 +1,11 @@
 package model
 
 import (
+	"fmt"
+
 	"github.com/e-fish/api/pkg/common/infra/orm"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type TeamOutput struct {
@@ -35,6 +38,7 @@ type PondOutput struct {
 	Type          string         `json:"type"`
 	Latitude      float64        `json:"latitude"`
 	Longitude     float64        `json:"longitude"`
+	Url           string         `json:"url"`
 	TeamID        uuid.UUID      `gorm:"size:256" json:"teamID"`
 	Team          *TeamOutput    `json:"team,omitempty" gorm:"foreignKey:TeamID;references:ID"`
 	Status        string         `json:"status"`
@@ -45,6 +49,11 @@ type PondOutput struct {
 
 func (t *PondOutput) TableName() string {
 	return "ponds"
+}
+
+func (t *PondOutput) AfterFind(db *gorm.DB) (err error) {
+	t.Url = fmt.Sprintf("https://www.google.com/maps/search/?api=1&query=%v,%v", t.Latitude, t.Longitude)
+	return
 }
 
 type BerkasOutput struct {

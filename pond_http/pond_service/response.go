@@ -1,6 +1,6 @@
 package pondservice
 
 type UploadPhotoResponse struct {
-	Name string
-	Url  string
+	Name string `json:"name,omitempty"`
+	Url  string `json:"url,omitempty"`
 }
