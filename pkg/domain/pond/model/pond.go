@@ -8,7 +8,6 @@ import (
 )
 
 type UserPond struct {
-	ID                  uuid.UUID `gorm:"primaryKey,size:256"`
 	Name                string
 	VarificationCode    string
 	ExpVerificationCode time.Time

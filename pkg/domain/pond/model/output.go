@@ -26,7 +26,6 @@ func (t *TeamOutput) TableName() string {
 
 type PondOutput struct {
 	ID            uuid.UUID      `gorm:"size:256" json:"id"`
-	UserID        uuid.UUID      `gorm:"size:256" json:"user_id"`
 	User          *UserPond      `json:"user,omitempty"`
 	Name          string         `json:"name"`
 	CountryID     uuid.UUID      `gorm:"size:256" json:"countryID"`
@@ -44,7 +43,6 @@ type PondOutput struct {
 	Status        string         `json:"status"`
 	ListPool      []PoolOutput   `json:"listPool,omitempty" gorm:"foreignKey:PondID;references:ID"`
 	ListBerkas    []BerkasOutput `json:"berkas,omitempty" gorm:"foreignKey:PondID;references:ID"`
-	orm.OrmModel
 }
 
 func (t *PondOutput) TableName() string {
