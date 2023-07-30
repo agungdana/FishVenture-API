@@ -20,10 +20,10 @@ type CreatePondInput struct {
 	Type          string              `json:"type"`
 	Latitude      float64             `json:"latitude"`
 	Longitude     float64             `json:"longitude"`
-	TeamID        uuid.UUID           `gorm:"size:256" json:"teamID"`
+	TeamID        *uuid.UUID          `gorm:"size:256" json:"teamID"`
 	Image         string              `json:"image"`
 	ListPool      []CreatePoolInput   `json:"listPool"`
-	ListBerkas    []CreateBerkasInput `json:"berkas"`
+	ListBerkas    []CreateBerkasInput `json:"listBerkas"`
 }
 
 func (c *CreatePondInput) Validate() error {
@@ -49,25 +49,27 @@ func (c *CreatePondInput) Validate() error {
 	}
 
 	if c.Type == TEAM {
-		if c.TeamID == uuid.Nil {
+		if c.TeamID == nil {
 			errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Team": "empty"}))
 		}
-		errs.Add(ValidateCreateberkasInput(c.ListBerkas))
+		if err := ValidateCreateberkasInput(c.ListBerkas); err != nil {
+			errs.Add(err)
+		}
 	}
 
 	if len(c.ListPool) < 1 {
 		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Pool": "empty"}))
 	}
 
-	errs.Add(ValidateCreatePoolInput(c.ListPool))
+	err := ValidateCreatePoolInput(c.ListPool)
+	if err != nil {
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"err": err}))
+	}
 
 	return errs.Return()
 }
 
-func (c *CreatePondInput) ToPond(userID uuid.UUID) Pond {
-	var (
-		pondID = uuid.New()
-	)
+func (c *CreatePondInput) ToPond(userID, pondID uuid.UUID) Pond {
 
 	return Pond{
 		ID:            pondID,
@@ -116,7 +118,9 @@ func ValidateCreateberkasInput(input []CreateBerkasInput) error {
 	errs := werror.NewError("error validate input")
 
 	for _, v := range input {
-		errs.Add(v.Validate())
+		if err := v.Validate(); err != nil {
+			errs.Add(err)
+		}
 	}
 
 	return errs.Return()
@@ -172,7 +176,10 @@ func ValidateCreatePoolInput(input []CreatePoolInput) error {
 	errs := werror.NewError("error validate input")
 
 	for _, v := range input {
-		errs.Add(v.Validate())
+		err := v.Validate()
+		if err != nil {
+			errs.Add(err)
+		}
 	}
 
 	return errs.Return()

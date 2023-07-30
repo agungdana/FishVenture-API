@@ -5,6 +5,7 @@ import (
 
 	"github.com/e-fish/api/pkg/common/infra/orm"
 	"github.com/e-fish/api/pkg/domain/budidaya/model"
+	pondModel "github.com/e-fish/api/pkg/domain/pond/model"
 	"github.com/google/uuid"
 )
 
@@ -20,6 +21,8 @@ func (u *User) TableName() string {
 type Order struct {
 	ID          uuid.UUID `gorm:"primaryKey,size:256"`
 	Code        string
+	PondID      uuid.UUID
+	Pond        pondModel.Pond
 	BudidayaID  uuid.UUID
 	Budidaya    model.Budidaya
 	UserID      uuid.UUID

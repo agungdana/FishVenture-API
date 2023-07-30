@@ -64,3 +64,9 @@ func (s *Service) CreateOrderInput(ctx context.Context, input model.CreateOrderI
 
 	return result, nil
 }
+
+func (s *Service) ReadOrder(ctx context.Context, input model.ReadInput) (*model.OrderOutputPagination, error) {
+	command := s.repo.NewQuery()
+	result, err := command.ReadOrder(ctx, input)
+	return result, err
+}

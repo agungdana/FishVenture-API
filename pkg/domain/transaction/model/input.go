@@ -38,6 +38,7 @@ func (c *CreateOrderInput) ToOrder(userID uuid.UUID, pricelist model.PriceList) 
 	return Order{
 		ID:          uuid.New(),
 		Code:        GenerateCode(),
+		PondID:      pricelist.Budidaya.PondID,
 		BudidayaID:  c.BudidayaID,
 		UserID:      userID,
 		Qty:         c.Qty,
@@ -59,4 +60,8 @@ func GenerateCode() string {
 	day := today.Weekday().String()
 	newDay := day[0:3]
 	return fmt.Sprintf("%v-%v%d/%v/%v", "OC", year, month, newDay, rand.RandCode(4))
+}
+
+type ReadInput struct {
+	orm.Paginantion
 }

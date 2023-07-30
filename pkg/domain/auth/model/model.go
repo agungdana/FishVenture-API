@@ -2,7 +2,6 @@ package model
 
 import (
 	"github.com/e-fish/api/pkg/common/infra/orm"
-	"github.com/e-fish/api/pkg/domain/pond/model"
 	"github.com/google/uuid"
 )
 
@@ -17,7 +16,6 @@ type User struct {
 	UserRole       []*UserRole
 	UserPermission []*UserPermission
 	PondID         *uuid.UUID `gorm:"primaryKey,size:256"`
-	Pond           model.Pond
 	orm.OrmModel
 }
 

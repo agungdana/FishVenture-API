@@ -23,6 +23,35 @@ func Migrations() {
 
 func Migrate(db *gorm.DB, flag string) error {
 	switch flag {
+	case "update-user-data":
+
+		err := db.Migrator().DropTable(&User{})
+		if err != nil {
+			return err
+		}
+		err = db.Migrator().DropTable(&Pond{})
+
+		return err
+
+	case "update-pond-data":
+		dbTxn := db.Begin()
+		err := dbTxn.Migrator().DropTable(&Pond{})
+		defer func() {
+			if err != nil {
+				dbTxn.Rollback()
+				return
+			}
+			dbTxn.Commit()
+		}()
+		if err != nil {
+			return err
+		}
+
+		err = dbTxn.AutoMigrate(&Pond{})
+		if err != nil {
+			return err
+		}
+		return nil
 	case "initial-data-model":
 		err := db.AutoMigrate(
 			&User{},
@@ -172,12 +201,35 @@ func Migrate(db *gorm.DB, flag string) error {
 			},
 		}
 
+		getOrder := uuid.MustParse("aa19cc95-94da-56a2-9b46-5cfdb42e3985")
+		getOrderPermission := model.Permission{
+			ID:   getOrder,
+			Code: "PM0006",
+			Name: "order",
+			Path: "/order",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("4fc8fc64-382d-5c6e-89c8-d2032c01cfad"),
+					RoleID:         seller,
+					PermissionName: "order",
+					PermissionPath: "/order",
+				},
+				{
+					ID:             uuid.MustParse("6c776404-4df1-5957-8b49-f2764fa60b7e"),
+					RoleID:         buyer,
+					PermissionName: "order",
+					PermissionPath: "/order",
+				},
+			},
+		}
+
 		permission = append(permission,
 			permissionProfile,
 			createOrderPermission,
 			createBudidayaPermission,
 			createPondPermission,
 			getPondSellerPermission,
+			getOrderPermission,
 		)
 
 		db.Save(&permission)
