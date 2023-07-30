@@ -3,6 +3,7 @@ package restsvr
 import (
 	"context"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -43,7 +44,7 @@ func Timeout() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
-		if c.Request.Method == "POST" {
+		if c.Request.Method == "POST" && !strings.Contains(c.Request.URL.Path, "upload-file") {
 			ctx, cancel := context.WithTimeout(ctx, time.Second*3)
 			defer cancel()
 

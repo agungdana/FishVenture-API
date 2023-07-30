@@ -35,6 +35,7 @@ func newRoute(ro route) {
 	ginEngine.Use(static.Serve("/assets/image/pond", static.LocalFile(ro.conf.PondImageConfig.Path, false)))
 
 	ginEngine.POST("/upload-pool-photo", handler.SaveImagePool)
+	ginEngine.POST("/upload-file", handler.SaveImagePond)
 	ginEngine.Use(static.Serve("/assets/image/pool", static.LocalFile(ro.conf.PoolImageConfig.Path, false)))
 
 }
