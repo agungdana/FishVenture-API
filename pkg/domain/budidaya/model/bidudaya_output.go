@@ -31,9 +31,17 @@ type PriceListOutput struct {
 	Price      int            `json:"price,omitempty"`
 }
 
+func (p *PriceListOutput) TableName() string {
+	return "price_lists"
+}
+
 type FishSpeciesOutput struct {
 	ID       uuid.UUID         `gorm:"primaryKey,size:256" json:"id"`
 	Name     string            `json:"name"`
 	Asal     string            `json:"asal"`
 	Budidaya []*BudidayaOutput `gorm:"foreignKey:FishSpeciesID;references:ID" json:"budidaya,omitempty"`
+}
+
+func (p *FishSpeciesOutput) TableName() string {
+	return "fish_species"
 }

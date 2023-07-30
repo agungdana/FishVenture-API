@@ -19,7 +19,7 @@ func newCommand(ctx context.Context, db *gorm.DB, budidayaRepo budidaya.Repo) Co
 	)
 
 	return &command{
-		dbTxn:         dbTxn,
+		dbTxn:         dbTxn.WithContext(ctx),
 		query:         newQuery(dbTxn),
 		budidayaQuery: budidayaRepo.NewQuery(),
 	}

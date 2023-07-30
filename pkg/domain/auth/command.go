@@ -86,6 +86,11 @@ func (c *command) CreateUser(ctx context.Context, input model.CreateUserInput) (
 
 	newUser := input.ToUser()
 
+	if input.ApplicationType == model.SELLER {
+		pondID := uuid.New()
+		newUser.PondID = &pondID
+	}
+
 	err = c.dbTxn.WithContext(ctx).Create(&newUser).Error
 	if err != nil {
 		return nil, errorauth.ErrFailedCreateUser.AttacthDetail(map[string]any{"err": err})

@@ -20,7 +20,7 @@ func newCommand(ctx context.Context, db *gorm.DB, pondRrepo pond.Repo) Command {
 	)
 
 	return &command{
-		dbTxn:     dbTxn,
+		dbTxn:     dbTxn.WithContext(ctx),
 		query:     newQuery(dbTxn),
 		pondQuery: pondRrepo.NewQuery(),
 	}

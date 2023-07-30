@@ -21,4 +21,14 @@ var (
 		Code:    "FailedCreateOrder",
 		Message: "failed create order",
 	}
+
+	ErrFoundOrder = werror.Error{
+		Code:    "FailedFoundOrder",
+		Message: "unable to find what you want",
+	}
+
+	ErrReadOrderData = werror.Error{
+		Code:    "FailedReadOrderData",
+		Message: "unable to read data",
+	}
 )

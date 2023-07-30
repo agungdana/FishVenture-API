@@ -18,7 +18,7 @@ func newCommand(ctx context.Context, db *gorm.DB) Command {
 	)
 
 	return &command{
-		dbTxn: dbTxn,
+		dbTxn: dbTxn.WithContext(ctx),
 		query: newQuery(dbTxn),
 	}
 }

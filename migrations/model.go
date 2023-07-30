@@ -18,8 +18,7 @@ type User struct {
 	Status         *bool
 	UserRole       []*UserRole
 	UserPermission []*UserPermission
-	PondID         *uuid.UUID `gorm:"size:256"`
-	Pond           Pond
+	PondID         uuid.UUID `gorm:"size:256"`
 	orm.OrmModel
 }
 
@@ -87,6 +86,8 @@ type Team struct {
 
 type Pond struct {
 	ID            uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
+	UserID        uuid.UUID `gorm:"size:256"`
+	User          User      `json:"user"`
 	OwnerName     string    `json:"ownerName"`
 	Name          string    `json:"name"`
 	CountryID     uuid.UUID `gorm:"size:256" json:"countryID"`
@@ -167,17 +168,19 @@ type FishSpecies struct {
 type Order struct {
 	ID          uuid.UUID `gorm:"primaryKey,size:256"`
 	Code        string
+	PondID      uuid.UUID `gorm:"size:256"`
+	Pond        Pond
 	BudidayaID  uuid.UUID `gorm:"size:256"`
 	Budidaya    model.Budidaya
 	UserID      uuid.UUID `gorm:"size:256"`
 	User        User
 	Qty         int
-	BookingDate time.Time
-	Status      string
-	PricelistID uuid.UUID
+	BookingDate *time.Time
+	PricelistID uuid.UUID `gorm:"size:256"`
 	Pricelist   model.PriceList
 	Price       float64
 	Ammout      float64
+	Status      string
 	orm.OrmModel
 }
 

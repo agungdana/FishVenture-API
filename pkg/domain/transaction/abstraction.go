@@ -20,5 +20,8 @@ type Command interface {
 }
 
 type Query interface {
+	ReadOrder(ctx context.Context, input model.ReadInput) (*model.OrderOutputPagination, error)
+	ReadOrderByID(ctx context.Context, id uuid.UUID) (*model.OrderOutput, error)
+
 	lock() Query
 }

@@ -18,7 +18,7 @@ func newCommand(ctx context.Context, db *gorm.DB, verificationRepo verification.
 	)
 
 	return &command{
-		dbTxn:            dbTxn,
+		dbTxn:            dbTxn.WithContext(ctx),
 		query:            newQuery(dbTxn),
 		verificationRepo: verificationRepo,
 	}
@@ -83,6 +83,7 @@ func (c *command) UpdatePondStatus(ctx context.Context, input model.UpdatePondSt
 func (c *command) CreatePond(ctx context.Context, input model.CreatePondInput) (*uuid.UUID, error) {
 	var (
 		userID, _ = ctxutil.GetUserID(ctx)
+		pondID, _ = ctxutil.GetPondID(ctx)
 	)
 
 	err := input.Validate()
@@ -90,7 +91,7 @@ func (c *command) CreatePond(ctx context.Context, input model.CreatePondInput) (
 		return nil, err
 	}
 
-	newPond := input.ToPond(userID)
+	newPond := input.ToPond(userID, pondID)
 
 	err = c.dbTxn.Create(&newPond).Error
 	if err != nil {
