@@ -8,6 +8,7 @@ import (
 )
 
 type UserPond struct {
+	ID                  uuid.UUID `gorm:"size:256" json:"id"`
 	Name                string    `json:"name"`
 	VarificationCode    string    `json:"varificationCode"`
 	ExpVerificationCode time.Time `json:"expVerificationCode"`
@@ -33,7 +34,7 @@ type Team struct {
 type Pond struct {
 	ID            uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
 	UserID        uuid.UUID `gorm:"size:256" json:"userID"`
-	User          UserPond 
+	User          UserPond
 	Name          string     `json:"name"`
 	CountryID     uuid.UUID  `gorm:"size:256" json:"countryID"`
 	ProvinceID    uuid.UUID  `gorm:"size:256" json:"provinceID"`
