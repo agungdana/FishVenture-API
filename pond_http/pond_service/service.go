@@ -130,6 +130,22 @@ func (s *Service) SaveImagesPond(ctx context.Context, file *multipart.FileHeader
 
 	return &result, nil
 }
+func (s *Service) SaveFilePond(ctx context.Context, file *multipart.FileHeader) (*UploadFileResponse, error) {
+	ext := filepath.Ext(file.Filename)
+	filename := uuid.New().String() + ext
+	err := savefile.SaveFile(file, s.conf.PondImageConfig.Path+"/"+filename)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := UploadFileResponse{
+		Name: filename,
+		Url:  s.conf.PondImageConfig.Url + filename,
+	}
+
+	return &result, nil
+}
 
 func (s *Service) SaveImagesPool(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
 	ext := filepath.Ext(file.Filename)

@@ -121,6 +121,21 @@ func (h *Handler) SaveImagePond(c *gin.Context) {
 	res.Add(result, err)
 }
 
+func (h *Handler) SaveFilePond(c *gin.Context) {
+	var (
+		ctx = c.Request.Context()
+		res = new(restsvr.HttpResponse)
+	)
+	defer restsvr.ResponsJson(c, res)
+	file, err := c.FormFile("file")
+	if err != nil {
+		res.Add(nil, err)
+		return
+	}
+	result, err := h.Service.SaveFilePond(ctx, file)
+	res.Add(result, err)
+}
+
 func (h *Handler) SaveImagePool(c *gin.Context) {
 	var (
 		ctx = c.Request.Context()
