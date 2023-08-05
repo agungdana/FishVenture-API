@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
+	userModel "github.com/e-fish/api/pkg/domain/auth/model"
 	errorpond "github.com/e-fish/api/pkg/domain/pond/error-pond"
 	"github.com/e-fish/api/pkg/domain/pond/model"
 	"github.com/google/uuid"
@@ -60,8 +61,8 @@ func (q *query) GetListPondSubmission(ctx context.Context) ([]*model.PondOutput,
 	return data, nil
 }
 
-// GetPondByUserPondAdmin implements Query.
-func (q *query) GetPondByUserPondAdmin(ctx context.Context) (*model.PondOutput, error) {
+// GetPondAdmin implements Query.
+func (q *query) GetPondAdmin(ctx context.Context) (*model.PondOutput, error) {
 	var (
 		userID, _ = ctxutil.GetUserID(ctx)
 		pondID, _ = ctxutil.GetPondID(ctx)
@@ -79,17 +80,24 @@ func (q *query) GetPondByUserPondAdmin(ctx context.Context) (*model.PondOutput, 
 	return &data, nil
 }
 
-// GetListPondForUser implements Query.
-func (q *query) GetListPondForUser(ctx context.Context) ([]*model.PondOutput, error) {
+// GetListPond implements Query.
+func (q *query) GetListPond(ctx context.Context) ([]*model.PondOutput, error) {
 	var (
-		data = []*model.PondOutput{}
+		data       = []*model.PondOutput{}
+		appType, _ = ctxutil.GetUserAppType(ctx)
+		db         = q.db
 	)
 
-	err := q.db.Where("deleted_at IS NULL").Find(&data).Error
+	if userModel.BUYER == appType {
+		db = db.Where("status = ?", model.ACTIVED)
+	}
+
+	if userModel.ADMIN == appType {
+		db = db.Preload("Team").Preload("ListBerkas").Preload("ListPool").Order("CASE WHEN status = " + model.SUBMISION + " THEN 1 ELSE 2 END, status")
+	}
+
+	err := db.Where("deleted_at IS NULL").Find(&data).Error
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errorpond.ErrFoundPond
-		}
 		return nil, errorpond.ErrFailedFindPond.AttacthDetail(map[string]any{"error": err})
 	}
 

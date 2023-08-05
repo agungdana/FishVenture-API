@@ -109,3 +109,15 @@ func (h *Handler) GetBudidayaForSeller(c *gin.Context) {
 	result, err := h.Service.GetBudidayaByUserSeller(ctx)
 	res.Add(result, err)
 }
+
+func (h *Handler) GetAllFishSpecies(c *gin.Context) {
+	var (
+		ctx = c.Request.Context()
+		res = new(restsvr.HttpResponse)
+	)
+
+	defer restsvr.ResponsJson(c, res)
+
+	result, err := h.Service.GetAllFishSpecies(ctx)
+	res.Add(result, err)
+}

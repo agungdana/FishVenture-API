@@ -1,8 +1,6 @@
 package budidayahttp
 
 import (
-	"fmt"
-
 	budidayaconfig "github.com/e-fish/api/budidaya_http/budidaya_config"
 	budidayahandler "github.com/e-fish/api/budidaya_http/budidaya_handler"
 	budidayaservice "github.com/e-fish/api/budidaya_http/budidaya_service"
@@ -24,12 +22,11 @@ func newRoute(ro route) {
 		Service: service,
 	}
 
-	fmt.Printf("handler: %v\n", handler)
-
 	ginEngine.POST("/create-budidaya", ctxutil.Authorization(), handler.CreateBudidaya)
 	ginEngine.POST("/create-fish-species", ctxutil.Authorization(), handler.CreateFishSpecies)
 	ginEngine.POST("/create-multiple-pricelist", ctxutil.Authorization(), handler.CreateMultiplePricelist)
 
+	ginEngine.GET("/list-fish-species", handler.GetAllFishSpecies)
 	ginEngine.GET("/list-budidaya-seller", ctxutil.Authorization(), handler.GetBudidayaForSeller)
 	ginEngine.GET("/list-budidaya", ctxutil.Authorization(), handler.GetBudidayaAdminAndCustomer)
 }

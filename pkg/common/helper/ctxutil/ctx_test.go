@@ -51,7 +51,7 @@ func Benchmark_ctxutil(b *testing.B) {
 	}
 
 	ctx = ctxutil.NewRequest(ctx)
-	ctx = ctxutil.SetUserPayload(ctx, userID, pondID, roleID...)
+	ctx = ctxutil.SetUserPayload(ctx, userID, pondID, "", roleID...)
 
 	idUserFromCtx, ok := ctxutil.GetUserID(ctx)
 

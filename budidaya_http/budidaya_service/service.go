@@ -104,12 +104,15 @@ func (s *Service) CreateMultiplePricelist(ctx context.Context, input model.Creat
 
 func (s *Service) GetBudidayaByUserLoginAdminOrCustomer(ctx context.Context, input model.GetBudidayaInput) ([]*model.BudidayaOutput, error) {
 	query := s.repo.NewQuery()
-
 	return query.ReadBudidayaByUserLogin(ctx, input)
 }
 
 func (s *Service) GetBudidayaByUserSeller(ctx context.Context) ([]*model.BudidayaOutput, error) {
 	query := s.repo.NewQuery()
-
 	return query.ReadBudidayaByUserSeller(ctx)
+}
+
+func (s *Service) GetAllFishSpecies(ctx context.Context) ([]*model.FishSpeciesOutput, error) {
+	query := s.repo.NewQuery()
+	return query.ReadAllDataFishSpecies(ctx)
 }
