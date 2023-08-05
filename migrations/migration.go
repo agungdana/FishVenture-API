@@ -223,6 +223,113 @@ func Migrate(db *gorm.DB, flag string) error {
 			},
 		}
 
+		CreateFishSpecies := uuid.MustParse("54c6eb6b-4faa-5e0b-8360-f2674d6ce097")
+		CreateFishSpeciesPermission := model.Permission{
+			ID:   CreateFishSpecies,
+			Code: "PM0007",
+			Name: "create fish species",
+			Path: "/create-fish-species",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("b5fecfec-1602-55fb-8e87-55da3bc6dbc1"),
+					RoleID:         seller,
+					PermissionName: "create fish species",
+					PermissionPath: "/create-fish-species",
+				},
+				{
+					ID:             uuid.MustParse("05cfddc4-e7e6-55a5-93dc-c6358c1a93b5"),
+					RoleID:         admin,
+					PermissionName: "create fish species",
+					PermissionPath: "/create-fish-species",
+				},
+			},
+		}
+
+		createMultiplePriceList := uuid.MustParse("cf7813cd-f911-5f5e-a893-1f549b21f896")
+		createMultiplePriceListPermission := model.Permission{
+			ID:   createMultiplePriceList,
+			Code: "PM0008",
+			Name: "create multiple pricelist",
+			Path: "/create-multiple-pricelist",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("d21c3d7a-f00d-5f70-aa29-21f5b1733bee"),
+					RoleID:         seller,
+					PermissionName: "create multiple pricelist",
+					PermissionPath: "/create-multiple-pricelist",
+				},
+			},
+		}
+
+		listBudidayaSeller := uuid.MustParse("941787f8-55cc-597b-a858-432e12a55b99")
+		listBudidayaSellerPermission := model.Permission{
+			ID:   listBudidayaSeller,
+			Code: "PM0009",
+			Name: "list budidaya seller",
+			Path: "/list-budidaya-seller",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("851f8565-32dd-57aa-84e1-3e9abf0fe24d"),
+					RoleID:         seller,
+					PermissionName: "list budidaya seller",
+					PermissionPath: "/list-budidaya-seller",
+				},
+			},
+		}
+
+		listBudidaya := uuid.MustParse("20f07e9b-d285-5c29-a2e6-413153ea9cd8")
+		listBudidayaPermission := model.Permission{
+			ID:   listBudidaya,
+			Code: "PM0010",
+			Name: "list budidaya",
+			Path: "/list-budidaya",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("550416e6-57ee-5872-b982-2ebdb1a47cc1"),
+					RoleID:         admin,
+					PermissionName: "list budidaya",
+					PermissionPath: "/list-budidaya",
+				}, {
+					ID:             uuid.MustParse("b2ba22e5-34c0-56f7-a8ac-a337d5fa28c3"),
+					RoleID:         buyer,
+					PermissionName: "list budidaya",
+					PermissionPath: "/list-budidaya",
+				},
+			},
+		}
+
+		updatePondStatus := uuid.MustParse("189c5cfd-a737-5fe9-9f3f-3654e666529b")
+		updatePondStatusPermission := model.Permission{
+			ID:   updatePondStatus,
+			Code: "PM0011",
+			Name: "update pond status",
+			Path: "/update-pond-status",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("8c36c2e8-4e09-55e6-80ea-7d8e6d72c20b"),
+					RoleID:         admin,
+					PermissionName: "update pond status",
+					PermissionPath: "/update-pond-status",
+				},
+			},
+		}
+
+		updatePond := uuid.MustParse("ae06c9a8-8f3a-59c7-a10e-57fe682d992d")
+		updatePondPermission := model.Permission{
+			ID:   updatePond,
+			Code: "PM0012",
+			Name: "update pond",
+			Path: "/update-pond",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("84f3d099-a475-5f84-b3c1-55452a403dde"),
+					RoleID:         seller,
+					PermissionName: "update pond",
+					PermissionPath: "/update-pond",
+				},
+			},
+		}
+
 		permission = append(permission,
 			permissionProfile,
 			createOrderPermission,
@@ -230,6 +337,13 @@ func Migrate(db *gorm.DB, flag string) error {
 			createPondPermission,
 			getPondSellerPermission,
 			getOrderPermission,
+			CreateFishSpeciesPermission,
+			createBudidayaPermission,
+			createMultiplePriceListPermission,
+			listBudidayaPermission,
+			listBudidayaSellerPermission,
+			updatePondStatusPermission,
+			updatePondPermission,
 		)
 
 		db.Save(&permission)
