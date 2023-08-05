@@ -40,9 +40,7 @@ func Authentication() gin.HandlerFunc {
 			return
 		}
 
-		ctx = SetUserID(ctx, payload.UserID)
-		ctx = SetRoleID(ctx, payload.UserRole...)
-		ctx = SetPondID(ctx, payload.PondID)
+		ctx = SetUserPayload(ctx, payload.UserID, payload.PondID, payload.AppType, payload.UserRole...)
 
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()

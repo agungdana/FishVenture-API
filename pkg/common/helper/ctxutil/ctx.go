@@ -132,12 +132,13 @@ func SetUserAppType(ctx context.Context, appType string) context.Context {
 }
 
 func GetUserAppType(ctx context.Context) (string, bool) {
-	return fromContextString(ctx, USER_ID)
+	return fromContextString(ctx, AppType)
 }
 
-func SetUserPayload(ctx context.Context, userID, PondID uuid.UUID, roleID ...uuid.UUID) context.Context {
+func SetUserPayload(ctx context.Context, userID, PondID uuid.UUID, appType string, roleID ...uuid.UUID) context.Context {
 	ctx = SetUserID(ctx, userID)
 	ctx = SetPondID(ctx, PondID)
 	ctx = SetRoleID(ctx, roleID...)
+	ctx = SetUserAppType(ctx, appType)
 	return ctx
 }

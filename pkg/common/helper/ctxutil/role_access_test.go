@@ -178,8 +178,9 @@ func Test_ValidateAccessFalse(t *testing.T) {
 
 	ctx := context.Background()
 	userID := uuid.New()
+	appType := ""
 
-	ctx = ctxutil.SetUserPayload(ctx, userID, roleID_2)
+	ctx = ctxutil.SetUserPayload(ctx, userID, roleID_2, appType)
 
 	ok := ctxutil.CanAccess(ctx, "/update")
 
@@ -201,8 +202,9 @@ func Test_ValidateAccessTrue(t *testing.T) {
 
 	ctx := context.Background()
 	userID := uuid.New()
+	appType := ""
 
-	ctx = ctxutil.SetUserPayload(ctx, userID, roleID_1)
+	ctx = ctxutil.SetUserPayload(ctx, userID, roleID_1, appType)
 
 	ok := ctxutil.CanAccess(ctx, "/update")
 
@@ -231,7 +233,7 @@ func Test_UserPermission(t *testing.T) {
 
 	ctx := context.Background()
 
-	ctx = ctxutil.SetUserPayload(ctx, userID_1, roleID_2)
+	ctx = ctxutil.SetUserPayload(ctx, userID_1, roleID_2, "")
 
 	ok := ctxutil.CanAccess(ctx, "/create")
 
@@ -260,7 +262,7 @@ func Benchmark_UserPermission(b *testing.B) {
 
 	ctx := context.Background()
 
-	ctx = ctxutil.SetUserPayload(ctx, userID_1, roleID_2)
+	ctx = ctxutil.SetUserPayload(ctx, userID_1, roleID_2, "")
 
 	ok := ctxutil.CanAccess(ctx, "/create")
 
@@ -290,7 +292,7 @@ func Test_DeleteUserPermission(t *testing.T) {
 
 	ctx := context.Background()
 
-	ctx = ctxutil.SetUserPayload(ctx, userID_1, roleID_2)
+	ctx = ctxutil.SetUserPayload(ctx, userID_1, roleID_2, "")
 
 	ok := ctxutil.CanAccess(ctx, "/create")
 
@@ -329,7 +331,7 @@ func Test_DeleteUserRole(t *testing.T) {
 
 	ctx := context.Background()
 
-	ctx = ctxutil.SetUserPayload(ctx, userID_1, roleID_1)
+	ctx = ctxutil.SetUserPayload(ctx, userID_1, roleID_1, "")
 
 	ok := ctxutil.CanAccess(ctx, "/create")
 

@@ -23,9 +23,9 @@ type Command interface {
 
 type Query interface {
 	GetListPondSubmission(ctx context.Context) ([]*model.PondOutput, error)
-	GetPondByUserPondAdmin(ctx context.Context) (*model.PondOutput, error)
+	GetPondAdmin(ctx context.Context) (*model.PondOutput, error)
 	GetPondByID(ctx context.Context, input uuid.UUID) (*model.PondOutput, error)
-	GetListPondForUser(ctx context.Context) ([]*model.PondOutput, error)
+	GetListPond(ctx context.Context) ([]*model.PondOutput, error)
 
 	lock() Query
 }

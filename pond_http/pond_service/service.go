@@ -101,7 +101,7 @@ func (s *Service) UpdatePondStatus(ctx context.Context, input model.UpdatePondSt
 
 func (s *Service) GetPondByUserID(ctx context.Context) (*model.PondOutput, error) {
 	query := s.repo.NewQuery()
-	return query.GetPondByUserPondAdmin(ctx)
+	return query.GetPondAdmin(ctx)
 }
 
 func (s *Service) GetAllPondSubmission(ctx context.Context) ([]*model.PondOutput, error) {
@@ -109,9 +109,9 @@ func (s *Service) GetAllPondSubmission(ctx context.Context) ([]*model.PondOutput
 	return query.GetListPondSubmission(ctx)
 }
 
-func (s *Service) GetListPondForUser(ctx context.Context) ([]*model.PondOutput, error) {
+func (s *Service) GetListPond(ctx context.Context) ([]*model.PondOutput, error) {
 	query := s.repo.NewQuery()
-	return query.GetListPondForUser(ctx)
+	return query.GetListPond(ctx)
 }
 
 func (s *Service) SaveImagesPond(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {

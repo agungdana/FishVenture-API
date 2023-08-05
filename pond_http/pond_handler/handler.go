@@ -94,7 +94,7 @@ func (h *Handler) GetAllPondSubmission(c *gin.Context) {
 	res.Add(result, err)
 }
 
-func (h *Handler) GetAllPondForUser(c *gin.Context) {
+func (h *Handler) GetAllPond(c *gin.Context) {
 	var (
 		ctx = c.Request.Context()
 		res = new(restsvr.HttpResponse)
@@ -102,7 +102,7 @@ func (h *Handler) GetAllPondForUser(c *gin.Context) {
 
 	defer restsvr.ResponsJson(c, res)
 
-	result, err := h.Service.GetListPondForUser(ctx)
+	result, err := h.Service.GetListPond(ctx)
 	res.Add(result, err)
 }
 

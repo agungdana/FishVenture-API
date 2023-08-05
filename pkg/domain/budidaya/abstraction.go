@@ -32,6 +32,8 @@ type Query interface {
 	ReadBudidayaByUserSeller(ctx context.Context) ([]*model.BudidayaOutput, error)
 	ReadBudidayaCodeActive(ctx context.Context) (*string, error)
 
+	ReadAllDataFishSpecies(ctx context.Context) ([]*model.FishSpeciesOutput, error)
+
 	ReadPriceListBudidayaByBiggerThanLimitAndBudidayaID(ctx context.Context, input model.ReadPricelistBudidayaInput) (*model.PriceList, error)
 	ReadPriceListBudidayaBySmallerThanLimitAndBudidayaID(ctx context.Context, input model.ReadPricelistBudidayaInput) (*model.PriceList, error)
 
