@@ -20,7 +20,6 @@ type CreatePondInput struct {
 	Type          string              `json:"type"`
 	Latitude      float64             `json:"latitude"`
 	Longitude     float64             `json:"longitude"`
-	TeamID        *uuid.UUID          `gorm:"size:256" json:"teamID"`
 	Image         string              `json:"image"`
 	ListPool      []CreatePoolInput   `json:"listPool"`
 	ListBerkas    []CreateBerkasInput `json:"listBerkas"`
@@ -84,7 +83,6 @@ func (c *CreatePondInput) ToPond(userID, pondID uuid.UUID) Pond {
 		Type:          c.Type,
 		Latitude:      c.Latitude,
 		Longitude:     c.Longitude,
-		TeamID:        c.TeamID,
 		Status:        SUBMISION,
 		Image:         c.Image,
 		ListPool:      ListPoolInputToListPool(userID, pondID, c.ListPool),
