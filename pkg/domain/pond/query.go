@@ -93,10 +93,10 @@ func (q *query) GetListPond(ctx context.Context) ([]*model.PondOutput, error) {
 	}
 
 	if userModel.ADMIN == appType {
-		db = db.Preload("Team").Preload("ListBerkas").Preload("ListPool").Order("CASE WHEN status = " + model.SUBMISION + " THEN 1 ELSE 2 END, status")
+		db = db.Preload("Team").Preload("ListBerkas").Preload("ListPool").Order("CASE WHEN status = '" + model.SUBMISION + "' THEN 1 ELSE 2 END, status")
 	}
 
-	err := db.Where("deleted_at IS NULL").Find(&data).Error
+	err := db.Debug().Where("deleted_at IS NULL").Find(&data).Error
 	if err != nil {
 		return nil, errorpond.ErrFailedFindPond.AttacthDetail(map[string]any{"error": err})
 	}
