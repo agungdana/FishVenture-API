@@ -42,6 +42,7 @@ type PondOutput struct {
 	TeamID        uuid.UUID      `gorm:"size:256" json:"teamID"`
 	Team          *TeamOutput    `json:"team,omitempty" gorm:"foreignKey:TeamID;references:ID"`
 	Status        string         `json:"status"`
+	Image         string         `json:"image"`
 	ListPool      []PoolOutput   `json:"listPool,omitempty" gorm:"foreignKey:PondID;references:ID"`
 	ListBerkas    []BerkasOutput `json:"berkas,omitempty" gorm:"foreignKey:PondID;references:ID"`
 }
