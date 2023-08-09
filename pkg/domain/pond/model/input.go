@@ -242,8 +242,8 @@ func (u *UpdatePondInput) ToPond(userID, pondID uuid.UUID) Pond {
 }
 
 type UpdatePondStatus struct {
-	PondID uuid.UUID
-	Status string
+	PondID uuid.UUID `json:"pondID"`
+	Status string    `json:"status"`
 }
 
 func (u *UpdatePondStatus) Validate() error {
