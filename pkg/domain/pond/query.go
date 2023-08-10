@@ -29,7 +29,14 @@ func (q *query) GetPondByID(ctx context.Context, input uuid.UUID) (*model.PondOu
 		data = model.PondOutput{}
 	)
 
-	err := q.db.Where("deleted_at IS NULL and id = ?", input).Take(&data).Error
+	err :=
+		q.db.
+			Where("deleted_at IS NULL and id = ?", input).
+			Preload("Country").
+			Preload("Province").
+			Preload("City").
+			Preload("District").
+			Take(&data).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errorpond.ErrFoundPond
@@ -46,7 +53,14 @@ func (q *query) GetListPondSubmission(ctx context.Context) ([]*model.PondOutput,
 		data = []*model.PondOutput{}
 	)
 
-	err := q.db.Where("deleted_at IS NULL").Preload("Team").Preload("ListPool").Preload("ListBerkas").Find(&data).Error
+	err := q.db.Where("deleted_at IS NULL").
+		Preload("Team").
+		Preload("ListPool").Preload("ListBerkas").
+		Preload("Country").
+		Preload("Province").
+		Preload("City").
+		Preload("District").
+		Find(&data).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errorpond.ErrFoundPond
@@ -69,7 +83,12 @@ func (q *query) GetPondAdmin(ctx context.Context) (*model.PondOutput, error) {
 		data      = model.PondOutput{}
 	)
 
-	err := q.db.Where("deleted_at IS NULL and id = ? and user_id = ?", pondID, userID).Take(&data).Error
+	err := q.db.Where("deleted_at IS NULL and id = ? and user_id = ?", pondID, userID).
+		Preload("Country").
+		Preload("Province").
+		Preload("City").
+		Preload("District").
+		Take(&data).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errorpond.ErrFoundPond
@@ -96,7 +115,12 @@ func (q *query) GetListPond(ctx context.Context) ([]*model.PondOutput, error) {
 		db = db.Preload("Team").Preload("ListBerkas").Preload("ListPool").Order("CASE WHEN status = '" + model.SUBMISION + "' THEN 1 ELSE 2 END, status")
 	}
 
-	err := db.Debug().Where("deleted_at IS NULL").Find(&data).Error
+	err := db.Debug().
+		Preload("Country").
+		Preload("Province").
+		Preload("City").
+		Preload("District").
+		Where("deleted_at IS NULL").Find(&data).Error
 	if err != nil {
 		return nil, errorpond.ErrFailedFindPond.AttacthDetail(map[string]any{"error": err})
 	}

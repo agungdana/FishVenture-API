@@ -6,16 +6,18 @@ import (
 )
 
 type User struct {
-	ID             uuid.UUID `gorm:"primaryKey,size:256"`
-	Name           string
-	Email          string
-	Password       string
-	Phone          string
-	Photo          string
-	Status         *bool
-	UserRole       []*UserRole
-	UserPermission []*UserPermission
-	PondID         *uuid.UUID `gorm:"primaryKey,size:256"`
+	ID                  uuid.UUID `gorm:"primaryKey,size:256"`
+	Name                string
+	Email               string
+	Password            string
+	Phone               string
+	Photo               string
+	Status              *bool
+	VarificationCode    string
+	ExpVerificationCode string
+	UserRole            []*UserRole
+	UserPermission      []*UserPermission
+	PondID              *uuid.UUID `gorm:"primaryKey,size:256"`
 	orm.OrmModel
 }
 
