@@ -65,7 +65,7 @@ type Berkas struct {
 
 type Pool struct {
 	ID     uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
-	PondID uuid.UUID `gorm:"size:256" json:"pond_id"`
+	PondID uuid.UUID `gorm:"size:256" json:"pondID"`
 	Pond   Pond      `json:"pond"`
 	Name   string    `json:"name"`
 	Long   float64   `json:"long"`
