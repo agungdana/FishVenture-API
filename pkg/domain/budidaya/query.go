@@ -115,7 +115,7 @@ func (q *query) ReadBudidayaByUserAdmin(ctx context.Context, input model.GetBudi
 	)
 
 	db = db.Preload("Pool")
-	db = db.Preload("FishSpecies")
+	db = db.Preload("FishSpecies").Preload("PriceList")
 	err := db.Where("deleted_at IS NULL and status <> ? and pond_id = ?", model.END, input.PondID).Find(&res).Error
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (q *query) ReadBudidayaByUserBuyer(ctx context.Context, input model.GetBudi
 	)
 
 	db = db.Preload("Pool")
-	db = db.Preload("FishSpecies")
+	db = db.Preload("FishSpecies").Preload("PriceList")
 	err := db.Where("deleted_at IS NULL and status <> ? and pond_id = ?", model.END, input.PondID).Find(&res).Error
 	if err != nil {
 		return nil, err
@@ -149,7 +149,7 @@ func (q *query) ReadBudidayaByUserSeller(ctx context.Context) ([]*model.Budidaya
 		db        = q.db
 	)
 	db = db.Preload("Pool")
-	db = db.Preload("FishSpecies")
+	db = db.Preload("FishSpecies").Preload("PriceList")
 	err := db.Where("deleted_at IS NULL and pond_id = ? and status <> ?", pondID, model.END).Find(&res).Error
 	if err != nil {
 		return nil, err
