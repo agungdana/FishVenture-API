@@ -26,6 +26,7 @@ type Query interface {
 	GetPondAdmin(ctx context.Context) (*model.PondOutput, error)
 	GetPondByID(ctx context.Context, input uuid.UUID) (*model.PondOutput, error)
 	GetListPond(ctx context.Context) ([]*model.PondOutput, error)
+	GetListPool(ctx context.Context, input uuid.UUID) ([]*model.PoolOutput, error)
 
 	lock() Query
 }

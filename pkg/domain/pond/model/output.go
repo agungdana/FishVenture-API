@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 
-	"github.com/e-fish/api/pkg/common/infra/orm"
 	"github.com/e-fish/api/pkg/domain/region/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -67,7 +66,6 @@ type BerkasOutput struct {
 	Pond   *PondOutput `gorm:"foreignKey:PondID;references:ID" json:"pond,omitempty"`
 	Name   string      `json:"name"`
 	File   string      `json:"file"`
-	orm.OrmModel
 }
 
 func (t *BerkasOutput) TableName() string {
@@ -82,7 +80,6 @@ type PoolOutput struct {
 	Long   float64     `json:"long"`
 	Wide   float64     `json:"wide"`
 	Image  string      `json:"image"`
-	orm.OrmModel
 }
 
 func (t *PoolOutput) TableName() string {

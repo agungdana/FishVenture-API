@@ -40,6 +40,12 @@ var (
 		Code:    "ValidatedFailedFoundPond",
 		Message: "pond not found",
 	}
+
+	ErrFailedFindPool = werror.Error{
+		Code:    "ValidatedFailedFoundPool",
+		Message: "pool not found",
+	}
+
 	ErrCannotUpdateStatusPond = werror.Error{
 		Code:    "CannotUpdateStatusPond",
 		Message: "failed to update status",
