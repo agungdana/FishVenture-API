@@ -23,6 +23,10 @@ type BudidayaOutput struct {
 	PriceList       []*PriceListOutput `gorm:"foreignKey:BudidayaID;references:ID" json:"priceList"`
 }
 
+func (p *BudidayaOutput) TableName() string {
+	return "budidayas"
+}
+
 type PriceListOutput struct {
 	ID         uuid.UUID      `gorm:"primaryKey,size:256" json:"id,omitempty"`
 	BudidayaID uuid.UUID      `json:"budidayaID,omitempty"`
