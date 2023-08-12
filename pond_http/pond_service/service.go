@@ -114,6 +114,11 @@ func (s *Service) GetListPond(ctx context.Context) ([]*model.PondOutput, error) 
 	return query.GetListPond(ctx)
 }
 
+func (s *Service) GetListPool(ctx context.Context, id uuid.UUID) ([]*model.PoolOutput, error) {
+	query := s.repo.NewQuery()
+	return query.GetListPool(ctx, id)
+}
+
 func (s *Service) SaveImagesPond(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext

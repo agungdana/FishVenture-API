@@ -23,6 +23,22 @@ type query struct {
 	db *gorm.DB
 }
 
+// GetListPool implements Query.
+func (q *query) GetListPool(ctx context.Context, input uuid.UUID) ([]*model.PoolOutput, error) {
+
+	pool := []*model.PoolOutput{}
+
+	err := q.db.Where("deleted_at IS NULL and pond_id = ?", input).Find(&pool).Error
+	if err != nil {
+		return nil, errorpond.ErrFailedFindPool.AttacthDetail(map[string]any{
+			"error":   err,
+			"pond-ID": input,
+		})
+	}
+
+	return pool, nil
+}
+
 // GetPondByID implements Query.
 func (q *query) GetPondByID(ctx context.Context, input uuid.UUID) (*model.PondOutput, error) {
 	var (
@@ -88,6 +104,7 @@ func (q *query) GetPondAdmin(ctx context.Context) (*model.PondOutput, error) {
 		Preload("Province").
 		Preload("City").
 		Preload("District").
+		Preload("ListPool").
 		Take(&data).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
