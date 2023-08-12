@@ -32,9 +32,10 @@ func (c *CreateBudidayaInput) Validate() error {
 	return errs.Return()
 }
 
-func (c *CreateBudidayaInput) ToBudidaya(userID, pondID uuid.UUID, code string) Budidaya {
+func (c *CreateBudidayaInput) ToBudidaya(userID, pondID uuid.UUID) Budidaya {
 	return Budidaya{
 		ID:            uuid.New(),
+		Code:          c.Code,
 		PondID:        pondID,
 		PoolID:        c.PoolID,
 		DateOfSeed:    c.DateOfSeed,

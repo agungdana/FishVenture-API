@@ -76,7 +76,7 @@ func (c *command) CreateBudidaya(ctx context.Context, input model.CreateBudidaya
 		}
 	}
 
-	newBudidaya := input.ToBudidaya(userID, pondID, input.Code)
+	newBudidaya := input.ToBudidaya(userID, pondID)
 
 	err = c.dbTxn.Create(&newBudidaya).Error
 	if err != nil {
