@@ -8,7 +8,7 @@ import (
 )
 
 type BudidayaOutput struct {
-	ID              uuid.UUID          `gorm:"primaryKey,size:256" json:"id"`
+	ID              uuid.UUID          `gorm:"pricmaryKey,size:256" json:"id"`
 	PondID          uuid.UUID          `gorm:"size:256" json:"pondID"`
 	PoolID          uuid.UUID          `gorm:"size:256" json:"poolID"`
 	Pool            model.PoolOutput   `gorm:"foreignKey:PoolID;references:ID" json:"pool"`
@@ -20,7 +20,7 @@ type BudidayaOutput struct {
 	EstPanenDate    time.Time          `json:"estPanenDate"`
 	EstPrice        int                `json:"estPrice"`
 	Status          string             `json:"status"`
-	PriceList       []*PriceListOutput `gorm:"foreignKey:BudidayaID;references:ID" json:"priceList"`
+	PriceList       []*PriceListOutput `gorm:"foreignKey:BudidayaID;references:ID" json:"priceList,omitempty"`
 }
 
 func (p *BudidayaOutput) TableName() string {
