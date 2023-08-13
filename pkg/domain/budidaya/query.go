@@ -164,7 +164,7 @@ func (q *query) ReadBudidayaActiveByPoolID(ctx context.Context, input uuid.UUID)
 		res = model.BudidayaOutput{}
 	)
 
-	err := q.db.Where("deleted_at IS NULL and pool_id and status <> ?", input, model.END).Take(&res).Error
+	err := q.db.Where("deleted_at IS NULL and pool_id = ? and status <> ?", input, model.END).Take(&res).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errorbudidaya.ErrFoundBudidaya.AttacthDetail(map[string]any{"poolID": input})

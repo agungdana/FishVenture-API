@@ -71,9 +71,13 @@ func (c *command) CreateBudidaya(ctx context.Context, input model.CreateBudidaya
 			}
 		}
 
-		if code != nil {
-			input.Code = *code
+		if code == nil {
+			newCode, _ := model.GeneratedCodeBudidaya(data.Name, *code)
+			code = &newCode
 		}
+
+		input.Code = *code
+
 	}
 
 	newBudidaya := input.ToBudidaya(userID, pondID)
