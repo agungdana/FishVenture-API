@@ -59,8 +59,10 @@ func (c *UpdateBudidayaStatusInput) ToBudidaya(userID uuid.UUID) Budidaya {
 	today := time.Now()
 
 	return Budidaya{
-		ID:     c.ID,
-		Status: c.Status,
+		ID:           c.ID,
+		Status:       c.Status,
+		EstTonase:    float64(c.EstTonase),
+		EstPanenDate: &c.EstDate,
 		OrmModel: orm.OrmModel{
 			UpdatedBy: &userID,
 			UpdatedAt: &today,
