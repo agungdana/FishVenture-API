@@ -15,9 +15,9 @@ type BudidayaOutput struct {
 	DateOfSeed      time.Time          `json:"dateOfSeed"`
 	FishSpeciesID   uuid.UUID          `json:"fishSpeciesID"`
 	FishSpecies     FishSpeciesOutput  `gorm:"foreignKey:FishSpeciesID;references:ID" json:"fishSpecies,omitempty"`
-	FishSpeciesName string             `json:"fishSpeciesName"`
+	FishSpeciesName string             `json:"fishSpeciesName,omitempty"`
 	EstTonase       float64            `json:"estTonase"`
-	EstPanenDate    time.Time          `json:"estPanenDate"`
+	EstPanenDate    *time.Time         `json:"estPanenDate,omitempty"`
 	EstPrice        int                `json:"estPrice"`
 	Status          string             `json:"status"`
 	PriceList       []*PriceListOutput `gorm:"foreignKey:BudidayaID;references:ID" json:"priceList,omitempty"`
@@ -28,11 +28,11 @@ func (p *BudidayaOutput) TableName() string {
 }
 
 type PriceListOutput struct {
-	ID         uuid.UUID      `gorm:"primaryKey,size:256" json:"id,omitempty"`
-	BudidayaID uuid.UUID      `json:"budidayaID,omitempty"`
-	Budidaya   BudidayaOutput `gorm:"foreignKey:BudidayaID;references:ID" json:"budidaya,omitempty"`
-	Limit      int            `json:"limit,omitempty"`
-	Price      int            `json:"price,omitempty"`
+	ID         uuid.UUID       `gorm:"primaryKey,size:256" json:"id,omitempty"`
+	BudidayaID *uuid.UUID      `json:"budidayaID,omitempty"`
+	Budidaya   *BudidayaOutput `gorm:"foreignKey:BudidayaID;references:ID" json:"budidaya,omitempty"`
+	Limit      int             `json:"limit,omitempty"`
+	Price      int             `json:"price,omitempty"`
 }
 
 func (p *PriceListOutput) TableName() string {

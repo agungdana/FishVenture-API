@@ -92,7 +92,10 @@ func (c *CreateMultiplePriceListInput) Validate() error {
 		v.BudidayaID = c.BudidayaID
 		v.EstTonase = c.EstTonase
 		v.EstDate = c.EstDate
-		errs.Add(errorbudidaya.ErrValidateMultipleInputPriceList.AttacthDetail(map[string]any{"limit": v.Limit, "error": v.Validate()}))
+		err := v.Validate()
+		if err != nil {
+			errs.Add(errorbudidaya.ErrValidateMultipleInputPriceList.AttacthDetail(map[string]any{"limit": v.Limit, "error": err}))
+		}
 	}
 
 	return errs.Return()
