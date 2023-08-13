@@ -11,10 +11,10 @@ type BudidayaOutput struct {
 	ID              uuid.UUID          `gorm:"pricmaryKey,size:256" json:"id"`
 	PondID          uuid.UUID          `gorm:"size:256" json:"pondID"`
 	PoolID          uuid.UUID          `gorm:"size:256" json:"poolID"`
-	Pool            model.PoolOutput   `gorm:"foreignKey:PoolID;references:ID" json:"pool"`
+	Pool            model.PoolOutput   `gorm:"foreignKey:PoolID;references:ID" json:"pool,omitempty"`
 	DateOfSeed      time.Time          `json:"dateOfSeed"`
 	FishSpeciesID   uuid.UUID          `json:"fishSpeciesID"`
-	FishSpecies     FishSpeciesOutput  `gorm:"foreignKey:FishSpeciesID;references:ID" json:"fishSpecies"`
+	FishSpecies     FishSpeciesOutput  `gorm:"foreignKey:FishSpeciesID;references:ID" json:"fishSpecies,omitempty"`
 	FishSpeciesName string             `json:"fishSpeciesName"`
 	EstTonase       float64            `json:"estTonase"`
 	EstPanenDate    time.Time          `json:"estPanenDate"`
