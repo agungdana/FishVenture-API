@@ -42,13 +42,15 @@ func (q *query) ReadOrder(ctx context.Context, input model.ReadInput) (*model.Or
 		appType, _ = ctxutil.GetUserAppType(ctx)
 	)
 
+	input.ObjectTable = model.Order{}
+
 	db = db.Where("deleted_at is NULL")
 
 	switch appType {
 	case userModel.BUYER:
-		db = db.Where("user_id = ?", userID)
+		db = db.Where("user_id = ?", userID).Preload("Budidaya.Pond")
 	case userModel.SELLER:
-		db = db.Where("pond_id = ?", pondID)
+		db = db.Where("pond_id = ?", pondID).Preload("Budidaya.Pool").Preload("User")
 	}
 
 	err := db.Scopes(orm.Paginate(db, &input.Paginantion)).Find(&order).Error

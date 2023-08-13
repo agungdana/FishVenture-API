@@ -39,9 +39,9 @@ func (p *Paginantion) setSort() {
 
 	switch p.Direction {
 	case "", "desc":
-		p.Sort = p.Sort + "DESC"
+		p.Sort = p.Sort + " DESC"
 	case "asc":
-		p.Sort = p.Sort + "ASC"
+		p.Sort = p.Sort + " ASC"
 	}
 
 }
@@ -57,7 +57,7 @@ func (p *Paginantion) setTotalRows(totalRows int64) {
 func Paginate(db *gorm.DB, pagination *Paginantion) func(db *gorm.DB) *gorm.DB {
 	var totalRows int64
 
-	db = db.Model(pagination.ObjectTable)
+	db = db.Model(&pagination.ObjectTable)
 
 	if pagination.Keyword != "" {
 		db = db.Where(pagination.FindBy+" ?", pagination.Keyword)

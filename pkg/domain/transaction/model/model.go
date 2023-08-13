@@ -10,8 +10,8 @@ import (
 )
 
 type User struct {
-	ID   uuid.UUID `gorm:"primaryKey,size:256"`
-	Name string
+	ID   uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
+	Name string    `json:"name"`
 }
 
 func (u *User) TableName() string {
