@@ -24,7 +24,7 @@ type Budidaya struct {
 	FishSpecies     FishSpecies
 	FishSpeciesName string
 	EstTonase       float64
-	EstPanenDate    time.Time
+	EstPanenDate    *time.Time
 	EstPrice        int
 	Status          string
 	PriceList       []*PriceList

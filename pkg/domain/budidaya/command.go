@@ -72,7 +72,7 @@ func (c *command) CreateBudidaya(ctx context.Context, input model.CreateBudidaya
 		}
 
 		if code == nil {
-			newCode, _ := model.GeneratedCodeBudidaya(data.Name, *code)
+			newCode, _ := model.GeneratedCodeBudidaya(data.Name, "")
 			code = &newCode
 		}
 
