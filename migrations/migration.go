@@ -162,7 +162,7 @@ func Migrate(db *gorm.DB, flag string) error {
 			RolePermission: []*model.RolePermission{
 				{
 					ID:             uuid.MustParse("33120128-4910-54bd-8a8e-0f3ab0db8650"),
-					RoleID:         buyer,
+					RoleID:         seller,
 					PermissionName: "create budidaya",
 					PermissionPath: "/create-budidaya",
 				},
@@ -334,11 +334,11 @@ func Migrate(db *gorm.DB, flag string) error {
 			permissionProfile,
 			createOrderPermission,
 			createBudidayaPermission,
+			createBudidayaPermission,
 			createPondPermission,
 			getPondSellerPermission,
 			getOrderPermission,
 			CreateFishSpeciesPermission,
-			createBudidayaPermission,
 			createMultiplePriceListPermission,
 			listBudidayaPermission,
 			listBudidayaSellerPermission,

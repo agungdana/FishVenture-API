@@ -81,7 +81,7 @@ func (q *query) ReadBudidayaCodeActive(ctx context.Context) (*string, error) {
 		return &budidaya.Code, nil
 	}
 
-	err = db.Where("deleted_at IS NULL and pond_id = ? and status = ?", model.END).First(&budidaya).Error
+	err = db.Where("deleted_at IS NULL and pond_id = ? and status = ?", pondID, model.END).First(&budidaya).Error
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errorbudidaya.ErrFoundBudidayaCode
