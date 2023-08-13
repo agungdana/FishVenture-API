@@ -46,6 +46,7 @@ func (c *CreateOrderInput) ToOrder(userID uuid.UUID, pricelist model.PriceList) 
 		Price:       float64(pricelist.Price),
 		Ammout:      float64(pricelist.Price) * float64(c.Qty),
 		BookingDate: c.BookingDate,
+		Status:      ACTIVE,
 		OrmModel: orm.OrmModel{
 			CreatedAt: time.Now(),
 			CreatedBy: userID,
