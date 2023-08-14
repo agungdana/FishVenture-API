@@ -177,10 +177,11 @@ func (q *query) ReadBudidayaActiveByPoolID(ctx context.Context, input uuid.UUID)
 
 func (q *query) ReadAllDataFishSpecies(ctx context.Context) ([]*model.FishSpeciesOutput, error) {
 	var (
-		res = []*model.FishSpeciesOutput{}
+		res       = []*model.FishSpeciesOutput{}
+		userID, _ = ctxutil.GetUserID(ctx)
 	)
 
-	err := q.db.Where("deleted_at IS NULL").Find(&res).Error
+	err := q.db.Debug().Where("deleted_at IS NULL and created_by = ?", userID).Find(&res).Error
 	if err != nil {
 		return nil, errorbudidaya.ErrFailedReadBudidaya.AttacthDetail(map[string]any{"error": err})
 	}
