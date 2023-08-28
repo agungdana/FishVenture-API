@@ -192,3 +192,23 @@ func (s *Service) SaveImages(ctx context.Context, file *multipart.FileHeader) (*
 
 	return &result, nil
 }
+
+func (s *Service) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*uuid.UUID, error) {
+	command := s.repo.NewCommand(ctx)
+
+	result, err := command.UpdateUser(ctx, input)
+	if err != nil {
+		if err := command.Rollback(ctx); err != nil {
+			logger.ErrorWithContext(ctx, "can't rollback transaction err: %v", err)
+		}
+		logger.ErrorWithContext(ctx, "error update user err: %v", err)
+		return nil, err
+	}
+
+	if err := command.Commit(ctx); err != nil {
+		logger.ErrorWithContext(ctx, "error update user err: %v", err)
+		return nil, err
+	}
+
+	return result, nil
+}
