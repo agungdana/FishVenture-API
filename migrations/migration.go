@@ -330,7 +330,7 @@ func Migrate(db *gorm.DB, flag string) error {
 			},
 		}
 
-		updateUser := uuid.MustParse("ecaf8304-9c34-5642-9459-1f4bb84a9967d")
+		updateUser := uuid.MustParse("4017a3d6-cbbc-4b6a-9c01-58e1fe1e9e06")
 		updateUserPermission := model.Permission{
 			ID:   updateUser,
 			Code: "PM0013",
@@ -338,17 +338,17 @@ func Migrate(db *gorm.DB, flag string) error {
 			Path: "/update-user",
 			RolePermission: []*model.RolePermission{
 				{
-					ID:             uuid.MustParse("0c43c9b8-1f46-595d-89b3-d2d72fc4b476"),
+					ID:             uuid.MustParse("182df938-6615-410e-9bae-35736286dba6"),
 					RoleID:         seller,
 					PermissionName: "update user",
 					PermissionPath: "/update-user",
 				}, {
-					ID:             uuid.MustParse("08863034-9ebf-5b1e-a49a-7772828cc353"),
+					ID:             uuid.MustParse("75742bec-e7d7-454c-93f8-1f9ca9904d92"),
 					RoleID:         admin,
 					PermissionName: "update user",
 					PermissionPath: "/update-user",
 				}, {
-					ID:             uuid.MustParse("5ca6783c-d21c-599b-9e5b-c8d82e784965"),
+					ID:             uuid.MustParse("196f5fd3-8814-4d97-8ad1-dbc296009cf3"),
 					RoleID:         buyer,
 					PermissionName: "update user",
 					PermissionPath: "/update-user",
