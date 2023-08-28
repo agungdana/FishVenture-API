@@ -330,6 +330,32 @@ func Migrate(db *gorm.DB, flag string) error {
 			},
 		}
 
+		updateUser := uuid.MustParse("ecaf8304-9c34-5642-9459-1f4bb84a9967d")
+		updateUserPermission := model.Permission{
+			ID:   updateUser,
+			Code: "PM0013",
+			Name: "update user",
+			Path: "/update-user",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("0c43c9b8-1f46-595d-89b3-d2d72fc4b476"),
+					RoleID:         seller,
+					PermissionName: "update user",
+					PermissionPath: "/update-user",
+				}, {
+					ID:             uuid.MustParse("08863034-9ebf-5b1e-a49a-7772828cc353"),
+					RoleID:         admin,
+					PermissionName: "update user",
+					PermissionPath: "/update-user",
+				}, {
+					ID:             uuid.MustParse("5ca6783c-d21c-599b-9e5b-c8d82e784965"),
+					RoleID:         buyer,
+					PermissionName: "update user",
+					PermissionPath: "/update-user",
+				},
+			},
+		}
+
 		permission = append(permission,
 			permissionProfile,
 			createOrderPermission,
@@ -344,6 +370,7 @@ func Migrate(db *gorm.DB, flag string) error {
 			listBudidayaSellerPermission,
 			updatePondStatusPermission,
 			updatePondPermission,
+			updateUserPermission,
 		)
 
 		db.Save(&permission)

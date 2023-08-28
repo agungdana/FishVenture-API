@@ -24,7 +24,7 @@ func newRoute(ro route) {
 	}
 
 	ginEngine.POST("/register", handler.CreateUser)
-	ginEngine.POST("/update-user", ctxutil.Authorization())
+	ginEngine.POST("/update-user", ctxutil.Authorization(), handler.UpdateUser)
 	ginEngine.POST("/delete-user", ctxutil.Authorization())
 	ginEngine.POST("/add-user-permission", ctxutil.Authorization())
 	ginEngine.POST("/delete-user-permission/id", ctxutil.Authorization())
