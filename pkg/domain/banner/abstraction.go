@@ -1,8 +1,10 @@
 package banner
+
 import (
 	"context"
 
 	"github.com/e-fish/api/pkg/domain/banner/model"
+	"github.com/google/uuid"
 )
 
 type Repo interface {
@@ -11,6 +13,9 @@ type Repo interface {
 }
 
 type Command interface {
+	CreateBanner(ctx context.Context, input model.BannerInputCreate) (*uuid.UUID, error)
+	UpdateBanner(ctx context.Context, input model.BannerInputUpdate) (*uuid.UUID, error)
+
 	Rollback(ctx context.Context) error
 	Commit(ctx context.Context) error
 }

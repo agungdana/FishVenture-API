@@ -357,6 +357,38 @@ func Migrate(db *gorm.DB, flag string) error {
 			},
 		}
 
+		createBanner := uuid.MustParse("9708d038-6be0-556e-9ffe-a2855178538a")
+		createBannerPermission := model.Permission{
+			ID:   createBanner,
+			Code: "PM0014",
+			Name: "create banner",
+			Path: "/create-banner",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("2814db86-955b-55dd-9a20-d9d126d2389e"),
+					RoleID:         admin,
+					PermissionName: "create banner",
+					PermissionPath: "/create-banner",
+				},
+			},
+		}
+
+		updateBanner := uuid.MustParse("e8d67381-841c-5c79-867d-fa270dcdede2")
+		updateBannerPermission := model.Permission{
+			ID:   updateBanner,
+			Code: "PM0015",
+			Name: "update banner",
+			Path: "/update-banner",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("cf1181c4-f3e8-5594-84df-a79871cebaa7"),
+					RoleID:         admin,
+					PermissionName: "update banner",
+					PermissionPath: "/update-banner",
+				},
+			},
+		}
+
 		permission = append(permission,
 			permissionProfile,
 			createOrderPermission,
@@ -372,6 +404,8 @@ func Migrate(db *gorm.DB, flag string) error {
 			updatePondStatusPermission,
 			updatePondPermission,
 			updateUserPermission,
+			createBannerPermission,
+			updateBannerPermission,
 		)
 
 		db.Save(&permission)
