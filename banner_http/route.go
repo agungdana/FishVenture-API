@@ -26,8 +26,7 @@ func newRoute(ro route) {
 	ginEngine.GET("/banner", handler.GetListBanner)
 	ginEngine.POST("/update-banner", ctxutil.Authorization(), handler.UpdateBanner)
 	ginEngine.POST("/create-banner", ctxutil.Authorization(), handler.CreateBanner)
-	ginEngine.POST("/create-banner", ctxutil.Authorization(), handler.CreateBanner)
 
-	ginEngine.POST("/upload-file", handler.SaveImageBanner)
+	ginEngine.POST("/upload-banner", handler.SaveImageBanner)
 	ginEngine.Use(static.Serve("/assets/image/banner", static.LocalFile(ro.conf.BannerImageConfig.Path, false)))
 }
