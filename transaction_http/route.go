@@ -24,5 +24,9 @@ func newRoute(ro route) {
 	}
 
 	ginEngine.POST("/create-order", ctxutil.Authorization(), handler.CreateOrder)
+	ginEngine.POST("/update-order-cancel", ctxutil.Authorization(), handler.UpdateOrderCancel)
+	ginEngine.POST("/update-order-success", ctxutil.Authorization(), handler.UpdateSuccessOrder)
 	ginEngine.GET("/order", ctxutil.Authorization(), handler.GetOrder)
+	ginEngine.GET("/order-cancel", ctxutil.Authorization(), handler.GetOrderCancel)
+	ginEngine.GET("/order-success", ctxutil.Authorization(), handler.GetOrderSuccess)
 }

@@ -14,6 +14,8 @@ type Repo interface {
 
 type Command interface {
 	CreateOrder(ctx context.Context, input model.CreateOrderInput) (*uuid.UUID, error)
+	UpdateCancelOrder(ctx context.Context, input uuid.UUID) (*uuid.UUID, error)
+	UpdateSuccesOrder(ctx context.Context, input uuid.UUID) (*uuid.UUID, error)
 
 	Rollback(ctx context.Context) error
 	Commit(ctx context.Context) error
@@ -21,6 +23,7 @@ type Command interface {
 
 type Query interface {
 	ReadOrder(ctx context.Context, input model.ReadInput) (*model.OrderOutputPagination, error)
+	ReadOrderByStatus(ctx context.Context, input model.ReadInput, status string) (*model.OrderOutputPagination, error)
 	ReadOrderByID(ctx context.Context, id uuid.UUID) (*model.OrderOutput, error)
 
 	lock() Query

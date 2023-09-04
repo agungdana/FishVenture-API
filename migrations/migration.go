@@ -389,6 +389,85 @@ func Migrate(db *gorm.DB, flag string) error {
 			},
 		}
 
+		updateCancelOrder := uuid.MustParse("60ca4c5b-9c16-53b4-b403-d0b7fadeb3b6")
+		updateCancelOrderPermission := model.Permission{
+			ID:   updateCancelOrder,
+			Code: "PM0016",
+			Name: "update cancel order",
+			Path: "/update-order-cancel",
+			RolePermission: []*model.RolePermission{{
+				ID:             uuid.MustParse("bfc634db-bc90-51df-b8ef-b592675d9b9f"),
+				RoleID:         buyer,
+				PermissionName: "update cancel order",
+				PermissionPath: "/update-order-cancel",
+			}},
+		}
+
+		UpdateSuccessOrder := uuid.MustParse("177141be-21a6-5ea3-8b28-68ecf1487a07")
+		UpdateSuccessOrderPermission := model.Permission{
+			ID:   UpdateSuccessOrder,
+			Code: "PM0017",
+			Name: "update success order",
+			Path: "/update-order-success",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("ce82bb38-b872-59b1-8b5b-0b67efb1a078"),
+					RoleID:         seller,
+					PermissionName: "update success order",
+					PermissionPath: "/update-order-success",
+				}, {
+					ID:             uuid.MustParse("0ba03e3a-ba7b-5370-bcbf-d073713e88b0"),
+					RoleID:         buyer,
+					PermissionName: "update success order",
+					PermissionPath: "/update-order-success",
+				},
+			},
+		}
+
+		getOrderCancel := uuid.MustParse("47eb02a8-0150-5351-a9ba-d2a48c020ec5")
+		getOrderCancelPermission := model.Permission{
+			ID:   getOrderCancel,
+			Code: "PM0018",
+			Name: "order cancel",
+			Path: "/order-cancel",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("0a587772-c6d4-59d2-a382-6ac7291b8cae"),
+					RoleID:         seller,
+					PermissionName: "order cancel",
+					PermissionPath: "/order-cancel",
+				},
+				{
+					ID:             uuid.MustParse("9192bb3f-8116-5e84-9eaa-d1b09e5329a5"),
+					RoleID:         buyer,
+					PermissionName: "order cancel",
+					PermissionPath: "/order-cancel",
+				},
+			},
+		}
+
+		getOrderSuccess := uuid.MustParse("7245c3d1-7f9e-51a3-990c-ced81ab3c0ab")
+		getOrderSuccessPermission := model.Permission{
+			ID:   getOrderSuccess,
+			Code: "PM0019",
+			Name: "order success",
+			Path: "/order-succes",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("4901dad9-4223-5b07-a880-bcd506ab63d0"),
+					RoleID:         seller,
+					PermissionName: "order success",
+					PermissionPath: "/order-succes",
+				},
+				{
+					ID:             uuid.MustParse("77816b2e-3c92-5f79-afd1-9040a3c523b5"),
+					RoleID:         buyer,
+					PermissionName: "order success",
+					PermissionPath: "/order-succes",
+				},
+			},
+		}
+
 		permission = append(permission,
 			permissionProfile,
 			createOrderPermission,
@@ -406,6 +485,10 @@ func Migrate(db *gorm.DB, flag string) error {
 			updateUserPermission,
 			createBannerPermission,
 			updateBannerPermission,
+			updateCancelOrderPermission,
+			UpdateSuccessOrderPermission,
+			getOrderCancelPermission,
+			getOrderSuccessPermission,
 		)
 
 		db.Save(&permission)

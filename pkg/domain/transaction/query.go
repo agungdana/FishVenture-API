@@ -77,6 +77,52 @@ func (q *query) ReadOrder(ctx context.Context, input model.ReadInput) (*model.Or
 	return &pagination, nil
 }
 
+// ReadOrder implements Query.
+func (q *query) ReadOrderByStatus(ctx context.Context, input model.ReadInput, status string) (*model.OrderOutputPagination, error) {
+	var (
+		order      []*model.OrderOutput
+		pagination model.OrderOutputPagination
+		db         = q.db
+		userID, _  = ctxutil.GetUserID(ctx)
+		pondID, _  = ctxutil.GetPondID(ctx)
+		appType, _ = ctxutil.GetUserAppType(ctx)
+	)
+
+	input.ObjectTable = model.Order{}
+
+	db = db.Where("deleted_at is NULL and status = ?", status)
+
+	switch appType {
+	case userModel.BUYER:
+		db = db.Where("user_id = ?", userID).Preload("Budidaya.Pond")
+	case userModel.SELLER:
+		db = db.Where("pond_id = ?", pondID).Preload("Budidaya.Pool").Preload("User")
+	}
+
+	err := db.Scopes(orm.Paginate(db, &input.Paginantion)).Find(&order).Error
+	if err != nil {
+		return nil, errortransaction.ErrReadOrderData.AttacthDetail(map[string]any{"error": err})
+	}
+
+	if len(order) < 1 {
+		return nil, errortransaction.ErrFoundOrder
+	}
+
+	pagination = model.OrderOutputPagination{
+		FindBy:    input.FindBy,
+		Keyword:   input.Keyword,
+		Limit:     input.Limit,
+		Page:      input.Page,
+		Sort:      input.Sort,
+		Direction: input.Direction,
+		TotalRows: input.TotalRows,
+		TotalPage: input.TotalPage,
+		Rows:      order,
+	}
+
+	return &pagination, nil
+}
+
 // ReadOrderByID implements Query.
 func (q *query) ReadOrderByID(ctx context.Context, id uuid.UUID) (*model.OrderOutput, error) {
 	var order model.OrderOutput
