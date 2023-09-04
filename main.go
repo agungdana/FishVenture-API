@@ -13,13 +13,17 @@ import (
 )
 
 func main() {
+	//1
 	ptime.SetDefaultTimeToUTC()
 
 	//get main config
+	//1
 	conf := mainconfig.GetConfig()
+	//1
 	logger.SetupLogger(conf.Debug)
 
 	//create new route
+	//1
 	restsvr.NewRoute(conf.AppConfig)
 
 	//register auth http in main
@@ -32,7 +36,10 @@ func main() {
 	transactionhttp.NewTransactionHttp()
 	//register region http in main
 	regionhttp.NewRegionHttp()
+	//register banner http in main
+	regionhttp.NewRegionHttp()
 
+	//1
 	restsvr.Run()
 
 }

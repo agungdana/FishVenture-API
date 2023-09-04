@@ -53,7 +53,8 @@ func Migrate(db *gorm.DB, flag string) error {
 		}
 		return nil
 	case "initial-data-model":
-		err := db.AutoMigrate(
+		err := db.Debug().AutoMigrate(
+			&Pond{},
 			&User{},
 			&Role{},
 			&Permission{},
@@ -61,7 +62,6 @@ func Migrate(db *gorm.DB, flag string) error {
 			&UserRole{},
 			&UserPermission{},
 			&Team{},
-			&Pond{},
 			&Berkas{},
 			&Pool{},
 			&Budidaya{},
@@ -72,6 +72,7 @@ func Migrate(db *gorm.DB, flag string) error {
 			&Province{},
 			&City{},
 			&District{},
+			&Banner{},
 		)
 		if err != nil {
 			logger.Info("Error Auto Migreate: %v", err)
