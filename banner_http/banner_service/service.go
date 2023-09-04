@@ -2,9 +2,12 @@ package bannerService
 
 import (
 	"context"
+	"mime/multipart"
+	"path/filepath"
 
 	bannerconfig "github.com/e-fish/api/banner_http/banner_config"
 	"github.com/e-fish/api/pkg/common/helper/logger"
+	"github.com/e-fish/api/pkg/common/helper/savefile"
 	"github.com/e-fish/api/pkg/domain/banner"
 	"github.com/e-fish/api/pkg/domain/banner/model"
 	"github.com/google/uuid"
@@ -71,4 +74,21 @@ func (s *Service) UpdateBanner(ctx context.Context, input model.BannerInputUpdat
 		logger.ErrorWithContext(ctx, "failed commit update banner with id [%v] - err [%v]", input.ID, err)
 	}
 	return result, nil
+}
+
+func (s *Service) SaveImageBanner(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
+	ext := filepath.Ext(file.Filename)
+	filename := uuid.New().String() + ext
+	err := savefile.SaveFile(file, s.conf.BannerImageConfig.Path+"/"+filename)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := UploadPhotoResponse{
+		Name: filename,
+		Url:  s.conf.BannerImageConfig.Url + filename,
+	}
+
+	return &result, nil
 }

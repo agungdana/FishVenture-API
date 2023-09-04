@@ -16,7 +16,8 @@ var (
 )
 
 type BannerConfig struct {
-	BannerDBConfig config.DbConfig
+	BannerImageConfig config.ImageConfig
+	BannerDBConfig    config.DbConfig
 }
 
 func getConfig() *BannerConfig {
@@ -35,6 +36,9 @@ func getConfig() *BannerConfig {
 			password := os.Getenv("DB_PASSWORD")
 			port := os.Getenv("DB_PORT")
 
+			bannerImagePath := os.Getenv("PATH_IMAGE_BANNER")
+			bannerImageUrl := os.Getenv("URL_IMAGE_BANNER")
+
 			conf = &BannerConfig{
 				BannerDBConfig: config.DbConfig{
 					Driver:   driver,
@@ -43,6 +47,10 @@ func getConfig() *BannerConfig {
 					Password: password,
 					Database: database,
 					Port:     port,
+				},
+				BannerImageConfig: config.ImageConfig{
+					Url:  bannerImageUrl,
+					Path: bannerImagePath,
 				},
 			}
 		})
