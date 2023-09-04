@@ -451,19 +451,19 @@ func Migrate(db *gorm.DB, flag string) error {
 			ID:   getOrderSuccess,
 			Code: "PM0019",
 			Name: "order success",
-			Path: "/order-succes",
+			Path: "/order-success",
 			RolePermission: []*model.RolePermission{
 				{
 					ID:             uuid.MustParse("4901dad9-4223-5b07-a880-bcd506ab63d0"),
 					RoleID:         seller,
 					PermissionName: "order success",
-					PermissionPath: "/order-succes",
+					PermissionPath: "/order-success",
 				},
 				{
 					ID:             uuid.MustParse("77816b2e-3c92-5f79-afd1-9040a3c523b5"),
 					RoleID:         buyer,
-					PermissionName: "order success",
-					PermissionPath: "/order-succes",
+					PermissionName: "order successs",
+					PermissionPath: "/order-success",
 				},
 			},
 		}
