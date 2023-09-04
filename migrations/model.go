@@ -220,3 +220,11 @@ type District struct {
 	IsCoverage bool
 	orm.OrmModel
 }
+
+type Banner struct {
+	ID          uuid.UUID `gorm:"primaryKey,size:256"`
+	Name        string
+	Link        string
+	Description string
+	orm.OrmModel
+}
