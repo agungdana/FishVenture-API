@@ -2,6 +2,7 @@ package main
 
 import (
 	authhttp "github.com/e-fish/api/auth_http"
+	bannerhttp "github.com/e-fish/api/banner_http"
 	budidayahttp "github.com/e-fish/api/budidaya_http"
 	mainconfig "github.com/e-fish/api/main_config"
 	"github.com/e-fish/api/pkg/common/helper/logger"
@@ -37,7 +38,7 @@ func main() {
 	//register region http in main
 	regionhttp.NewRegionHttp()
 	//register banner http in main
-	regionhttp.NewRegionHttp()
+	bannerhttp.NewRegionHttp()
 
 	//1
 	restsvr.Run()
