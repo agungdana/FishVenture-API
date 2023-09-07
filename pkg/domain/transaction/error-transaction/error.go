@@ -31,4 +31,9 @@ var (
 		Code:    "FailedReadOrderData",
 		Message: "unable to read data",
 	}
+
+	ErrUpdateOrderStatus = werror.Error{
+		Code:    "FailedUpdateOrderStatus",
+		Message: "failed update order status",
+	}
 )

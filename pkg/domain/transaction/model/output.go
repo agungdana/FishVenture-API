@@ -25,7 +25,7 @@ type OrderOutput struct {
 }
 
 func (*OrderOutput) TableName() string {
-	return "order"
+	return "orders"
 }
 
 type OrderOutputPagination struct {

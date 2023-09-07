@@ -2,8 +2,11 @@ package transaction
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
+	"github.com/e-fish/api/pkg/common/helper/werror"
 	"github.com/e-fish/api/pkg/common/infra/orm"
 	"github.com/e-fish/api/pkg/domain/budidaya"
 	modelBudidaya "github.com/e-fish/api/pkg/domain/budidaya/model"
@@ -29,6 +32,82 @@ type command struct {
 	dbTxn         *gorm.DB
 	query         Query
 	budidayaQuery budidaya.Query
+}
+
+// UpdateCancelOrder implements Command.
+func (c *command) UpdateCancelOrder(ctx context.Context, input uuid.UUID) (*uuid.UUID, error) {
+	var (
+		userID, _ = ctxutil.GetUserID(ctx)
+		today     = time.Now()
+	)
+
+	exist, err := c.query.lock().ReadOrderByID(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	isTrue, ok := model.ValidateStatus[exist.Status][model.CANCEL]
+	if !ok || !isTrue {
+		return nil, werror.Error{
+			Code:    errortransaction.ErrUpdateOrderStatus.Code,
+			Message: fmt.Sprintf("the order status has [%s], failed to update the order [%s]", exist.Status, model.CANCEL),
+		}
+	}
+
+	err = c.dbTxn.Where("deleted_at IS NULL and id = ?", input).Updates(
+		&model.Order{
+			ID:     input,
+			Status: model.CANCEL,
+			OrmModel: orm.OrmModel{
+				UpdatedBy: &userID,
+				UpdatedAt: &today,
+			},
+		},
+	).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &input, nil
+}
+
+// UpdateSuccesOrder implements Command.
+func (c *command) UpdateSuccesOrder(ctx context.Context, input uuid.UUID) (*uuid.UUID, error) {
+	var (
+		userID, _ = ctxutil.GetUserID(ctx)
+		today     = time.Now()
+	)
+
+	exist, err := c.query.lock().ReadOrderByID(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	isTrue, ok := model.ValidateStatus[exist.Status][model.SUCCESS]
+	if !ok || !isTrue {
+		return nil, werror.Error{
+			Code:    errortransaction.ErrUpdateOrderStatus.Code,
+			Message: fmt.Sprintf("the order status has [%s], failed to update the order [%s]", exist.Status, model.SUCCESS),
+		}
+	}
+
+	err = c.dbTxn.Where("deleted_at IS NULL and id = ?", input).Updates(
+		&model.Order{
+			ID:     input,
+			Status: model.SUCCESS,
+			OrmModel: orm.OrmModel{
+				UpdatedBy: &userID,
+				UpdatedAt: &today,
+			},
+		},
+	).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &input, nil
 }
 
 // CreateOrder implements Command.

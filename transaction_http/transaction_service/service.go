@@ -70,3 +70,53 @@ func (s *Service) ReadOrder(ctx context.Context, input model.ReadInput) (*model.
 	result, err := command.ReadOrder(ctx, input)
 	return result, err
 }
+
+func (s *Service) ReadOrderCancel(ctx context.Context, input model.ReadInput) (*model.OrderOutputPagination, error) {
+	command := s.repo.NewQuery()
+	result, err := command.ReadOrderByStatus(ctx, input, model.CANCEL)
+	return result, err
+}
+
+func (s *Service) ReadOrderSuccess(ctx context.Context, input model.ReadInput) (*model.OrderOutputPagination, error) {
+	command := s.repo.NewQuery()
+	result, err := command.ReadOrderByStatus(ctx, input, model.SUCCESS)
+	return result, err
+}
+
+func (s *Service) UpdateOrderCancel(ctx context.Context, input uuid.UUID) (*uuid.UUID, error) {
+	command := s.repo.NewCommand(ctx)
+	result, err := command.UpdateCancelOrder(ctx, input)
+	if err != nil {
+		if err := command.Rollback(ctx); err != nil {
+			logger.ErrorWithContext(ctx, "failed rollback transaction err: %v", err)
+		}
+		logger.ErrorWithContext(ctx, "failed update order err: %v", err)
+		return nil, err
+	}
+
+	if err := command.Commit(ctx); err != nil {
+		logger.ErrorWithContext(ctx, "failed commit transaction err: %v", err)
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (s *Service) UpdateOrderSuccess(ctx context.Context, input uuid.UUID) (*uuid.UUID, error) {
+	command := s.repo.NewCommand(ctx)
+	result, err := command.UpdateSuccesOrder(ctx, input)
+	if err != nil {
+		if err := command.Rollback(ctx); err != nil {
+			logger.ErrorWithContext(ctx, "failed rollback transaction err: %v", err)
+		}
+		logger.ErrorWithContext(ctx, "failed update order err: %v", err)
+		return nil, err
+	}
+
+	if err := command.Commit(ctx); err != nil {
+		logger.ErrorWithContext(ctx, "failed commit transaction err: %v", err)
+		return nil, err
+	}
+
+	return result, nil
+}
