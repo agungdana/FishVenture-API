@@ -5,3 +5,4 @@ path.json
 *.http
 *.json
 *.sql
+*__debug_bin
