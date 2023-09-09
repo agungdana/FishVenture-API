@@ -25,6 +25,7 @@ type Query interface {
 	ReadOrder(ctx context.Context, input model.ReadInput) (*model.OrderOutputPagination, error)
 	ReadOrderByStatus(ctx context.Context, input model.ReadInput, status string) (*model.OrderOutputPagination, error)
 	ReadOrderByID(ctx context.Context, id uuid.UUID) (*model.OrderOutput, error)
+	ReadAllOrderActive(ctx context.Context) ([]*model.Order, error)
 
 	lock() Query
 }

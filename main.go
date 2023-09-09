@@ -10,6 +10,7 @@ import (
 	"github.com/e-fish/api/pkg/common/helper/restsvr"
 	pondhttp "github.com/e-fish/api/pond_http"
 	regionhttp "github.com/e-fish/api/region_http"
+	"github.com/e-fish/api/scheduler"
 	transactionhttp "github.com/e-fish/api/transaction_http"
 )
 
@@ -39,6 +40,8 @@ func main() {
 	regionhttp.NewRegionHttp()
 	//register banner http in main
 	bannerhttp.NewRegionHttp()
+
+	scheduler.Scheduler()
 
 	//1
 	restsvr.Run()
