@@ -4,10 +4,10 @@ const (
 	MANDIRI = "mandiri"
 	TEAM    = "team"
 
-	SUBMISION = "submission"
-	REVIEWED  = "reviewed"
-	ACTIVED   = "actived"
-	DISABLED  = "disabled"
+	SUBMISION = "tahap pengajuan"
+	REVIEWED  = "sedang direview"
+	ACTIVED   = "aktif"
+	DISABLED  = "di tolak"
 )
 
 var MapStatus = map[string]map[string]bool{
