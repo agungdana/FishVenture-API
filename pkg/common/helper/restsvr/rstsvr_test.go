@@ -16,7 +16,7 @@ import (
 
 func TestRestSvrNeRoute(t *testing.T) {
 	conf := config.AppConfig{
-		Name:  "palen-id",
+		Name:  "efis-id",
 		Host:  "localhost",
 		Port:  "8081",
 		Debug: "true",

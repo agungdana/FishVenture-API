@@ -6,6 +6,7 @@ type AppConfig struct {
 	Port           string
 	Debug          string
 	FirebaseConfig FirebaseConfig
+	RedisConfig    RedisConfig
 }
 
 type ImageConfig struct {
@@ -24,4 +25,16 @@ type DbConfig struct {
 
 type FirebaseConfig struct {
 	FireBase string
+}
+
+type RedisConfig struct {
+	Host        string
+	Port        string
+	Password    string
+	DB          int
+	ExpiredTime int //in minute
+}
+
+type ConsumerConfig struct {
+	Topic string
 }

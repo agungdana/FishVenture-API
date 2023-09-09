@@ -23,16 +23,67 @@ func Migrations() {
 
 func Migrate(db *gorm.DB, flag string) error {
 	switch flag {
-	case "update-user-data":
+	case "chat":
+		db.Migrator().DropTable(&Chat{})
+		db.Migrator().DropTable(&ChatItem{})
 
-		err := db.Migrator().DropTable(&User{})
+		err := db.Debug().AutoMigrate(
+			&Chat{},
+			&ChatItem{},
+		)
 		if err != nil {
+			logger.Info("Error Auto Migreate: %v", err)
+		}
+		return err
+	case "update-user-data":
+		db = db.Begin()
+		user := []User{}
+		pond := []Pond{}
+
+		err := db.Find(&user).Error
+		if err != nil {
+			db.Rollback()
 			return err
 		}
-		err = db.Migrator().DropTable(&Pond{})
+		err = db.Find(&pond).Error
+		if err != nil {
+			db.Rollback()
+			return err
+		}
+
+		// err = db.Migrator().DropTable(&User{})
+		// if err != nil {
+		// 	db.Rollback()
+		// 	return err
+		// }
+		// err = db.Migrator().DropTable(&Pond{})
+		// if err != nil {
+		// 	db.Rollback()
+		// 	return err
+		// }
+		err = db.Debug().AutoMigrate(
+			&User{},
+			&Pond{},
+		)
+		if err != nil {
+			db.Rollback()
+			return err
+		}
+
+		err = db.Save(&user).Error
+		if err != nil {
+			db.Rollback()
+			return err
+		}
+		err = db.Save(&pond).Error
+		if err != nil {
+			db.Rollback()
+			return err
+		}
+
+		db.Commit()
 
 		return err
-
 	case "update-pond-data":
 		dbTxn := db.Begin()
 		err := dbTxn.Migrator().DropTable(&Pond{})

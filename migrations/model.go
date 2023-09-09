@@ -18,7 +18,7 @@ type User struct {
 	Status         *bool
 	UserRole       []*UserRole
 	UserPermission []*UserPermission
-	PondID         uuid.UUID `gorm:"size:256"`
+	PondID         *uuid.UUID `gorm:"size:256"`
 	orm.OrmModel
 }
 
@@ -85,26 +85,25 @@ type Team struct {
 }
 
 type Pond struct {
-	ID            uuid.UUID `gorm:"primaryKey,size:256" json:"id"`
-	UserID        uuid.UUID `gorm:"size:256"`
-	User          User      `json:"user"`
-	OwnerName     string    `json:"ownerName"`
-	Name          string    `json:"name"`
-	CountryID     uuid.UUID `gorm:"size:256" json:"countryID"`
-	ProvinceID    uuid.UUID `gorm:"size:256" json:"provinceID"`
-	CityID        uuid.UUID `gorm:"size:256" json:"cityID"`
-	DistrictID    uuid.UUID `gorm:"size:256" json:"districtID"`
-	DetailAddress string    `json:"detailAddress"`
-	NoteAddress   string    `json:"noteAddress"`
-	Type          string    `json:"type"`
-	Latitude      float64   `json:"latitude"`
-	Longitude     float64   `json:"longitude"`
-	TeamID        uuid.UUID `gorm:"size:256" json:"teamID"`
-	Team          Team      `json:"team"`
-	Status        string    `json:"status"`
-	Image         string    `json:"image"`
-	ListPool      []Pool    `json:"listPool"`
-	ListBerkas    []Berkas  `json:"berkas"`
+	ID     uuid.UUID `gorm:"primaryKey,size:256"`
+	UserID uuid.UUID `gorm:"size:256"`
+	User
+	Name          string
+	CountryID     uuid.UUID `gorm:"size:256"`
+	ProvinceID    uuid.UUID `gorm:"size:256"`
+	CityID        uuid.UUID `gorm:"size:256"`
+	DistrictID    uuid.UUID `gorm:"size:256"`
+	DetailAddress string
+	NoteAddress   string
+	Type          string
+	Latitude      float64
+	Longitude     float64
+	TeamID        *uuid.UUID `gorm:"size:256"`
+	Team          Team
+	Status        string
+	Image         string
+	ListPool      []Pool
+	ListBerkas    []Berkas
 	orm.OrmModel
 }
 
@@ -226,5 +225,26 @@ type Banner struct {
 	Name        string
 	Link        string
 	Description string
+	orm.OrmModel
+}
+
+type Chat struct {
+	ID     uuid.UUID `gorm:"primaryKey,size:256"`
+	UserID uuid.UUID `gorm:"size:256"`
+	User   User
+	PondID uuid.UUID `gorm:"size:256"`
+	Pond   Pond
+	orm.OrmModel
+}
+
+type ChatItem struct {
+	ID         uuid.UUID `gorm:"primaryKey,size:256"`
+	ChatID     uuid.UUID `gorm:"size:256"`
+	SenderID   uuid.UUID `gorm:"size:256"`
+	ReceiverID uuid.UUID `gorm:"size:256"`
+	Image      string
+	Text       string
+	Payload    string
+	Type       string
 	orm.OrmModel
 }

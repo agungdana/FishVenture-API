@@ -11,6 +11,7 @@ import (
 	pondhttp "github.com/e-fish/api/pond_http"
 	regionhttp "github.com/e-fish/api/region_http"
 	transactionhttp "github.com/e-fish/api/transaction_http"
+	wshttp "github.com/e-fish/api/ws-http"
 )
 
 func main() {
@@ -39,6 +40,8 @@ func main() {
 	regionhttp.NewRegionHttp()
 	//register banner http in main
 	bannerhttp.NewRegionHttp()
+	//register ws http http in main
+	wshttp.NewWsHttp()
 
 	//1
 	restsvr.Run()

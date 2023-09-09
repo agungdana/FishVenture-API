@@ -82,18 +82,18 @@ var (
 		Message: "can't rollback region transaction",
 	}
 
-	ErrFoundNearestTenant = werror.Error{
-		Code:    "FailedFoundNearestTenant",
-		Message: "cannot find the nearest tenant you are looking for",
+	ErrFoundNearestPond = werror.Error{
+		Code:    "FailedFoundNearestPond",
+		Message: "cannot find the nearest pond you are looking for",
 	}
 
-	ErrReadNearestTenant = werror.Error{
-		Code:    "FailedReadNearestTenant",
-		Message: "failed to read nearest tenant data",
+	ErrReadNearestPond = werror.Error{
+		Code:    "FailedReadNearestPond",
+		Message: "failed to read nearest pond data",
 	}
 
-	ErrFailedSetTenantInAddress = werror.Error{
-		Code:    "FailedSetTenantInAddress",
-		Message: "failed to update tenant id in address",
+	ErrFailedSetPondInAddress = werror.Error{
+		Code:    "FailedSetPondInAddress",
+		Message: "failed to update pond id in address",
 	}
 )

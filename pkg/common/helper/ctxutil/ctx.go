@@ -142,3 +142,89 @@ func SetUserPayload(ctx context.Context, userID, PondID uuid.UUID, appType strin
 	ctx = SetUserAppType(ctx, appType)
 	return ctx
 }
+
+func CopyCtxWithoutTimeout(ctx context.Context) context.Context {
+	newContext := context.Background()
+	requestID, _ := GetRequestID(ctx)
+	newContext = context.WithValue(newContext, REQUEST_ID, requestID)
+	transactionID, _ := GetTransactionID(ctx)
+	newContext = context.WithValue(newContext, TRANSACTION_ID, transactionID)
+	userID, _ := GetUserID(ctx)
+	newContext = SetUserID(newContext, userID)
+	roleID, _ := GetRoleID(ctx)
+	newContext = SetRoleID(newContext, roleID...)
+	pondID, _ := GetPondID(ctx)
+	newContext = SetPondID(newContext, pondID)
+	appType, _ := GetUserAppType(ctx)
+	newContext = SetUserAppType(newContext, appType)
+	return newContext
+}
+
+func ToMap(ctx context.Context) map[string]any {
+	ctxMap := make(map[string]any)
+
+	if userID, ok := GetUserID(ctx); ok {
+		ctxMap[string(USER_ID)] = userID
+	}
+
+	if roleID, ok := GetRoleID(ctx); ok {
+		ctxMap[string(ROLE_ID)] = roleID
+	}
+
+	if pondID, ok := GetPondID(ctx); ok {
+		ctxMap[string(POND_ID)] = pondID
+	}
+
+	if appType, ok := GetUserAppType(ctx); ok {
+		ctxMap[string(AppType)] = appType
+	}
+
+	return ctxMap
+}
+
+func ToContextUsingMap(ctxMap map[string]any) context.Context {
+	ctx := context.Background()
+
+	if userID, ok := ctxMap[string(USER_ID)]; ok {
+		ctx = SetUserID(ctx, ToUUID(userID))
+	}
+
+	if roleID, ok := ctxMap[string(ROLE_ID)]; ok {
+		ctx = SetRoleID(ctx, ToUUID(roleID))
+	}
+
+	if pondID, ok := ctxMap[string(POND_ID)]; ok {
+		ctx = SetPondID(ctx, ToUUID(pondID))
+	}
+
+	if appType, ok := ctxMap[string(AppType)]; ok {
+		ctx = SetUserAppType(ctx, ToString(appType))
+	}
+
+	return ctx
+}
+
+func ToUUID(data any) uuid.UUID {
+	switch v := data.(type) {
+	case uuid.UUID:
+		return v
+	case string:
+		return uuid.MustParse(v)
+	case []byte:
+		uid, _ := uuid.FromBytes(v)
+		return uid
+	}
+	return uuid.Nil
+}
+
+func ToString(data any) string {
+	switch v := data.(type) {
+	case uuid.UUID:
+		return v.String()
+	case string:
+		return v
+	case []byte:
+		return string(v)
+	}
+	return ""
+}

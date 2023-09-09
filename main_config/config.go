@@ -2,6 +2,7 @@ package mainconfig
 
 import (
 	"os"
+	"strconv"
 	"sync"
 
 	"github.com/e-fish/api/pkg/common/helper/config"
@@ -35,6 +36,12 @@ func getConfig() *Config {
 			debug := os.Getenv("APP_DEBUG")
 			firebaseConf := os.Getenv("FIREBASE_CONF")
 
+			redisHost := os.Getenv("REDIS_HOST")
+			redisPort := os.Getenv("REDIS_PORT")
+			redisPassword := os.Getenv("REDIS_PASSWORD")
+			redisDB, _ := strconv.Atoi(os.Getenv("REDIS_DB"))
+			redisExpiredTime, _ := strconv.Atoi(os.Getenv("REDIS_EXPIRED_TIME"))
+
 			conf = &Config{
 				AppConfig: config.AppConfig{
 					Name:  name,
@@ -43,6 +50,13 @@ func getConfig() *Config {
 					Debug: debug,
 					FirebaseConfig: config.FirebaseConfig{
 						FireBase: firebaseConf,
+					},
+					RedisConfig: config.RedisConfig{
+						Host:        redisHost,
+						Port:        redisPort,
+						Password:    redisPassword,
+						DB:          redisDB,
+						ExpiredTime: redisExpiredTime,
 					},
 				},
 			}
