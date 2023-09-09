@@ -29,4 +29,5 @@ func newRoute(ro route) {
 	ginEngine.GET("/list-fish-species", handler.GetAllFishSpecies)
 	ginEngine.GET("/list-budidaya-seller", ctxutil.Authorization(), handler.GetBudidayaForSeller)
 	ginEngine.GET("/list-budidaya", ctxutil.Authorization(), handler.GetBudidayaAdminAndCustomer)
+	ginEngine.GET("/nearest-budidaya", handler.ReadBudidayaNeaerest)
 }
