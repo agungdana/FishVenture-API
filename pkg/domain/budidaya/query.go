@@ -31,6 +31,20 @@ type query struct {
 	db *gorm.DB
 }
 
+// ReadBudidayaByID implements Query.
+func (q *query) ReadBudidayaByID(ctx context.Context, id uuid.UUID) (*model.BudidayaOutput, error) {
+	budidaya := model.BudidayaOutput{}
+	err := q.db.Where("deleted_at IS NULL and id = ?", id).Take(&budidaya).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorbudidaya.ErrFoundBudidaya.AttacthDetail(map[string]any{"id": id})
+		}
+		return nil, errorbudidaya.ErrFailedReadBudidaya.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &budidaya, nil
+}
+
 // ReadPriceListBudidayaByBiggerThanLimitAndBudidayaID implements Query.
 func (q *query) ReadPriceListBudidayaByBiggerThanLimitAndBudidayaID(ctx context.Context, input model.ReadPricelistBudidayaInput) (*model.PriceList, error) {
 	pricelist := model.PriceList{}
