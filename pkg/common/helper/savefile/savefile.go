@@ -22,3 +22,34 @@ func SaveFile(file *multipart.FileHeader, dst string) error {
 	_, err = io.Copy(out, src)
 	return err
 }
+
+const (
+	JPG  = "jpg"
+	JPEG = "jpeg"
+	PNG  = "png"
+	GIF  = "gif"
+	TIFF = "tiff"
+	PSD  = "psd"
+	PDF  = "pdf"
+	EPS  = "eps"
+	AI   = "ai"
+	RAW  = "raw"
+	WEBP = "webp"
+)
+
+var ImageExt = map[string]struct{}{
+	JPG:  {},
+	JPEG: {},
+	PNG:  {},
+	GIF:  {},
+	TIFF: {},
+	PSD:  {},
+	EPS:  {},
+	AI:   {},
+	RAW:  {},
+	WEBP: {},
+}
+
+var FileExt = map[string]struct{}{
+	PDF: {},
+}

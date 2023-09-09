@@ -2,12 +2,14 @@ package bannerService
 
 import (
 	"context"
+	"fmt"
 	"mime/multipart"
 	"path/filepath"
 
 	bannerconfig "github.com/e-fish/api/banner_http/banner_config"
 	"github.com/e-fish/api/pkg/common/helper/logger"
 	"github.com/e-fish/api/pkg/common/helper/savefile"
+	"github.com/e-fish/api/pkg/common/helper/werror"
 	"github.com/e-fish/api/pkg/domain/banner"
 	"github.com/e-fish/api/pkg/domain/banner/model"
 	"github.com/google/uuid"
@@ -79,6 +81,20 @@ func (s *Service) UpdateBanner(ctx context.Context, input model.BannerInputUpdat
 func (s *Service) SaveImageBanner(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext
+
+	_, imageExtOk := savefile.ImageExt[ext]
+
+	if !imageExtOk {
+		return nil, werror.Error{
+			Code:    "FailedSaveFile",
+			Message: "extension not suported",
+			Details: map[string]any{
+				"ext":                  ext,
+				"permitted-extensions": fmt.Sprintf("%v", savefile.ImageExt),
+			},
+		}
+	}
+
 	err := savefile.SaveFile(file, s.conf.BannerImageConfig.Path+"/"+filename)
 
 	if err != nil {
