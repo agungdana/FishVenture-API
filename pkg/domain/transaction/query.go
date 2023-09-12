@@ -31,6 +31,16 @@ type query struct {
 	db *gorm.DB
 }
 
+// ReadAllOrderActive implements Query.
+func (q *query) ReadAllOrderActive(ctx context.Context) ([]*model.Order, error) {
+	data := []*model.Order{}
+	err := q.db.Where("deleted_at IS NULL and status = ?", model.ACTIVE).Find(&data).Error
+	if err != nil {
+		return nil, errortransaction.ErrFoundOrder.AttacthDetail(map[string]any{"error": err})
+	}
+	return data, nil
+}
+
 // ReadOrder implements Query.
 func (q *query) ReadOrder(ctx context.Context, input model.ReadInput) (*model.OrderOutputPagination, error) {
 	var (
