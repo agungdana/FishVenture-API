@@ -47,6 +47,11 @@ var (
 		Message: "failed update Budidaya",
 	}
 
+	ErrFailedUpdateBudidayaEstDate = werror.Error{
+		Code:    "FailedUpdateBudidaya",
+		Message: "failed update Budidaya, Harvest estimate cannot be before sowing period.",
+	}
+
 	ErrValidateInputbUpdateStatus = werror.Error{
 		Code:    "ValidatedFailedInputUpdateStatus",
 		Message: "field can't be empty",

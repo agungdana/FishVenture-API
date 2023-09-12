@@ -98,6 +98,18 @@ func (h *Handler) GetBudidayaAdminAndCustomer(c *gin.Context) {
 	res.Add(result, err)
 }
 
+func (h *Handler) ReadBudidayaNeaerest(c *gin.Context) {
+	var (
+		ctx = c.Request.Context()
+		res = new(restsvr.HttpResponse)
+	)
+
+	defer restsvr.ResponsJson(c, res)
+
+	result, err := h.Service.ReadBudidayaNeaerest(ctx)
+	res.Add(result, err)
+}
+
 func (h *Handler) GetBudidayaForSeller(c *gin.Context) {
 	var (
 		ctx = c.Request.Context()

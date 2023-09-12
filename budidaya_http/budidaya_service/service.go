@@ -116,3 +116,8 @@ func (s *Service) GetAllFishSpecies(ctx context.Context) ([]*model.FishSpeciesOu
 	query := s.repo.NewQuery()
 	return query.ReadAllDataFishSpecies(ctx)
 }
+
+func (s *Service) ReadBudidayaNeaerest(ctx context.Context) ([]*model.BudidayaOutput, error) {
+	query := s.repo.NewQuery()
+	return query.ReadBudidayaNeaerest(ctx)
+}

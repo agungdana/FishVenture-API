@@ -123,6 +123,19 @@ func (c *command) CreateMultiplePricelistBudidaya(ctx context.Context, input mod
 		return nil, err
 	}
 
+	exist, err := c.query.ReadBudidayaByID(ctx, input.BudidayaID)
+	if err != nil {
+		return nil, err
+	}
+
+	if exist == nil {
+		return nil, errorbudidaya.ErrFoundBudidaya
+	}
+
+	if input.EstDate.Before(exist.DateOfSeed) {
+		return nil, errorbudidaya.ErrFailedUpdateBudidayaEstDate.AttacthDetail(map[string]any{"Sowing-period": exist.DateOfSeed, "Harvest-estimate": input.EstDate})
+	}
+
 	newPricelist := input.ToMultiplePriceList(userID)
 
 	err = c.dbTxn.Create(&newPricelist).Error
