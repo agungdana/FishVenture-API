@@ -28,6 +28,6 @@ func newRoute(ro route) {
 	ginEngine.GET("/list-chat", ctxutil.Authorization(), handler.ReadListChat)
 	ginEngine.GET("/list-chat-item", ctxutil.Authorization(), handler.ReadListChatItems)
 
-	ginEngine.POST("/upload-banner", handler.SaveImageChat)
-	ginEngine.Use(static.Serve("/assets/image/banner", static.LocalFile(ro.conf.ChatImageConfig.Path, false)))
+	ginEngine.POST("/upload-chat", handler.SaveImageChat)
+	ginEngine.Use(static.Serve("/assets/image/chat", static.LocalFile(ro.conf.ChatImageConfig.Path, false)))
 }
