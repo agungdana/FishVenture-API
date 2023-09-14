@@ -43,8 +43,12 @@ func (h *Handler) ChatHandler(ctx context.Context) {
 		switch m.Action {
 		case PUBLISH_TO_ALL:
 			req := chatservice.ReadChatRequest{}
-			req.OrderRequestFromMap(m.Data.(map[string]any))
+			req.ChatRequestFromMap(m.Data.(map[string]any))
 			service.PublishChatToAll(ctx, req)
+		case PUBLISH_NEW_CHAT_ITEM_TO_ALL:
+			req := chatservice.ReadChatRequest{}
+			req.ChatRequestFromMap(m.Data.(map[string]any))
+			service.PublishChatItemToAll(ctx, req)
 		}
 
 	})

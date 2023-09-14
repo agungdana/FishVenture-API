@@ -17,9 +17,10 @@ var (
 )
 
 type ChatConfig struct {
-	AppConfig       config.AppConfig
-	ChatImageConfig config.ImageConfig
-	ChatDBConfig    config.DbConfig
+	AppConfig          config.AppConfig
+	ChatImageConfig    config.ImageConfig
+	ChatDBConfig       config.DbConfig
+	ChatPublisherTopic string
 }
 
 func getConfig() *ChatConfig {
@@ -57,6 +58,7 @@ func getConfig() *ChatConfig {
 					Url:  bannerImageUrl,
 					Path: bannerImagePath,
 				},
+				ChatPublisherTopic: os.Getenv("CHAT_CONSUMER_TOPIC"),
 			}
 		})
 	}

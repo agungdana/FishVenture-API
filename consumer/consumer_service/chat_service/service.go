@@ -39,7 +39,7 @@ func NewService(event event.EventPubsub) ChatService {
 func (s *ChatService) PublishChatToAll(ctx context.Context, req ReadChatRequest) error {
 	query := s.repo.NewQuery()
 
-	chat, err := query.ReadChatByID(ctx, req.ChatID)
+	chat, err := query.ReadChatByID(ctx, req.ChatItemID)
 	if err != nil {
 		err = werror.Error{
 			Code:    "ConsumerOrderServicePublishOrderToAll",
@@ -77,7 +77,7 @@ func (s *ChatService) PublishChatToAll(ctx context.Context, req ReadChatRequest)
 func (s *ChatService) PublishChatItemToAll(ctx context.Context, req ReadChatRequest) error {
 	query := s.repo.NewQuery()
 
-	chat, err := query.ReadChatItemsByID(ctx, req.ChatID)
+	chat, err := query.ReadChatItemsByID(ctx, req.ChatItemID)
 	if err != nil {
 		err = werror.Error{
 			Code:    "ConsumerOrderServicePublishOrderToAll",

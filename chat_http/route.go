@@ -5,19 +5,23 @@ import (
 	chathandler "github.com/e-fish/api/chat_http/chat_handler"
 	"github.com/e-fish/api/chat_http/chatservice"
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
+	"github.com/e-fish/api/pkg/common/infra/event"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
 type route struct {
-	conf chatconfig.ChatConfig
-	gin  *gin.Engine
+	conf  chatconfig.ChatConfig
+	event event.Event
+
+	gin *gin.Engine
 }
 
 func newRoute(ro route) {
 	ginEngine := ro.gin
+	publisher := ro.event.NewEventPubsub()
 
-	service := chatservice.NewService(ro.conf)
+	service := chatservice.NewService(ro.conf, publisher)
 	handler := chathandler.Handler{
 		Conf:    ro.conf,
 		Service: service,

@@ -6,15 +6,20 @@ import (
 )
 
 type ReadChatRequest struct {
-	ChatID uuid.UUID `json:"chatID"`
-	Valid  `json:"valid"`
+	ChatID     uuid.UUID `json:"chatID"`
+	ChatItemID uuid.UUID `json:"chatItemID"`
+	Valid      `json:"valid"`
 }
 
-func (r *ReadChatRequest) OrderRequestFromMap(data map[string]any) *ReadChatRequest {
+func (r *ReadChatRequest) ChatRequestFromMap(data map[string]any) *ReadChatRequest {
 	res := ReadChatRequest{}
 
 	if val, ok := data["chatID"]; ok {
 		r.ChatID = ctxutil.ToUUID(val)
+	}
+
+	if val, ok := data["chatItemID"]; ok {
+		r.ChatItemID = ctxutil.ToUUID(val)
 	}
 
 	r.Valid.FromMap(data)

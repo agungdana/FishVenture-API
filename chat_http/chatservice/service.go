@@ -6,8 +6,12 @@ import (
 	"path/filepath"
 
 	chatconfig "github.com/e-fish/api/chat_http/chat_config"
+	consumerhandler "github.com/e-fish/api/consumer/consumer_handler"
+	chatservice "github.com/e-fish/api/consumer/consumer_service/chat_service"
+	"github.com/e-fish/api/pkg/common/helper/ctxutil"
 	"github.com/e-fish/api/pkg/common/helper/logger"
 	"github.com/e-fish/api/pkg/common/helper/savefile"
+	"github.com/e-fish/api/pkg/common/infra/event"
 	"github.com/e-fish/api/pkg/domain/chat"
 	"github.com/e-fish/api/pkg/domain/chat/model"
 	"github.com/google/uuid"
@@ -16,9 +20,11 @@ import (
 type Service struct {
 	conf chatconfig.ChatConfig
 	repo chat.Repo
+
+	publisher event.EventPubsub
 }
 
-func NewService(conf chatconfig.ChatConfig) Service {
+func NewService(conf chatconfig.ChatConfig, publisher event.EventPubsub) Service {
 	var (
 		service = Service{
 			conf: conf,
@@ -31,6 +37,7 @@ func NewService(conf chatconfig.ChatConfig) Service {
 	}
 
 	service.repo = chatRepo
+	service.publisher = publisher
 
 	return service
 }
@@ -52,6 +59,15 @@ func (s *Service) CreateChat(ctx context.Context, input model.CreateChatInput) (
 		return nil, err
 	}
 
+	go s.publisher.Publish(ctx, event.ClientMessages{
+		Topic:  s.conf.ChatPublisherTopic,
+		Action: consumerhandler.PUBLISH_TO_ALL,
+		CtxMap: ctxutil.ToMap(ctx),
+		Data: chatservice.ReadChatRequest{
+			ChatID: *result,
+		},
+	})
+
 	return result, nil
 }
 
@@ -71,6 +87,15 @@ func (s *Service) CreateChatItem(ctx context.Context, input model.CreateChatItem
 		logger.ErrorWithContext(ctx, "failed commit transaction create CreateChatItemInput err: %v", err)
 		return nil, err
 	}
+
+	go s.publisher.Publish(ctx, event.ClientMessages{
+		Topic:  s.conf.ChatPublisherTopic,
+		Action: consumerhandler.PUBLISH_NEW_CHAT_ITEM_TO_ALL,
+		CtxMap: ctxutil.ToMap(ctx),
+		Data: chatservice.ReadChatRequest{
+			ChatItemID: *result,
+		},
+	})
 
 	return result, nil
 }
