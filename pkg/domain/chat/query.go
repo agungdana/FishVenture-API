@@ -30,12 +30,21 @@ type query struct {
 // ReadChatItemsByID implements Query.
 func (q *query) ReadChatItemsByID(ctx context.Context, id uuid.UUID) (*model.ChatItemOutput, error) {
 	var (
-		data = model.ChatItemOutput{}
+		userID, _ = ctxutil.GetUserID(ctx)
+		pondID, _ = ctxutil.GetPondID(ctx)
+		data      = model.ChatItemOutput{}
 	)
 
 	err := q.db.Where("deleted_at IS NULL and id = ?", id).Take(&data).Error
 	if err != nil {
 		return nil, errorchat.ErrReadChatData.AttacthDetail(map[string]any{"err": err})
+	}
+
+	if userID == data.SenderID {
+		data.IsMe = true
+	}
+	if pondID == data.SenderID {
+		data.IsMe = true
 	}
 
 	return &data, nil
