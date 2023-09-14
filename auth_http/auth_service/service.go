@@ -2,6 +2,7 @@ package authservice
 
 import (
 	"context"
+	"fmt"
 	"mime/multipart"
 	"path/filepath"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
 	"github.com/e-fish/api/pkg/common/helper/logger"
 	"github.com/e-fish/api/pkg/common/helper/savefile"
+	"github.com/e-fish/api/pkg/common/helper/werror"
 	"github.com/e-fish/api/pkg/common/infra/firebase"
 	"github.com/e-fish/api/pkg/common/infra/token"
 	"github.com/e-fish/api/pkg/domain/auth"
@@ -179,6 +181,20 @@ func (s *Service) Profile(ctx context.Context) (*model.Profile, error) {
 func (s *Service) SaveImages(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext
+
+	_, imageExtOk := savefile.ImageExt[ext]
+
+	if !imageExtOk {
+		return nil, werror.Error{
+			Code:    "FailedSaveFile",
+			Message: "extension not suported",
+			Details: map[string]any{
+				"ext":                  ext,
+				"permitted-extensions": fmt.Sprintf("%v", savefile.ImageExt),
+			},
+		}
+	}
+
 	err := savefile.SaveFile(file, s.conf.UserImageConfig.Path+"/"+filename)
 
 	if err != nil {

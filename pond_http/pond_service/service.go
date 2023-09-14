@@ -2,11 +2,13 @@ package pondservice
 
 import (
 	"context"
+	"fmt"
 	"mime/multipart"
 	"path/filepath"
 
 	"github.com/e-fish/api/pkg/common/helper/logger"
 	"github.com/e-fish/api/pkg/common/helper/savefile"
+	"github.com/e-fish/api/pkg/common/helper/werror"
 	"github.com/e-fish/api/pkg/domain/pond"
 	"github.com/e-fish/api/pkg/domain/pond/model"
 	"github.com/e-fish/api/pkg/domain/verification"
@@ -122,6 +124,19 @@ func (s *Service) GetListPool(ctx context.Context, id uuid.UUID) ([]*model.PoolO
 func (s *Service) SaveImagesPond(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext
+
+	_, imageExtOk := savefile.ImageExt[ext]
+	if !imageExtOk {
+		return nil, werror.Error{
+			Code:    "FailedSaveFile",
+			Message: "extension not suported",
+			Details: map[string]any{
+				"ext":                  ext,
+				"permitted-extensions": fmt.Sprintf("%v", savefile.ImageExt),
+			},
+		}
+	}
+
 	err := savefile.SaveFile(file, s.conf.PondImageConfig.Path+"/"+filename)
 
 	if err != nil {
@@ -138,8 +153,21 @@ func (s *Service) SaveImagesPond(ctx context.Context, file *multipart.FileHeader
 func (s *Service) SaveFilePond(ctx context.Context, file *multipart.FileHeader) (*UploadFileResponse, error) {
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext
-	err := savefile.SaveFile(file, s.conf.PondImageConfig.Path+"/"+filename)
 
+	_, imageExtOk := savefile.ImageExt[ext]
+	_, fileExtOk := savefile.FileExt[ext]
+	if !imageExtOk && !fileExtOk {
+		return nil, werror.Error{
+			Code:    "FailedSaveFile",
+			Message: "extension not suported",
+			Details: map[string]any{
+				"ext":                  ext,
+				"permitted-extensions": fmt.Sprintf("%v, %v", savefile.FileExt, savefile.ImageExt),
+			},
+		}
+	}
+
+	err := savefile.SaveFile(file, s.conf.PondImageConfig.Path+"/"+filename)
 	if err != nil {
 		return nil, err
 	}
@@ -155,6 +183,19 @@ func (s *Service) SaveFilePond(ctx context.Context, file *multipart.FileHeader) 
 func (s *Service) SaveImagesPool(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext
+	_, imageExtOk := savefile.ImageExt[ext]
+
+	if !imageExtOk {
+		return nil, werror.Error{
+			Code:    "FailedSaveFile",
+			Message: "extension not suported",
+			Details: map[string]any{
+				"ext":                  ext,
+				"permitted-extensions": fmt.Sprintf("%v", savefile.ImageExt),
+			},
+		}
+	}
+
 	err := savefile.SaveFile(file, s.conf.PoolImageConfig.Path+"/"+filename)
 
 	if err != nil {

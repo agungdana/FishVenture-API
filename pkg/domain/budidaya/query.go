@@ -3,6 +3,7 @@ package budidaya
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
 	usertype "github.com/e-fish/api/pkg/domain/auth/model"
@@ -28,6 +29,20 @@ func (q *query) lock() Query {
 
 type query struct {
 	db *gorm.DB
+}
+
+// ReadBudidayaByID implements Query.
+func (q *query) ReadBudidayaByID(ctx context.Context, id uuid.UUID) (*model.BudidayaOutput, error) {
+	budidaya := model.BudidayaOutput{}
+	err := q.db.Where("deleted_at IS NULL and id = ?", id).Take(&budidaya).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errorbudidaya.ErrFoundBudidaya.AttacthDetail(map[string]any{"id": id})
+		}
+		return nil, errorbudidaya.ErrFailedReadBudidaya.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &budidaya, nil
 }
 
 // ReadPriceListBudidayaByBiggerThanLimitAndBudidayaID implements Query.
@@ -124,15 +139,36 @@ func (q *query) ReadBudidayaByUserAdmin(ctx context.Context, input model.GetBudi
 	return res, nil
 }
 
+// ReadBudidayaNeaerest implements Query.
+func (q *query) ReadBudidayaNeaerest(ctx context.Context) ([]*model.BudidayaOutput, error) {
+	var (
+		res = []*model.BudidayaOutput{}
+		db  = q.db
+		now = time.Now()
+	)
+
+	db = db.Preload("Pool")
+	db = db.Preload("FishSpecies").Preload("PriceList")
+	db = db.Where("est_panen_date IS NULL OR est_panen_date <= ?", now)
+	err := db.Where("deleted_at IS NULL and status <> ?", model.END).Find(&res).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
 // ReadBudidayaByUserBuyer implements Query.
 func (q *query) ReadBudidayaByUserBuyer(ctx context.Context, input model.GetBudidayaInput) ([]*model.BudidayaOutput, error) {
 	var (
 		res = []*model.BudidayaOutput{}
 		db  = q.db
+		now = time.Now()
 	)
 
 	db = db.Preload("Pool")
 	db = db.Preload("FishSpecies").Preload("PriceList")
+	db = db.Where("est_panen_date IS NULL OR est_panen_date <= ?", now)
 	err := db.Where("deleted_at IS NULL and status <> ? and pond_id = ?", model.END, input.PondID).Find(&res).Error
 	if err != nil {
 		return nil, err
