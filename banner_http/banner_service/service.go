@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"path/filepath"
+	"strings"
 
 	bannerconfig "github.com/e-fish/api/banner_http/banner_config"
 	"github.com/e-fish/api/pkg/common/helper/logger"
@@ -82,7 +83,7 @@ func (s *Service) SaveImageBanner(ctx context.Context, file *multipart.FileHeade
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext
 
-	_, imageExtOk := savefile.ImageExt[ext]
+	_, imageExtOk := savefile.ImageExt[strings.ReplaceAll(ext, ".", "")]
 
 	if !imageExtOk {
 		return nil, werror.Error{

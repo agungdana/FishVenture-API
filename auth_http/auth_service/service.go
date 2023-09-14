@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"path/filepath"
+	"strings"
 
 	authconfig "github.com/e-fish/api/auth_http/auth_config"
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
@@ -182,7 +183,7 @@ func (s *Service) SaveImages(ctx context.Context, file *multipart.FileHeader) (*
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext
 
-	_, imageExtOk := savefile.ImageExt[ext]
+	_, imageExtOk := savefile.ImageExt[strings.ReplaceAll(ext, ".", "")]
 
 	if !imageExtOk {
 		return nil, werror.Error{

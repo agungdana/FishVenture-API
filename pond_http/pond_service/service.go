@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"path/filepath"
+	"strings"
 
 	"github.com/e-fish/api/pkg/common/helper/logger"
 	"github.com/e-fish/api/pkg/common/helper/savefile"
@@ -125,7 +126,7 @@ func (s *Service) SaveImagesPond(ctx context.Context, file *multipart.FileHeader
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext
 
-	_, imageExtOk := savefile.ImageExt[ext]
+	_, imageExtOk := savefile.ImageExt[strings.ReplaceAll(ext, ".", "")]
 	if !imageExtOk {
 		return nil, werror.Error{
 			Code:    "FailedSaveFile",
@@ -154,8 +155,8 @@ func (s *Service) SaveFilePond(ctx context.Context, file *multipart.FileHeader) 
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext
 
-	_, imageExtOk := savefile.ImageExt[ext]
-	_, fileExtOk := savefile.FileExt[ext]
+	_, imageExtOk := savefile.ImageExt[strings.ReplaceAll(ext, ".", "")]
+	_, fileExtOk := savefile.FileExt[strings.ReplaceAll(ext,".","")]
 	if !imageExtOk && !fileExtOk {
 		return nil, werror.Error{
 			Code:    "FailedSaveFile",
@@ -183,7 +184,7 @@ func (s *Service) SaveFilePond(ctx context.Context, file *multipart.FileHeader) 
 func (s *Service) SaveImagesPool(ctx context.Context, file *multipart.FileHeader) (*UploadPhotoResponse, error) {
 	ext := filepath.Ext(file.Filename)
 	filename := uuid.New().String() + ext
-	_, imageExtOk := savefile.ImageExt[ext]
+	_, imageExtOk := savefile.ImageExt[strings.ReplaceAll(ext, ".", "")]
 
 	if !imageExtOk {
 		return nil, werror.Error{
