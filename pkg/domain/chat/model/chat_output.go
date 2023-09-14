@@ -38,4 +38,5 @@ type ChatItemOutput struct {
 	Text       string    `json:"text"`
 	Payload    string    `json:"payload"`
 	Type       string    `json:"type"`
+	IsMe       bool      `json:"isMe"`
 }

@@ -74,12 +74,23 @@ func (q *query) ReadChatByCsAndPondID(ctx context.Context, csID uuid.UUID, pondI
 // ReadChatItemsByChatID implements Query.
 func (q *query) ReadChatItemsByChatID(ctx context.Context, id uuid.UUID) ([]*model.ChatItemOutput, error) {
 	var (
-		data = []*model.ChatItemOutput{}
+		data      = []*model.ChatItemOutput{}
+		userID, _ = ctxutil.GetUserID(ctx)
+		pondID, _ = ctxutil.GetPondID(ctx)
 	)
 
 	err := q.db.Where("deleted_at IS NULL and chat_id = ?", id).Order("created_at desc").Find(&data).Error
 	if err != nil {
 		return nil, errorchat.ErrReadChatData.AttacthDetail(map[string]any{"err": err})
+	}
+
+	for idx := range data {
+		if userID == data[idx].SenderID {
+			data[idx].IsMe = true
+		}
+		if pondID == data[idx].SenderID {
+			data[idx].IsMe = true
+		}
 	}
 
 	return data, nil
