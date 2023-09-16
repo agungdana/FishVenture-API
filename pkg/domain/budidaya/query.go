@@ -142,14 +142,15 @@ func (q *query) ReadBudidayaByUserAdmin(ctx context.Context, input model.GetBudi
 // ReadBudidayaNeaerest implements Query.
 func (q *query) ReadBudidayaNeaerest(ctx context.Context) ([]*model.BudidayaOutput, error) {
 	var (
-		res = []*model.BudidayaOutput{}
-		db  = q.db
-		now = time.Now()
+		res   = []*model.BudidayaOutput{}
+		db    = q.db
+		now   = time.Now()
+		today = time.Date(now.Year(), now.Month(), now.Day(), 1, 0, 0, 0, now.Location())
 	)
 
 	db = db.Preload("Pool")
 	db = db.Preload("FishSpecies").Preload("PriceList")
-	db = db.Where("est_panen_date IS NULL OR est_panen_date <= ?", now)
+	db = db.Where("est_panen_date IS NULL OR est_panen_date >= ?", today)
 	err := db.Where("deleted_at IS NULL and status <> ?", model.END).Find(&res).Error
 	if err != nil {
 		return nil, err
@@ -161,14 +162,15 @@ func (q *query) ReadBudidayaNeaerest(ctx context.Context) ([]*model.BudidayaOutp
 // ReadBudidayaByUserBuyer implements Query.
 func (q *query) ReadBudidayaByUserBuyer(ctx context.Context, input model.GetBudidayaInput) ([]*model.BudidayaOutput, error) {
 	var (
-		res = []*model.BudidayaOutput{}
-		db  = q.db
-		now = time.Now()
+		res   = []*model.BudidayaOutput{}
+		db    = q.db
+		now   = time.Now()
+		today = time.Date(now.Year(), now.Month(), now.Day(), 1, 0, 0, 0, now.Location())
 	)
 
 	db = db.Preload("Pool")
 	db = db.Preload("FishSpecies").Preload("PriceList")
-	db = db.Where("est_panen_date IS NULL OR est_panen_date <= ?", now)
+	db = db.Where("est_panen_date IS NULL OR est_panen_date >= ?", today)
 	err := db.Where("deleted_at IS NULL and status <> ? and pond_id = ?", model.END, input.PondID).Find(&res).Error
 	if err != nil {
 		return nil, err
