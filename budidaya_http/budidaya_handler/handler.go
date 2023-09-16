@@ -34,10 +34,10 @@ func (h *Handler) CreateBudidaya(c *gin.Context) {
 	res.Add(result, err)
 }
 
-func (h *Handler) UpdateBudidaya(c *gin.Context) {
+func (h *Handler) UpdateBudidayaWithPricelist(c *gin.Context) {
 	var (
 		ctx = c.Request.Context()
-		req model.UpdateBudidayaStatusInput
+		req model.UpdateBudidayaWithPricelist
 		res = new(restsvr.HttpResponse)
 	)
 
@@ -49,7 +49,7 @@ func (h *Handler) UpdateBudidaya(c *gin.Context) {
 		return
 	}
 
-	result, err := h.Service.UpdateBudidaya(ctx, req)
+	result, err := h.Service.UpdateBudidayaWithPricelist(ctx, req)
 	res.Add(result, err)
 }
 

@@ -62,20 +62,20 @@ func (s *Service) CreateBudidaya(ctx context.Context, input model.CreateBudidaya
 	return result, nil
 }
 
-func (s *Service) UpdateBudidaya(ctx context.Context, input model.UpdateBudidayaStatusInput) (*uuid.UUID, error) {
+func (s *Service) UpdateBudidayaWithPricelist(ctx context.Context, input model.UpdateBudidayaWithPricelist) (*uuid.UUID, error) {
 	command := s.repo.NewCommand(ctx)
 
-	result, err := command.UpdateStatusBudidaya(ctx, input)
+	result, err := command.UpdateStatusBudidayaWithListPricelist(ctx, input)
 	if err != nil {
 		if err := command.Rollback(ctx); err != nil {
-			logger.ErrorWithContext(ctx, "failed rollback transaction create budidaya err: %v", err)
+			logger.ErrorWithContext(ctx, "failed rollback transaction update budidaya with pricelist err: %v", err)
 		}
-		logger.ErrorWithContext(ctx, "failed create budidaya err: %v", err)
+		logger.ErrorWithContext(ctx, "failed update budidaya with pricelist err: %v", err)
 		return nil, err
 	}
 
 	if err := command.Commit(ctx); err != nil {
-		logger.ErrorWithContext(ctx, "failed commit transaction create budidaya err: %v", err)
+		logger.ErrorWithContext(ctx, "failed commit transaction update budidaya with pricelist err: %v", err)
 		return nil, err
 	}
 

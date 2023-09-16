@@ -198,3 +198,98 @@ type ReadPricelistBudidayaInput struct {
 	BudidayaID uuid.UUID
 	Qty        int
 }
+
+type UpdateBudidayaWithPricelist struct {
+	BudidayaID uuid.UUID              `json:"budidayaID"`
+	EstTonase  int                    `json:"estTonase"`
+	EstDate    *time.Time             `json:"estDate"`
+	Pricelist  []UpdatePriceListInput `json:"pricelist"`
+}
+
+func (u *UpdateBudidayaWithPricelist) Validate() error {
+
+	errs := werror.NewError("bad input update budidaya")
+
+	if u.BudidayaID == uuid.Nil {
+		errs.Add(errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"budidayaID": "empty"}))
+	}
+
+	if err := errs.Return(); err != nil {
+		return err
+	}
+
+	for idx := range u.Pricelist {
+		u.Pricelist[idx].BudidayaID = u.BudidayaID
+		err := u.Pricelist[idx].Validate()
+		if err != nil {
+			errs.Add(errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"field": idx, "error": err}))
+		}
+	}
+
+	if err := errs.Return(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *UpdateBudidayaWithPricelist) ToBudidaya(userID uuid.UUID) Budidaya {
+	var (
+		today = time.Now()
+	)
+
+	return Budidaya{
+		ID:           u.BudidayaID,
+		EstTonase:    float64(u.EstTonase),
+		EstPanenDate: u.EstDate,
+		PriceList:    UpdatePricelistInputToPricelist(u.Pricelist, userID),
+		OrmModel: orm.OrmModel{
+			UpdatedAt: &today,
+			UpdatedBy: &userID,
+		},
+	}
+}
+
+type UpdatePriceListInput struct {
+	ID         uuid.UUID `json:"id"`
+	BudidayaID uuid.UUID `json:"budidayaID"`
+	EstTonase  int       `json:"estTonase"`
+	EstDate    time.Time `json:"estDate"`
+	Limit      int       `json:"limit"`
+	Price      int       `json:"price"`
+}
+
+func (u *UpdatePriceListInput) Validate() error {
+	errs := werror.NewError("bad input update pricelist")
+
+	if u.ID == uuid.Nil {
+		errs.Add(errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"id": "empty"}))
+	}
+
+	if u.BudidayaID == uuid.Nil {
+		errs.Add(errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"budidayaID": "empty"}))
+	}
+
+	return nil
+}
+
+func UpdatePricelistInputToPricelist(input []UpdatePriceListInput, userID uuid.UUID) []*PriceList {
+	var (
+		pricelist []*PriceList
+		today     = time.Now()
+	)
+	for _, price := range input {
+		pricelist = append(pricelist, &PriceList{
+			ID:         price.ID,
+			BudidayaID: price.BudidayaID,
+			Limit:      price.Limit,
+			Price:      price.Price,
+			OrmModel: orm.OrmModel{
+				UpdatedAt: &today,
+				UpdatedBy: &userID,
+			},
+		})
+	}
+
+	return pricelist
+}
