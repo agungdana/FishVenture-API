@@ -9,6 +9,7 @@ import (
 	transactionconfig "github.com/e-fish/api/transaction_http/transaction_config"
 	transactionservice "github.com/e-fish/api/transaction_http/transaction_service"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -78,6 +79,7 @@ func (h *Handler) GetOrderSuccess(c *gin.Context) {
 	direction := c.Query("direction")
 	objectTable := c.Query("objectTable")
 	year, _ := strconv.Atoi(c.Query("year"))
+	pondID, _ := uuid.Parse(c.Query("pondID"))
 
 	result, err := h.Service.ReadOrderSuccess(ctx, model.ReadInput{
 		Paginantion: orm.Paginantion{
@@ -89,7 +91,8 @@ func (h *Handler) GetOrderSuccess(c *gin.Context) {
 			Direction:   direction,
 			ObjectTable: objectTable,
 		},
-		Year: year,
+		Year:   year,
+		PondID: pondID,
 	})
 	res.Add(result, err)
 }
@@ -109,6 +112,7 @@ func (h *Handler) GetOrderCancel(c *gin.Context) {
 	direction := c.Query("direction")
 	objectTable := c.Query("objectTable")
 	year, _ := strconv.Atoi(c.Query("year"))
+	pondID, _ := uuid.Parse(c.Query("pondID"))
 
 	result, err := h.Service.ReadOrderCancel(ctx, model.ReadInput{
 		Paginantion: orm.Paginantion{
@@ -120,7 +124,8 @@ func (h *Handler) GetOrderCancel(c *gin.Context) {
 			Direction:   direction,
 			ObjectTable: objectTable,
 		},
-		Year: year,
+		Year:   year,
+		PondID: pondID,
 	})
 	res.Add(result, err)
 }

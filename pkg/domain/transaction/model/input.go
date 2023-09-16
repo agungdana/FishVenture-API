@@ -65,5 +65,6 @@ func GenerateCode() string {
 
 type ReadInput struct {
 	orm.Paginantion
-	Year int
+	Year   int
+	PondID uuid.UUID
 }

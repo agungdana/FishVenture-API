@@ -221,6 +221,12 @@ func Migrate(db *gorm.DB, flag string) error {
 					PermissionName: "order",
 					PermissionPath: "/order",
 				},
+				{
+					ID:             uuid.MustParse("fefba0fe-c421-56a1-b1a4-9f1e9f5ed89e"),
+					RoleID:         admin,
+					PermissionName: "order",
+					PermissionPath: "/order",
+				},
 			},
 		}
 
@@ -443,6 +449,12 @@ func Migrate(db *gorm.DB, flag string) error {
 					PermissionName: "order cancel",
 					PermissionPath: "/order-cancel",
 				},
+				{
+					ID:             uuid.MustParse("a5048b64-caa5-53c3-9d82-b8f6d0c574f1"),
+					RoleID:         admin,
+					PermissionName: "order cancel",
+					PermissionPath: "/order-cancel",
+				},
 			},
 		}
 
@@ -462,6 +474,12 @@ func Migrate(db *gorm.DB, flag string) error {
 				{
 					ID:             uuid.MustParse("77816b2e-3c92-5f79-afd1-9040a3c523b5"),
 					RoleID:         buyer,
+					PermissionName: "order successs",
+					PermissionPath: "/order-success",
+				},
+				{
+					ID:             uuid.MustParse("45b6dcd9-670c-5f06-a66b-cd2be4b4fc08"),
+					RoleID:         admin,
 					PermissionName: "order successs",
 					PermissionPath: "/order-success",
 				},

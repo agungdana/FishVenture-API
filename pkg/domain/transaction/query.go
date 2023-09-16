@@ -61,6 +61,11 @@ func (q *query) ReadOrder(ctx context.Context, input model.ReadInput) (*model.Or
 	}
 
 	switch appType {
+	case userModel.ADMIN:
+		if input.PondID != uuid.Nil {
+			db = db.Where("pond_id = ?", pondID)
+		}
+		db = db.Preload("Budidaya.Pond").Preload("Budidaya.Pool").Preload("Budidaya.FishSpecies")
 	case userModel.BUYER:
 		db = db.Where("user_id = ?", userID).Preload("Budidaya.Pond").Preload("Budidaya.Pool").Preload("Budidaya.FishSpecies")
 	case userModel.SELLER:
@@ -111,6 +116,11 @@ func (q *query) ReadOrderByStatus(ctx context.Context, input model.ReadInput, st
 	}
 
 	switch appType {
+	case userModel.ADMIN:
+		if input.PondID != uuid.Nil {
+			db = db.Where("pond_id = ?", pondID)
+		}
+		db = db.Preload("Budidaya.Pond").Preload("Budidaya.Pool").Preload("Budidaya.FishSpecies")
 	case userModel.BUYER:
 		db = db.Where("user_id = ?", userID).Preload("Budidaya.Pond").Preload("Budidaya.Pool").Preload("Budidaya.FishSpecies")
 	case userModel.SELLER:
