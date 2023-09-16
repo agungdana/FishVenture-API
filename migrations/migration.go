@@ -468,6 +468,23 @@ func Migrate(db *gorm.DB, flag string) error {
 			},
 		}
 
+		// update-budidaya
+		updateBudidaya := uuid.MustParse("89ccf18b-3455-53e6-9c03-837ccd9d8adc")
+		updateBudidayaWithPricelistPermission := model.Permission{
+			ID:   updateBudidaya,
+			Code: "PM0020",
+			Name: "update budidaya with pricelist",
+			Path: "/update-budidaya-with-pricelist",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("1dad21a3-556b-53ad-ae6a-424d6d64905b"),
+					RoleID:         seller,
+					PermissionName: "update budidaya with pricelist",
+					PermissionPath: "/update-budidaya-with-pricelist",
+				},
+			},
+		}
+
 		permission = append(permission,
 			permissionProfile,
 			createOrderPermission,
@@ -489,6 +506,7 @@ func Migrate(db *gorm.DB, flag string) error {
 			UpdateSuccessOrderPermission,
 			getOrderCancelPermission,
 			getOrderSuccessPermission,
+			updateBudidayaWithPricelistPermission,
 		)
 
 		db.Save(&permission)

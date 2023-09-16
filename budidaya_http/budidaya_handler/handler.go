@@ -34,6 +34,25 @@ func (h *Handler) CreateBudidaya(c *gin.Context) {
 	res.Add(result, err)
 }
 
+func (h *Handler) UpdateBudidayaWithPricelist(c *gin.Context) {
+	var (
+		ctx = c.Request.Context()
+		req model.UpdateBudidayaWithPricelist
+		res = new(restsvr.HttpResponse)
+	)
+
+	defer restsvr.ResponsJson(c, res)
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		res.Add(nil, err)
+		return
+	}
+
+	result, err := h.Service.UpdateBudidayaWithPricelist(ctx, req)
+	res.Add(result, err)
+}
+
 func (h *Handler) CreateFishSpecies(c *gin.Context) {
 	var (
 		ctx = c.Request.Context()

@@ -32,6 +32,33 @@ type command struct {
 	pondQuery pond.Query
 }
 
+// UpdateStatusBudidayaWithListPricelist implements Command.
+func (c *command) UpdateStatusBudidayaWithListPricelist(ctx context.Context, input model.UpdateBudidayaWithPricelist) (*uuid.UUID, error) {
+	var (
+		userID, _ = ctxutil.GetUserID(ctx)
+	)
+
+	err := input.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	updatedBudidaya := input.ToBudidaya(userID)
+
+	err = c.dbTxn.Updates(&updatedBudidaya).Error
+	if err != nil {
+		return nil, errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"error": err})
+	}
+
+	pricelist := model.UpdatePricelistInputToPricelist(input.Pricelist, userID)
+	err = c.dbTxn.Save(&pricelist).Error
+	if err != nil {
+		return nil, errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"error": err, "flag": "save pricelist"})
+	}
+
+	return &input.BudidayaID, nil
+}
+
 // CreateBudidaya implements Command.
 func (c *command) CreateBudidaya(ctx context.Context, input model.CreateBudidayaInput) (*uuid.UUID, error) {
 	var (
