@@ -25,6 +25,7 @@ func newRoute(ro route) {
 
 	ginEngine.POST("/create-pond", ctxutil.Authorization(), handler.CreatePond)
 	ginEngine.POST("/update-pond", ctxutil.Authorization(), handler.UpdatePond)
+	ginEngine.POST("/resubmission-pond", ctxutil.Authorization(), handler.ResubmissionPond)
 	ginEngine.GET("/pond", ctxutil.Authorization(), handler.GetPondByUserAdmin)
 	ginEngine.GET("/list-pond", handler.GetAllPond)
 

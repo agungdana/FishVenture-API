@@ -17,6 +17,8 @@ type Command interface {
 	UpdatePond(ctx context.Context, input model.UpdatePondInput) (*uuid.UUID, error)
 	UpdatePondStatus(ctx context.Context, input model.UpdatePondStatus) (*uuid.UUID, error)
 
+	ResubmissionPond(ctx context.Context, input model.Resubmission) (*uuid.UUID, error)
+
 	Rollback(ctx context.Context) error
 	Commit(ctx context.Context) error
 }

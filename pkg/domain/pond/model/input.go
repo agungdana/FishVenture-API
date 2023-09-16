@@ -242,8 +242,9 @@ func (u *UpdatePondInput) ToPond(userID, pondID uuid.UUID) Pond {
 }
 
 type UpdatePondStatus struct {
-	PondID uuid.UUID `json:"pondID"`
-	Status string    `json:"status"`
+	PondID  uuid.UUID `json:"pondID"`
+	Status  string    `json:"status"`
+	Reasons string    `json:"reasons"`
 }
 
 func (u *UpdatePondStatus) Validate() error {
@@ -256,6 +257,10 @@ func (u *UpdatePondStatus) Validate() error {
 		errs.Add(errorpond.ErrValidateInputbUpdateStatus.AttacthDetail(map[string]any{"Status": "empty"}))
 	}
 
+	if u.Status == DISABLED && u.Reasons == "" {
+		errs.Add(errorpond.ErrValidateInputbUpdateStatus.AttacthDetail(map[string]any{"reasons": "empty"}))
+	}
+
 	return errs.Return()
 }
 
@@ -265,10 +270,231 @@ func (u *UpdatePondStatus) ToPond(userID uuid.UUID) Pond {
 	)
 
 	return Pond{
-		ID:     u.PondID,
-		Status: u.Status,
+		ID:      u.PondID,
+		Status:  u.Status,
+		Reasons: u.Reasons,
 		OrmModel: orm.OrmModel{
 			UpdatedAt: &today,
+			UpdatedBy: &userID,
+		},
+	}
+}
+
+type Resubmission struct {
+	Name          string              `json:"name"`
+	CountryID     uuid.UUID           `gorm:"size:256" json:"countryID"`
+	ProvinceID    uuid.UUID           `gorm:"size:256" json:"provinceID"`
+	CityID        uuid.UUID           `gorm:"size:256" json:"cityID"`
+	DistrictID    uuid.UUID           `gorm:"size:256" json:"districtID"`
+	DetailAddress string              `json:"detailAddress"`
+	NoteAddress   string              `json:"noteAddress"`
+	Type          string              `json:"type"`
+	Latitude      float64             `json:"latitude"`
+	Longitude     float64             `json:"longitude"`
+	Image         string              `json:"image"`
+	ListPool      []UpdatePoolInput   `json:"listPool"`
+	ListBerkas    []UpdateBerkasInput `json:"listBerkas"`
+}
+
+func (c *Resubmission) Validate() error {
+	errs := werror.NewError("error validate input")
+
+	if c.Name == "" {
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Name": "empty"}))
+	}
+	if c.CountryID == uuid.Nil {
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"CountryID": "empty"}))
+	}
+	if c.ProvinceID == uuid.Nil {
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"ProvinceID": "empty"}))
+	}
+	if c.CityID == uuid.Nil {
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"CityID": "empty"}))
+	}
+	if c.DistrictID == uuid.Nil {
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"DistrictID": "empty"}))
+	}
+	if c.Type == "" {
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Type": "empty"}))
+	}
+
+	if c.Type == TEAM {
+		if err := ValidateUpdateberkasInput(c.ListBerkas); err != nil {
+			errs.Add(err)
+		}
+	}
+
+	if len(c.ListPool) < 1 {
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Pool": "empty"}))
+	}
+
+	err := ValidateUpdatePoolInput(c.ListPool)
+	if err != nil {
+		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"err": err}))
+	}
+
+	return errs.Return()
+}
+
+type UpdatePoolInput struct {
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Long      float64   `json:"long"`
+	Wide      float64   `json:"wide"`
+	Image     string    `json:"image"`
+	IsDeleted bool      `json:"isDeleted"`
+}
+
+type UpdateBerkasInput struct {
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	File      string    `json:"file"`
+	IsDeleted bool      `json:"isDeleted"`
+}
+
+func (c *UpdateBerkasInput) Validate() error {
+	errs := werror.NewError("error validate input")
+
+	if c.Name == "" {
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Name": "empty"}))
+	}
+	if c.File == "" {
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"File": "empty"}))
+	}
+
+	return errs.Return()
+}
+
+func ValidateUpdateberkasInput(input []UpdateBerkasInput) error {
+	errs := werror.NewError("error validate input")
+
+	for idx := range input {
+		if err := input[idx].Validate(); err != nil {
+			errs.Add(err)
+		}
+	}
+
+	return errs.Return()
+}
+
+func (c *UpdateBerkasInput) ToBerkas(userID uuid.UUID, pondID uuid.UUID) Berkas {
+	var (
+		now    = time.Now()
+		berkas = Berkas{
+			ID:     c.ID,
+			PondID: pondID,
+			Name:   c.Name,
+			File:   c.File,
+			OrmModel: orm.OrmModel{
+				UpdatedAt: &now,
+				UpdatedBy: &userID,
+			},
+		}
+	)
+
+	if c.IsDeleted {
+		berkas.DeletedAt = &now
+		berkas.DeletedBy = &userID
+	}
+	return berkas
+}
+
+func UpdateListBerkasInputToListBerkas(userID, pondID uuid.UUID, input []UpdateBerkasInput) (newBerkas []Berkas) {
+	for idx := range input {
+		if input[idx].ID == uuid.Nil {
+			input[idx].ID = uuid.New()
+		}
+		newBerkas = append(newBerkas, input[idx].ToBerkas(userID, pondID))
+	}
+	return
+}
+
+func (c *UpdatePoolInput) Validate() error {
+	errs := werror.NewError("error validate input")
+
+	if c.Name == "" {
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Name": "empty"}))
+	}
+	if c.Long == 0 {
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Long": "empty"}))
+	}
+	if c.Wide == 0 {
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Wide": "empty"}))
+	}
+	if c.Image == "" {
+		errs.Add(errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"Image": "empty"}))
+	}
+
+	return errs.Return()
+}
+
+func ValidateUpdatePoolInput(input []UpdatePoolInput) error {
+	errs := werror.NewError("error validate input")
+
+	for _, v := range input {
+		err := v.Validate()
+		if err != nil {
+			errs.Add(err)
+		}
+	}
+
+	return errs.Return()
+}
+
+func (c *UpdatePoolInput) ToPool(userID uuid.UUID, pondID uuid.UUID) Pool {
+	var (
+		now = time.Now()
+
+		pool = Pool{
+			ID:     c.ID,
+			PondID: pondID,
+			Name:   c.Name,
+			Long:   c.Long,
+			Wide:   c.Wide,
+			Image:  c.Image,
+			OrmModel: orm.OrmModel{
+				UpdatedAt: &now,
+				UpdatedBy: &userID,
+			},
+		}
+	)
+
+	if c.IsDeleted {
+		pool.DeletedAt = &now
+		pool.DeletedBy = &userID
+	}
+	return pool
+}
+
+func UpdateListPoolInputToListPool(userID, pondID uuid.UUID, input []UpdatePoolInput) (newPool []Pool) {
+	for idx := range input {
+		if input[idx].ID == uuid.Nil {
+			input[idx].ID = uuid.New()
+		}
+		newPool = append(newPool, input[idx].ToPool(userID, pondID))
+	}
+	return
+}
+
+func (c *Resubmission) ToPond(userID, pondID uuid.UUID) Pond {
+	now := time.Now()
+	return Pond{
+		ID:            pondID,
+		UserID:        userID,
+		Name:          c.Name,
+		CountryID:     c.CountryID,
+		ProvinceID:    c.ProvinceID,
+		CityID:        c.CityID,
+		DistrictID:    c.DistrictID,
+		DetailAddress: c.DetailAddress,
+		NoteAddress:   c.NoteAddress,
+		Type:          c.Type,
+		Latitude:      c.Latitude,
+		Longitude:     c.Longitude,
+		Status:        SUBMISION,
+		Image:         c.Image,
+		OrmModel: orm.OrmModel{
+			UpdatedAt: &now,
 			UpdatedBy: &userID,
 		},
 	}

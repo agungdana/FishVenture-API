@@ -485,6 +485,23 @@ func Migrate(db *gorm.DB, flag string) error {
 			},
 		}
 
+		// resubmission-pond
+		resubmissionPond := uuid.MustParse("ab45e0b0-d352-59dd-a821-795768f975c7")
+		resubmissionPondPermission := model.Permission{
+			ID:   resubmissionPond,
+			Code: "PM0021",
+			Name: "resubmission-pond",
+			Path: "/resubmission-pond",
+			RolePermission: []*model.RolePermission{
+				{
+					ID:             uuid.MustParse("0d489c16-b7fe-5b53-8946-562bd89a564f"),
+					RoleID:         seller,
+					PermissionName: "resubmission-pond",
+					PermissionPath: "/resubmission-pond",
+				},
+			},
+		}
+
 		permission = append(permission,
 			permissionProfile,
 			createOrderPermission,
@@ -507,6 +524,7 @@ func Migrate(db *gorm.DB, flag string) error {
 			getOrderCancelPermission,
 			getOrderSuccessPermission,
 			updateBudidayaWithPricelistPermission,
+			resubmissionPondPermission,
 		)
 
 		db.Save(&permission)
