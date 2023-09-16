@@ -56,6 +56,10 @@ func (q *query) ReadOrder(ctx context.Context, input model.ReadInput) (*model.Or
 
 	db = db.Where("deleted_at is NULL")
 
+	if input.Year > 0 {
+		db = db.Where("YEAR(created_at) = ?", input.Year)
+	}
+
 	switch appType {
 	case userModel.BUYER:
 		db = db.Where("user_id = ?", userID).Preload("Budidaya.Pond").Preload("Budidaya.Pool").Preload("Budidaya.FishSpecies")
@@ -101,6 +105,10 @@ func (q *query) ReadOrderByStatus(ctx context.Context, input model.ReadInput, st
 	input.ObjectTable = model.Order{}
 
 	db = db.Where("deleted_at is NULL and status = ?", status)
+
+	if input.Year > 0 {
+		db = db.Where("YEAR(created_at) = ?", input.Year)
+	}
 
 	switch appType {
 	case userModel.BUYER:

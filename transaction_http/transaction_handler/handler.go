@@ -77,6 +77,7 @@ func (h *Handler) GetOrderSuccess(c *gin.Context) {
 	sort := c.Query("sort")
 	direction := c.Query("direction")
 	objectTable := c.Query("objectTable")
+	year, _ := strconv.Atoi(c.Query("year"))
 
 	result, err := h.Service.ReadOrderSuccess(ctx, model.ReadInput{
 		Paginantion: orm.Paginantion{
@@ -88,6 +89,7 @@ func (h *Handler) GetOrderSuccess(c *gin.Context) {
 			Direction:   direction,
 			ObjectTable: objectTable,
 		},
+		Year: year,
 	})
 	res.Add(result, err)
 }
@@ -106,6 +108,7 @@ func (h *Handler) GetOrderCancel(c *gin.Context) {
 	sort := c.Query("sort")
 	direction := c.Query("direction")
 	objectTable := c.Query("objectTable")
+	year, _ := strconv.Atoi(c.Query("year"))
 
 	result, err := h.Service.ReadOrderCancel(ctx, model.ReadInput{
 		Paginantion: orm.Paginantion{
@@ -117,6 +120,7 @@ func (h *Handler) GetOrderCancel(c *gin.Context) {
 			Direction:   direction,
 			ObjectTable: objectTable,
 		},
+		Year: year,
 	})
 	res.Add(result, err)
 }
