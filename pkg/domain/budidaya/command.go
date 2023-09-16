@@ -50,6 +50,12 @@ func (c *command) UpdateStatusBudidayaWithListPricelist(ctx context.Context, inp
 		return nil, errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"error": err})
 	}
 
+	pricelist := model.UpdatePricelistInputToPricelist(input.Pricelist, userID)
+	err = c.dbTxn.Save(&pricelist).Error
+	if err != nil {
+		return nil, errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"error": err, "flag": "save pricelist"})
+	}
+
 	return &input.BudidayaID, nil
 }
 

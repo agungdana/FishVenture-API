@@ -242,7 +242,6 @@ func (u *UpdateBudidayaWithPricelist) ToBudidaya(userID uuid.UUID) Budidaya {
 		ID:           u.BudidayaID,
 		EstTonase:    float64(u.EstTonase),
 		EstPanenDate: u.EstDate,
-		PriceList:    UpdatePricelistInputToPricelist(u.Pricelist, userID),
 		OrmModel: orm.OrmModel{
 			UpdatedAt: &today,
 			UpdatedBy: &userID,
