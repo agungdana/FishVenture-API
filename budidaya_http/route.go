@@ -23,6 +23,7 @@ func newRoute(ro route) {
 	}
 
 	ginEngine.POST("/create-budidaya", ctxutil.Authorization(), handler.CreateBudidaya)
+	ginEngine.POST("/update-budidaya", ctxutil.Authorization(), handler.UpdateBudidaya)
 	ginEngine.POST("/create-fish-species", ctxutil.Authorization(), handler.CreateFishSpecies)
 	ginEngine.POST("/create-multiple-pricelist", ctxutil.Authorization(), handler.CreateMultiplePricelist)
 
