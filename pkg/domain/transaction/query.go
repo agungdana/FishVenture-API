@@ -104,7 +104,7 @@ func (q *query) ReadOrderByStatus(ctx context.Context, input model.ReadInput, st
 
 	switch appType {
 	case userModel.BUYER:
-		db = db.Where("user_id = ?", userID).Preload("Budidaya.Pond")
+		db = db.Where("user_id = ?", userID).Preload("Budidaya.Pond").Preload("Budidaya.Pool").Preload("Budidaya.FishSpecies")
 	case userModel.SELLER:
 		db = db.Where("pond_id = ?", pondID).Preload("Budidaya.Pool").Preload("User")
 	}
