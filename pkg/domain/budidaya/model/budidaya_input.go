@@ -269,6 +269,10 @@ func (u *UpdatePriceListInput) Validate() error {
 		errs.Add(errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"budidayaID": "empty"}))
 	}
 
+	if err := errs.Return(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
