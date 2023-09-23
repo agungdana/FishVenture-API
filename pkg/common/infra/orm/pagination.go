@@ -59,10 +59,6 @@ func Paginate(db *gorm.DB, pagination *Paginantion) func(db *gorm.DB) *gorm.DB {
 
 	db = db.Model(&pagination.ObjectTable)
 
-	if pagination.Keyword != "" {
-		db = db.Where(pagination.FindBy+" ?", pagination.Keyword)
-	}
-
 	db.Count(&totalRows)
 
 	pagination.setTotalRows(totalRows)
