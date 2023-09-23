@@ -2,7 +2,6 @@ package schedulerservice
 
 import (
 	"context"
-	"sync"
 	"time"
 
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
@@ -10,7 +9,6 @@ import (
 	"github.com/e-fish/api/pkg/domain/budidaya"
 	"github.com/e-fish/api/pkg/domain/pond"
 	"github.com/e-fish/api/pkg/domain/transaction"
-	"github.com/e-fish/api/pkg/domain/transaction/model"
 	"github.com/e-fish/api/pkg/domain/verification"
 	schedulerconfig "github.com/e-fish/api/scheduler/scheduler_config"
 	"github.com/e-fish/api/scheduler/scheduler_service/internal"
@@ -80,7 +78,6 @@ func (s *Service) cancelOrder() {
 func (s *Service) UpdateOrderStatus(count int) {
 	ctx := context.Background()
 	ctx = ctxutil.NewRequest(ctx)
-	wg := sync.WaitGroup{}
 
 	if count == 10 {
 		return
@@ -93,49 +90,27 @@ func (s *Service) UpdateOrderStatus(count int) {
 		return
 	}
 
-	numWorker := make(chan struct{}, 20)
 	for _, order := range orders {
-		if order == nil {
+		if order.BookingDate == nil {
 			continue
 		}
-		wg.Add(1)
-		numWorker <- struct{}{}
-		go func(order model.Order) {
-			defer func() {
-				<-numWorker
-				wg.Done()
-			}()
-
-			if order.BookingDate == nil {
-				return
+		lastTime := order.BookingDate.AddDate(0, 0, 2)
+		if time.Now().Before(lastTime) {
+			continue
+		}
+		command := s.transactionRepo.NewCommand(ctx)
+		result, err := command.UpdateCancelOrder(ctx, order.ID)
+		if err != nil {
+			if err := command.Rollback(ctx); err != nil {
+				logger.ErrorWithContext(ctx, "failed rollback transaction update transaction: %v", err)
 			}
-
-			lastTime := order.BookingDate.AddDate(0, 0, 2)
-			if time.Now().Before(lastTime) {
-				return
-			}
-
-			command := s.transactionRepo.NewCommand(ctx)
-			result, err := command.UpdateCancelOrder(ctx, order.ID)
-			if err != nil {
-				if err := command.Rollback(ctx); err != nil {
-					logger.ErrorWithContext(ctx, "failed rollback transaction update transaction: %v", err)
-				}
-
-				return
-			}
-
-			if err := command.Commit(ctx); err != nil {
-				logger.ErrorWithContext(ctx, "failed commit transaction update transaction: %v", err)
-				return
-			}
-
-			logger.InfoWithContext(ctx, "Success update order [%v]", result)
-
-		}(*order)
+			continue
+		}
+		if err := command.Commit(ctx); err != nil {
+			logger.ErrorWithContext(ctx, "failed commit transaction update transaction: %v", err)
+			continue
+		}
+		logger.InfoWithContext(ctx, "Success update order [%v]", result)
 	}
-
-	wg.Wait()
-
 	logger.DebugWithContext(ctx, "########Success update data")
 }

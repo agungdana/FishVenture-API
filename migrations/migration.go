@@ -23,6 +23,25 @@ func Migrations() {
 
 func Migrate(db *gorm.DB, flag string) error {
 	switch flag {
+	case "update-budidaya":
+
+		budidaya := []Budidaya{}
+
+		db.Find(&budidaya)
+
+		err := db.Migrator().DropTable(&User{})
+		if err != nil {
+			return err
+		}
+
+		db.AutoMigrate(&Budidaya{})
+
+		if len(budidaya) > 0 {
+			db.Save(&budidaya)
+		}
+
+		return err
+
 	case "update-user-data":
 
 		err := db.Migrator().DropTable(&User{})

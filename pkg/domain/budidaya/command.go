@@ -2,9 +2,11 @@ package budidaya
 
 import (
 	"context"
+	"time"
 
 	"github.com/e-fish/api/pkg/common/helper/ctxutil"
 	"github.com/e-fish/api/pkg/common/helper/logger"
+	"github.com/e-fish/api/pkg/common/helper/werror"
 	"github.com/e-fish/api/pkg/common/infra/orm"
 	errorbudidaya "github.com/e-fish/api/pkg/domain/budidaya/error-budidaya"
 	"github.com/e-fish/api/pkg/domain/budidaya/model"
@@ -218,4 +220,43 @@ func (c *command) Rollback(ctx context.Context) error {
 		return errorbudidaya.ErrRollback.AttacthDetail(map[string]any{"errors": err})
 	}
 	return nil
+}
+
+// UpdateBudidayaSoldQty implements Command.
+func (c *command) UpdateBudidayaSoldQty(ctx context.Context, input model.UpdateBudidayaSoldQty) (*uuid.UUID, error) {
+	var (
+		userID, _ = ctxutil.GetUserID(ctx)
+	)
+
+	exist, err := c.query.lock().ReadBudidayaByID(ctx, input.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if exist == nil {
+		return nil, errorbudidaya.ErrFoundBudidaya.AttacthDetail(map[string]any{"error": "budidaya empty"})
+	}
+
+	expr := gorm.Expr("sold + ?", input.SoldQty)
+	if input.IsCancel {
+		expr = gorm.Expr("sold - ?", input.SoldQty)
+	}
+
+	if !input.IsCancel && (input.SoldQty > exist.Stock) {
+		return nil, werror.Error{
+			Code:    "FailedUpdateOrder",
+			Message: "Order Estimate Exceeded Capacity",
+		}
+	}
+
+	err = c.dbTxn.Where("deleted_at IS NULL AND id = ?", input.ID).Updates(map[string]interface{}{
+		"sold":       expr,
+		"updated_at": time.Now(),
+		"updated_by": userID,
+	}).Error
+	if err != nil {
+		return nil, errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &input.ID, nil
 }

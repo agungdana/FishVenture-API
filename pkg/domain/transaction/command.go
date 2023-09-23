@@ -22,16 +22,18 @@ func newCommand(ctx context.Context, db *gorm.DB, budidayaRepo budidaya.Repo) Co
 	)
 
 	return &command{
-		dbTxn:         dbTxn.WithContext(ctx),
-		query:         newQuery(dbTxn),
-		budidayaQuery: budidayaRepo.NewQuery(),
+		dbTxn:           dbTxn.WithContext(ctx),
+		query:           newQuery(dbTxn),
+		budidayaQuery:   budidayaRepo.NewQuery(),
+		budidayaCommand: budidayaRepo.NewCommand(ctx),
 	}
 }
 
 type command struct {
-	dbTxn         *gorm.DB
-	query         Query
-	budidayaQuery budidaya.Query
+	dbTxn           *gorm.DB
+	query           Query
+	budidayaQuery   budidaya.Query
+	budidayaCommand budidaya.Command
 }
 
 // UpdateCancelOrder implements Command.
@@ -64,6 +66,16 @@ func (c *command) UpdateCancelOrder(ctx context.Context, input uuid.UUID) (*uuid
 			},
 		},
 	).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = c.budidayaCommand.UpdateBudidayaSoldQty(ctx, modelBudidaya.UpdateBudidayaSoldQty{
+		ID:       exist.BudidayaID,
+		SoldQty:  exist.Qty,
+		IsCancel: true,
+	})
 
 	if err != nil {
 		return nil, err
@@ -139,6 +151,16 @@ func (c *command) CreateOrder(ctx context.Context, input model.CreateOrderInput)
 	err = c.dbTxn.Create(&newOrder).Error
 	if err != nil {
 		return nil, errortransaction.ErrCreateOrder.AttacthDetail(map[string]any{"error": err})
+	}
+
+	_, err = c.budidayaCommand.UpdateBudidayaSoldQty(ctx, modelBudidaya.UpdateBudidayaSoldQty{
+		ID:       input.BudidayaID,
+		SoldQty:  input.Qty,
+		IsCancel: false,
+	})
+
+	if err != nil {
+		return nil, err
 	}
 
 	return &newOrder.ID, nil

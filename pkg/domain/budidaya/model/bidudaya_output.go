@@ -5,6 +5,7 @@ import (
 
 	"github.com/e-fish/api/pkg/domain/pond/model"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type BudidayaOutput struct {
@@ -22,10 +23,18 @@ type BudidayaOutput struct {
 	EstPrice        int                `json:"estPrice"`
 	Status          string             `json:"status"`
 	PriceList       []*PriceListOutput `gorm:"foreignKey:BudidayaID;references:ID" json:"priceList,omitempty"`
+
+	Sold  int `json:"sold"`
+	Stock int `json:"stock"`
 }
 
 func (p *BudidayaOutput) TableName() string {
 	return "budidayas"
+}
+
+func (p *BudidayaOutput) AfterFind(db *gorm.DB) (err error) {
+	p.Stock = int(p.EstTonase) - p.Sold
+	return
 }
 
 type PriceListOutput struct {
