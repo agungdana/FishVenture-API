@@ -60,16 +60,18 @@ func (q *query) ReadOrder(ctx context.Context, input model.ReadInput) (*model.Or
 		db = db.Where("YEAR(created_at) = ?", input.Year)
 	}
 
+	db = db.Preload("Budidaya.Pool").Preload("Budidaya.FishSpecies")
+
 	switch appType {
 	case userModel.ADMIN:
 		if input.PondID != uuid.Nil {
 			db = db.Where("pond_id = ?", pondID)
 		}
-		db = db.Preload("Budidaya.Pond").Preload("Budidaya.Pool").Preload("Budidaya.FishSpecies")
+		db = db.Preload("Budidaya.Pond")
 	case userModel.BUYER:
-		db = db.Where("user_id = ?", userID).Preload("Budidaya.Pond").Preload("Budidaya.Pool").Preload("Budidaya.FishSpecies")
+		db = db.Where("user_id = ?", userID).Preload("Budidaya.Pond")
 	case userModel.SELLER:
-		db = db.Where("pond_id = ?", pondID).Preload("Budidaya.Pool").Preload("User")
+		db = db.Where("pond_id = ?", pondID).Preload("User")
 	}
 
 	err := db.Scopes(orm.Paginate(db, &input.Paginantion)).Find(&order).Error
