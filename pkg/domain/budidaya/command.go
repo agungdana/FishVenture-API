@@ -226,6 +226,7 @@ func (c *command) Rollback(ctx context.Context) error {
 func (c *command) UpdateBudidayaSoldQty(ctx context.Context, input model.UpdateBudidayaSoldQty) (*uuid.UUID, error) {
 	var (
 		userID, _ = ctxutil.GetUserID(ctx)
+		today     = time.Now()
 	)
 
 	exist, err := c.query.lock().ReadBudidayaByID(ctx, input.ID)
@@ -237,9 +238,10 @@ func (c *command) UpdateBudidayaSoldQty(ctx context.Context, input model.UpdateB
 		return nil, errorbudidaya.ErrFoundBudidaya.AttacthDetail(map[string]any{"error": "budidaya empty"})
 	}
 
-	expr := gorm.Expr("sold + ?", input.SoldQty)
+	exist.Sold = exist.Sold + input.SoldQty
 	if input.IsCancel {
-		expr = gorm.Expr("sold - ?", input.SoldQty)
+		exist.Sold = exist.Sold - input.SoldQty
+
 	}
 
 	if !input.IsCancel && (input.SoldQty > exist.Stock) {
@@ -249,10 +251,12 @@ func (c *command) UpdateBudidayaSoldQty(ctx context.Context, input model.UpdateB
 		}
 	}
 
-	err = c.dbTxn.Where("deleted_at IS NULL AND id = ?", input.ID).Updates(map[string]interface{}{
-		"sold":       expr,
-		"updated_at": time.Now(),
-		"updated_by": userID,
+	err = c.dbTxn.Where("deleted_at IS NULL AND id = ?", input.ID).Updates(&model.Budidaya{
+		Sold: exist.Sold,
+		OrmModel: orm.OrmModel{
+			UpdatedAt: &today,
+			UpdatedBy: &userID,
+		},
 	}).Error
 	if err != nil {
 		return nil, errorbudidaya.ErrFailedUpdateBudidaya.AttacthDetail(map[string]any{"error": err})

@@ -168,6 +168,10 @@ func (c *command) CreateOrder(ctx context.Context, input model.CreateOrderInput)
 
 // Commit implements Command.
 func (c *command) Commit(ctx context.Context) error {
+	if err := c.budidayaCommand.Commit(ctx); err != nil {
+		return errortransaction.ErrCommit.AttacthDetail(map[string]any{"errors": err})
+	}
+
 	if err := orm.CommitTxn(ctx); err != nil {
 		return errortransaction.ErrCommit.AttacthDetail(map[string]any{"errors": err})
 	}
@@ -176,6 +180,10 @@ func (c *command) Commit(ctx context.Context) error {
 
 // Rollback implements Command.
 func (c *command) Rollback(ctx context.Context) error {
+	if err := c.budidayaCommand.Rollback(ctx); err != nil {
+		return errortransaction.ErrRollback.AttacthDetail(map[string]any{"errors": err})
+	}
+
 	if err := orm.RollbackTxn(ctx); err != nil {
 		return errortransaction.ErrRollback.AttacthDetail(map[string]any{"errors": err})
 	}
