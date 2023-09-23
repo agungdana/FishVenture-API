@@ -101,6 +101,40 @@ func (c *command) CreatePond(ctx context.Context, input model.CreatePondInput) (
 	return &newPond.ID, nil
 }
 
+// CreatePond implements Command.
+func (c *command) ResubmissionPond(ctx context.Context, input model.Resubmission) (*uuid.UUID, error) {
+	var (
+		userID, _ = ctxutil.GetUserID(ctx)
+		pondID, _ = ctxutil.GetPondID(ctx)
+	)
+
+	err := input.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	updatedPond := input.ToPond(userID, pondID)
+
+	err = c.dbTxn.Where("id = ?", pondID).Updates(&updatedPond).Error
+	if err != nil {
+		return nil, errorpond.ErrFailedUpdatePond.AttacthDetail(map[string]any{"error": err})
+	}
+
+	ListPool := model.UpdateListPoolInputToListPool(userID, pondID, input.ListPool)
+	ListBerkas := model.UpdateListBerkasInputToListBerkas(userID, pondID, input.ListBerkas)
+
+	err = c.dbTxn.Save(&ListPool).Error
+	if err != nil {
+		return nil, errorpond.ErrFailedUpdatePond.AttacthDetail(map[string]any{"error": err})
+	}
+	err = c.dbTxn.Save(&ListBerkas).Error
+	if err != nil {
+		return nil, errorpond.ErrFailedUpdatePond.AttacthDetail(map[string]any{"error": err})
+	}
+
+	return &updatedPond.ID, nil
+}
+
 // Commit implements Command.
 func (c *command) Commit(ctx context.Context) error {
 	if err := orm.CommitTxn(ctx); err != nil {

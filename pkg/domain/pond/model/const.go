@@ -30,7 +30,7 @@ var MapStatus = map[string]map[string]bool{
 		DISABLED:  true,
 	},
 	DISABLED: {
-		SUBMISION: false,
+		SUBMISION: true,
 		REVIEWED:  false,
 		ACTIVED:   false,
 		DISABLED:  true,

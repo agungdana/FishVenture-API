@@ -82,6 +82,26 @@ func (s *Service) UpdatePond(ctx context.Context, input model.UpdatePondInput) (
 	return result, nil
 }
 
+func (s *Service) ResubmissionPond(ctx context.Context, input model.Resubmission) (*uuid.UUID, error) {
+	command := s.repo.NewCommand(ctx)
+
+	result, err := command.ResubmissionPond(ctx, input)
+	if err != nil {
+		if err := command.Rollback(ctx); err != nil {
+			logger.ErrorWithContext(ctx, "failed rollback transaction resubmission pond err: %v", err)
+		}
+		logger.ErrorWithContext(ctx, "failed resubmission pond err: %v", err)
+		return nil, err
+	}
+
+	if err := command.Commit(ctx); err != nil {
+		logger.ErrorWithContext(ctx, "failed commit transaction resubmission pond err: %v", err)
+		return nil, err
+	}
+
+	return result, nil
+}
+
 func (s *Service) UpdatePondStatus(ctx context.Context, input model.UpdatePondStatus) (*uuid.UUID, error) {
 	command := s.repo.NewCommand(ctx)
 
@@ -156,7 +176,7 @@ func (s *Service) SaveFilePond(ctx context.Context, file *multipart.FileHeader) 
 	filename := uuid.New().String() + ext
 
 	_, imageExtOk := savefile.ImageExt[strings.ReplaceAll(ext, ".", "")]
-	_, fileExtOk := savefile.FileExt[strings.ReplaceAll(ext,".","")]
+	_, fileExtOk := savefile.FileExt[strings.ReplaceAll(ext, ".", "")]
 	if !imageExtOk && !fileExtOk {
 		return nil, werror.Error{
 			Code:    "FailedSaveFile",

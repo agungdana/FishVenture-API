@@ -103,6 +103,7 @@ type Pond struct {
 	Team          Team      `json:"team"`
 	Status        string    `json:"status"`
 	Image         string    `json:"image"`
+	Reasons       string    `json:"reasons"`
 	ListPool      []Pool    `json:"listPool"`
 	ListBerkas    []Berkas  `json:"berkas"`
 	orm.OrmModel
