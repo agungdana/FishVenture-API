@@ -18,7 +18,7 @@ func Test_Migrate(t *testing.T) {
 		return
 	}
 
-	err = migrations.Migrate(con, "add-permission")
+	err = migrations.Migrate(con, "update-budidaya")
 	if err != nil {
 		log.Println("error: ", err)
 		return

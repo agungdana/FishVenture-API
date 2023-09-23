@@ -16,7 +16,7 @@ type Command interface {
 	CreateBudidaya(ctx context.Context, input model.CreateBudidayaInput) (*uuid.UUID, error)
 	UpdateStatusBudidaya(ctx context.Context, input model.UpdateBudidayaStatusInput) (*uuid.UUID, error)
 	UpdateStatusBudidayaWithListPricelist(ctx context.Context, input model.UpdateBudidayaWithPricelist) (*uuid.UUID, error)
-
+	UpdateBudidayaSoldQty(ctx context.Context, input model.UpdateBudidayaSoldQty) (*uuid.UUID, error)
 	CreateMultiplePricelistBudidaya(ctx context.Context, input model.CreateMultiplePriceListInput) ([]*uuid.UUID, error)
 
 	CreateFishSpecies(ctx context.Context, input model.CreateFishSpeciesInput) (*uuid.UUID, error)

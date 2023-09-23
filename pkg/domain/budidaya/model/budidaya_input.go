@@ -296,3 +296,9 @@ func UpdatePricelistInputToPricelist(input []UpdatePriceListInput, userID uuid.U
 
 	return pricelist
 }
+
+type UpdateBudidayaSoldQty struct {
+	ID       uuid.UUID `json:"id"`
+	SoldQty  int       `json:"sold"`
+	IsCancel bool      `json:"isCancel"`
+}

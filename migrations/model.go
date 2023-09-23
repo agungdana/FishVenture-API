@@ -145,6 +145,7 @@ type Budidaya struct {
 	EstPanenDate    time.Time
 	EstPrice        int
 	Status          string
+	Sold            int
 	PriceList       []*PriceList
 	orm.OrmModel
 }
