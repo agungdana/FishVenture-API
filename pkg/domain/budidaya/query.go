@@ -149,7 +149,7 @@ func (q *query) ReadBudidayaNeaerest(ctx context.Context) ([]*model.BudidayaOutp
 	)
 
 	db = db.Preload("Pool")
-	db = db.Preload("FishSpecies").Preload("PriceList")
+	db = db.Preload("FishSpecies").Preload("PriceList").Preload("Pond")
 	db = db.Where("est_panen_date IS NULL OR est_panen_date >= ?", today)
 	err := db.Where("deleted_at IS NULL and status <> ?", model.END).Find(&res).Error
 	if err != nil {
