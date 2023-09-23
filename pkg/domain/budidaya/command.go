@@ -237,9 +237,10 @@ func (c *command) UpdateBudidayaSoldQty(ctx context.Context, input model.UpdateB
 		return nil, errorbudidaya.ErrFoundBudidaya.AttacthDetail(map[string]any{"error": "budidaya empty"})
 	}
 
-	expr := gorm.Expr("sold + ?", input.SoldQty)
+	exist.Sold = exist.Sold + input.SoldQty
 	if input.IsCancel {
-		expr = gorm.Expr("sold - ?", input.SoldQty)
+		exist.Sold = exist.Sold - input.SoldQty
+
 	}
 
 	if !input.IsCancel && (input.SoldQty > exist.Stock) {
@@ -250,7 +251,7 @@ func (c *command) UpdateBudidayaSoldQty(ctx context.Context, input model.UpdateB
 	}
 
 	err = c.dbTxn.Where("deleted_at IS NULL AND id = ?", input.ID).Updates(map[string]interface{}{
-		"sold":       expr,
+		"sold":       exist.Sold,
 		"updated_at": time.Now(),
 		"updated_by": userID,
 	}).Error
