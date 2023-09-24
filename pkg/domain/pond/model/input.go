@@ -115,6 +115,10 @@ func (c *CreateBerkasInput) Validate() error {
 func ValidateCreateberkasInput(input []CreateBerkasInput) error {
 	errs := werror.NewError("error validate input")
 
+	if len(input) < 1 {
+		return errorpond.ErrValidateInputbBerkas.AttacthDetail(map[string]any{"berkas": "empty"})
+	}
+
 	for _, v := range input {
 		if err := v.Validate(); err != nil {
 			errs.Add(err)
