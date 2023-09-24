@@ -47,14 +47,14 @@ func (c *CreatePondInput) Validate() error {
 		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Type": "empty"}))
 	}
 
-	if c.Type == TEAM {
-		// if c.TeamID == nil {
-		// 	errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Team": "empty"}))
-		// }
-		if err := ValidateCreateberkasInput(c.ListBerkas); err != nil {
-			errs.Add(err)
-		}
-	}
+	// if c.Type == TEAM {
+	// if c.TeamID == nil {
+	// 	errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Team": "empty"}))
+	// }
+	// if err := ValidateCreateberkasInput(c.ListBerkas); err != nil {
+	// errs.Add(err)
+	// }
+	// }
 
 	if len(c.ListPool) < 1 {
 		errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Pool": "empty"}))
