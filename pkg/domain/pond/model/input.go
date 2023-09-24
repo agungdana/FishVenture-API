@@ -51,9 +51,9 @@ func (c *CreatePondInput) Validate() error {
 	// if c.TeamID == nil {
 	// 	errs.Add(errorpond.ErrValidateInputPond.AttacthDetail(map[string]any{"Team": "empty"}))
 	// }
-	// if err := ValidateCreateberkasInput(c.ListBerkas); err != nil {
-	// errs.Add(err)
-	// }
+	if err := ValidateCreateberkasInput(c.ListBerkas); err != nil {
+		errs.Add(err)
+	}
 	// }
 
 	if len(c.ListPool) < 1 {
