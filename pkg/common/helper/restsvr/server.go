@@ -89,6 +89,7 @@ func GetGinRoute() *gin.Engine {
 
 func Run() {
 	rs := getGinEngine()
+	host := ""
 
 	rs.gin.GET("/status", func(ctx *gin.Context) {
 		res := new(HttpResponse)
@@ -96,14 +97,17 @@ func Run() {
 		ResponsJson(ctx, res)
 	})
 
-	if rs.conf.Host == "" {
-		rs.conf.Host = "localhost"
-	}
 	if rs.conf.Port == "" {
 		rs.conf.Port = "8080"
 	}
 
-	if err := rs.gin.Run(rs.conf.Host + ":" + rs.conf.Port); err != nil {
+	host = rs.conf.Port
+
+	if rs.conf.Host != "" {
+		host = rs.conf.Host + ":" + rs.conf.Port
+	}
+
+	if err := rs.gin.Run(host); err != nil {
 		logger.Fatal("failed to run serv: %v", err)
 	}
 
