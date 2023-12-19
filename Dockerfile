@@ -8,4 +8,5 @@ WORKDIR /App
 EXPOSE 8080
 ARG APP_ENV
 COPY --from=builder /builder/gobin .
+COPY --from=builder /builder/.env .
 ENTRYPOINT ["./gobin"]
